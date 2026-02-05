@@ -1709,16 +1709,34 @@ function initTeaserEngine() {
                 if (!cardTimers.has(card)) {
                     const timerId = setTimeout(() => {
                         card.classList.add('teaser-active');
-                        // PRE-WARM BUNNY CONNECTION
+                        // PRE-WARM VIDEO (SMARTEST STRATEGY: HIDDEN IFRAME)
                         const expId = card.dataset.id;
                         const exp = experiencesData.find(e => e.id === expId);
                         if(exp && exp.video) {
-                            // Extract Library ID (555558) and Video ID for preconnect hint
-                            const vidUrl = new URL(exp.video);
-                            const preLink = document.createElement('link');
-                            preLink.rel = 'preconnect';
-                            preLink.href = vidUrl.origin;
-                            document.head.appendChild(preLink);
+                            const preloadId = `preload-video-${expId}`;
+                            const container = document.getElementById('video-preload-container');
+
+                            if (container && !document.getElementById(preloadId)) {
+                                // Create hidden iframe to buffer the video stream
+                                const iframe = document.createElement('iframe');
+                                iframe.id = preloadId;
+
+                                // Bunny.net optimization params:
+                                // preload=true: Forces buffering
+                                // autoplay=false: Don't start yet
+                                // playButton=false: Hide the big button
+                                // controls=0: Hide controls
+                                let src = exp.video;
+                                if(!src.includes('?')) src += '?';
+                                src += `&preload=true&autoplay=false&playButton=false&controls=0&loop=false&muted=false`;
+
+                                iframe.src = src;
+                                iframe.style.width = '100%';
+                                iframe.style.height = '100%';
+                                iframe.setAttribute('loading', 'eager');
+
+                                container.appendChild(iframe);
+                            }
                         }
                     }, 600);
                     cardTimers.set(card, timerId);
@@ -2092,7 +2110,7 @@ window.StoryManager = {
         }
     },
 
-    // 4. Video Logic (FIXED FOR SOUND)
+    // 4. Video Logic (FIXED FOR SOUND & INSTANT PLAY)
     playVideoSlide: function(item, container, progressBar) {
         if(this.isMuted) {
              this.audioObj.pause();
@@ -2101,18 +2119,43 @@ window.StoryManager = {
              this.fadeAudio(0, 300, true);
         }
 
-        const iframe = document.createElement('iframe');
-        const ts = new Date().getTime();
+        // 1. Check for Preloaded Iframe (The "Smartest Strategy")
+        const preloadId = `preload-video-${this.currentExp.id}`;
+        const preloadedIframe = document.getElementById(preloadId);
+        let iframe;
 
-        // === THE SOUND FIX ===
-        let src = item.src;
-        if(!src.includes('?')) src += '?';
-        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
+        if (preloadedIframe) {
+            // ADOPT THE PRELOADED FRAME
+            iframe = preloadedIframe;
+            // IMPORTANT: Remove ID so it doesn't conflict if we close/reopen (though we should clone or move)
+            // Moving it is better to keep the buffered state
+            iframe.removeAttribute('id');
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.className = 'story-media-item';
 
-        iframe.src = src;
-        iframe.className = 'story-media-item';
-        iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-        iframe.setAttribute('loading', 'eager');
+            // We need to update the SRC to trigger autoplay NOW
+            // The preloaded one had autoplay=false
+            let src = iframe.src;
+            src = src.replace('autoplay=false', 'autoplay=true');
+            // Ensure playButton=false is there
+            if(!src.includes('playButton=false')) src += '&playButton=false';
+
+            iframe.src = src; // Reloads the frame with autoplay enabled
+        } else {
+            // Fallback: Create new
+            iframe = document.createElement('iframe');
+            const ts = new Date().getTime();
+            let src = item.src;
+            if(!src.includes('?')) src += '?';
+            // Explicitly hide play button and controls
+            src += `&autoplay=true&muted=0&playButton=false&controls=0&playsinline=1&modestbranding=1&ts=${ts}`;
+
+            iframe.src = src;
+            iframe.className = 'story-media-item';
+            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+            iframe.setAttribute('loading', 'eager');
+        }
 
         container.appendChild(iframe);
 
@@ -3093,5 +3136,6 @@ function openMapWidget(id, event) {
 function addMarker(coords) { if (mapMarker) mapMarker.remove(); const el = document.createElement('div'); el.className = 'venue-marker'; mapMarker = new mapboxgl.Marker(el).setLngLat(coords).addTo(map); }
 function closeMapWidget() { const modal = document.getElementById('mapbox-modal'); modal.classList.remove('active'); document.body.style.overflow = ''; setTimeout(() => { modal.style.display = 'none'; }, 400); }
 </script>
+<div id="video-preload-container" style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;visibility:hidden;"></div>
 </body>
 </html>
