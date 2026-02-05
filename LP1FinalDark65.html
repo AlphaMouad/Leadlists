@@ -20,7 +20,6 @@
     <link rel="preconnect" href="https://vz-fe8cf04d-f49.b-cdn.net" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fast.wistia.com">
     <link rel="preconnect" href="https://player.mediadelivery.net">
     <link rel="preconnect" href="https://MTSZone.b-cdn.net">
     <link rel="preconnect" href="https://MTSpull.b-cdn.net">
@@ -1492,6 +1491,17 @@ async function loadBunnyPlayer() {
     } catch (e) { console.error('Bunny Player load failed', e); }
 }
 
+// === OPTIMIZATION: IDLE LOAD ===
+window.addEventListener('load', () => {
+    const idleCallback = window.requestIdleCallback || ((cb) => setTimeout(cb, 3000));
+    idleCallback(() => {
+        setTimeout(() => {
+            loadMapboxResources();
+            loadBunnyPlayer();
+        }, 2000); // Small delay to let main thread settle
+    });
+});
+
 const videoIdMap = {
     "stah": "o39c248x3j", "tanjia": "0q2d4cko4b", "folk": "t1873lqxyr", "ritziF": "sjy3c57qxz", "ritziD": "sjy3c57qxz",
     "nouba": "c349wcz8hz", "noto": "khj4dlqdv2", "ibrahim": "f1pummm5r9", "malak": "x1wjp5k66n"
@@ -1691,8 +1701,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // === UPGRADE: REVIEWS HTML STRUCTURE ===
         card.innerHTML = `
-            <div class="card-image" onclick="StoryManager.open('${exp.id}')">
-                <img loading="lazy" src="${exp.image}" alt="${exp.name}">
+            <div class="card-image" onclick="StoryManager.open('${exp.id}')" onmouseenter="StoryManager.preload('${exp.id}')">
+                <img loading="lazy" decoding="async" src="${exp.image}" alt="${exp.name}">
                 ${soldOutOverlay}
                 <div class="card-image-overlay" data-cta="${ctaText}"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg></div>
                 <div class="media-badge"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> GALERIE & VIDÉO</div>
@@ -1711,7 +1721,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="card-description">${exp.description}</p>
                 <div class="card-meta"><span>${exp.time} • Tous les soirs</span> <span class="price-range" onclick="openMapWidget('${exp.id}', event)">${exp.price}</span></div>
                 <div class="card-actions-container">
-                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>MENU</button>
+                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}')" onmouseenter="preloadMenu('${exp.menuUrl}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>MENU</button>
                     <button class="card-btn btn-book" onclick="scrollToForm('${exp.id}')">RÉSERVER MA SOIRÉE (0€)</button>
                 </div>
                 <div class="trust-micro-signal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> Paiement sur place &bull; Zéro Frais</div>
@@ -2220,6 +2230,22 @@ window.StoryManager = {
             this.currentIndex = 0;
             this.queue = [];
         }, 300);
+    },
+
+    // 9. Preload Strategy (Elite UX)
+    preload: function(id) {
+        const exp = (window.experiencesData || []).find(e => e.id === id);
+        if(!exp) return;
+
+        // Preload first image
+        if(exp.gallery && exp.gallery.length > 0) {
+            const img = new Image();
+            img.src = exp.gallery[0];
+        }
+        // If video, we can try to warm up the connection to the player CDN
+        if(exp.video) {
+            loadBunnyPlayer();
+        }
     }
 };
 /* === OPTIMIZATION END === */
@@ -2295,6 +2321,24 @@ const MenuEngine = (() => {
     };
 })();
 window.openMenu = (url) => MenuEngine.open(url);
+
+// === OPTIMIZATION: MENU PRELOADER ===
+const preloadedMenus = new Set();
+function preloadMenu(url) {
+    if(!url || preloadedMenus.has(url)) return;
+    preloadedMenus.add(url);
+
+    // Create hidden iframe to warm up the viewer
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = 'https://docs.google.com/gview?embedded=true&url=' + encodeURIComponent(url);
+    document.body.appendChild(iframe);
+
+    // Cleanup after 10s to save memory
+    setTimeout(() => {
+        if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    }, 10000);
+}
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoidnBzbW9lcm9ja3MiLCJhIjoiY21qaWY1czlsMHAzNzNnc2Nmc21qNXM3bSJ9.EWmJAoL7TH7Dx5mm_v7tIg';
 let map = null; let mapMarker = null;
