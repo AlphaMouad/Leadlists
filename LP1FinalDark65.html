@@ -138,14 +138,13 @@
         }
         /* Black Gradient Overlay to hide edge and blend */
         .hero-video-bg::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 25%;
-            background: linear-gradient(to top, #000000 0%, transparent 100%); z-index: 2; pointer-events: none;
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 30%;
+            background: linear-gradient(to top, #000000 10%, rgba(0,0,0,0.6) 50%, transparent 100%); z-index: 2; pointer-events: none;
         }
         .hero-video-bg iframe {
             position: absolute; top: 50%; left: 50%; width: 177.78vh; height: 100vh; min-width: 100%; min-height: 100%;
-            transform: translate(-50%, -50%) translateZ(0); border: none; pointer-events: none; background: #000; opacity: 0; animation: videoFadeIn 1s ease forwards 0.5s;
+            transform: translate(-50%, -50%) translateZ(0); border: none; pointer-events: none; background: #000;
         }
-        @keyframes videoFadeIn { to { opacity: 1; } }
 
         .hero-content {
             position: relative; z-index: 10; max-width: 500px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center;
@@ -2247,6 +2246,15 @@ window.StoryManager = {
         // 1. Warm up Video Player Code (if video exists)
         if(exp.video) {
             loadBunnyPlayer();
+            // Dynamically preload script for high priority
+            if(!document.querySelector('link[href="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"]')) {
+                const preloadLink = document.createElement('link');
+                preloadLink.rel = 'preload';
+                preloadLink.as = 'script';
+                preloadLink.href = 'https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js';
+                document.head.appendChild(preloadLink);
+            }
+
             // Preconnect to video origin
             const vidUrl = new URL(exp.video);
             if(!document.querySelector(`link[href="${vidUrl.origin}"]`)) {
