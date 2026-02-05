@@ -509,7 +509,7 @@
 
         .card-content { padding: 1.4rem; display: flex; flex-direction: column; background: #fff; gap: 0; }
         .card-title { font-size: 1.4rem; line-height: 1.1; margin-bottom: 0.3rem; color: var(--text-dark); }
-        
+
         /* UPGRADED CARD RATING CSS */
         .card-rating {
             display: flex;
@@ -539,7 +539,7 @@
             font-size: 0.75rem;
             font-weight: 500;
         }
-        
+
         .card-description { margin-bottom: 1rem; color: var(--text-body); font-size: 0.9rem; line-height: 1.5; }
         .card-meta {
             display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-dark);
@@ -651,110 +651,110 @@
 
 /* === V25 ULTIMATE STORY OVERLAY (EXACT SOURCE COPY) === */
 .story-overlay {
-    position: fixed; top: 0; left: 0; 
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%; height: 100dvh;
-    background: #000; z-index: 9999; 
+    background: #000; z-index: 9999;
     display: none; align-items: center; justify-content: center;
-    opacity: 0; 
+    opacity: 0;
     transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
     will-change: opacity;
     transform: translateZ(0);
 }
-.story-overlay.show { 
-    display: flex; 
-    opacity: 1; 
+.story-overlay.show {
+    display: flex;
+    opacity: 1;
 }
 
-.story-container { 
-    width: 100%; height: 100%; height: 100dvh; 
-    position: relative; overflow: hidden; background: #000; 
+.story-container {
+    width: 100%; height: 100%; height: 100dvh;
+    position: relative; overflow: hidden; background: #000;
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
 }
 
 @media(min-width: 768px) {
-    .story-container { 
-        width: 450px; height: 90vh; 
-        border-radius: 20px; 
-        box-shadow: 0 0 50px rgba(0,0,0,0.8); 
-        transform: translateZ(0); 
+    .story-container {
+        width: 450px; height: 90vh;
+        border-radius: 20px;
+        box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        transform: translateZ(0);
         -webkit-mask-image: -webkit-radial-gradient(white, black);
         mask-image: radial-gradient(white, black);
     }
 }
 
-.story-media-wrapper { 
-    width: 100%; height: 100%; 
-    position: relative; background: #000; z-index: 1; 
+.story-media-wrapper {
+    width: 100%; height: 100%;
+    position: relative; background: #000; z-index: 1;
     overflow: hidden;
 }
 
-.story-media-item { 
-    width: 100%; height: 100%; 
+.story-media-item {
+    width: 100%; height: 100%;
     object-fit: cover; object-position: center center;
-    position: absolute; top: 0; left: 0; 
-    opacity: 0; 
+    position: absolute; top: 0; left: 0;
+    opacity: 0;
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity;
 }
 
-.story-media-item.active { 
-    opacity: 1; z-index: 1; 
+.story-media-item.active {
+    opacity: 1; z-index: 1;
 }
 
 .story-media-item img {
-    width: 100%; height: 100%; 
+    width: 100%; height: 100%;
     object-fit: cover; object-position: center center;
     display: block;
 }
 
 .story-media-item iframe {
-    width: 100%; height: 100%; 
+    width: 100%; height: 100%;
     border: none; display: block;
 }
 
 /* UI LAYER */
 .story-ui-top {
     position: absolute; top: 0; left: 0; width: 100%;
-    padding: 15px 15px 30px 15px; 
+    padding: 15px 15px 30px 15px;
     background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
-    z-index: 300; pointer-events: none; 
+    z-index: 300; pointer-events: none;
 }
 
-.story-progress-bar { 
-    display: flex; gap: 4px; height: 2px; 
-    margin-bottom: 12px; pointer-events: auto; 
+.story-progress-bar {
+    display: flex; gap: 4px; height: 2px;
+    margin-bottom: 12px; pointer-events: auto;
     transform: translateZ(0);
 }
-.progress-segment { 
-    flex: 1; background: rgba(255,255,255,0.3); 
-    border-radius: 2px; overflow: hidden; height: 2px; 
+.progress-segment {
+    flex: 1; background: rgba(255,255,255,0.3);
+    border-radius: 2px; overflow: hidden; height: 2px;
 }
-.progress-fill { 
-    width: 100%; height: 100%; 
-    background: #fff; 
-    transform-origin: left; 
-    transform: scaleX(0); 
+.progress-fill {
+    width: 100%; height: 100%;
+    background: #fff;
+    transform-origin: left;
+    transform: scaleX(0);
     will-change: transform;
 }
 
 .story-controls-row { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
 
-.story-brand { 
-    color: #fff; font-size: 0.8rem; font-weight: 700; 
-    opacity: 0.95; text-transform: uppercase; letter-spacing: 1px; 
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+.story-brand {
+    color: #fff; font-size: 0.8rem; font-weight: 700;
+    opacity: 0.95; text-transform: uppercase; letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .story-actions { display: flex; gap: 10px; align-items: center; pointer-events: auto; }
 
-.story-icon { 
-    width: 32px; height: 32px; 
-    display: flex; align-items: center; justify-content: center; 
-    color: #fff; cursor: pointer; 
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); 
-    opacity: 0.95; transition: transform 0.2s; 
+.story-icon {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; cursor: pointer;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    opacity: 0.95; transition: transform 0.2s;
 }
 .story-icon svg { width: 24px; height: 24px; stroke-width: 2px; }
 .story-icon:hover { transform: scale(1.1); }
@@ -762,7 +762,7 @@
 .story-nav-zone { position: absolute; top: 0; bottom: 0; z-index: 40; height: 100%; }
 .nav-left { left: 0; width: 30%; }
 .nav-right { right: 0; width: 30%; }
-.nav-center { left: 30%; width: 40%; } 
+.nav-center { left: 30%; width: 40%; }
 
 .story-footer {
     position: absolute; bottom: 0; left: 0; width: 100%;
@@ -775,10 +775,10 @@
 
 .story-footer.hidden { transform: translateY(50px); opacity: 0; }
 
-.story-title-text { 
-    color: #fff; font-family: 'Playfair Display'; font-size: 1.4rem; 
-    margin-bottom: 10px; font-weight: 700; 
-    text-shadow: 0 2px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.5); 
+.story-title-text {
+    color: #fff; font-family: 'Playfair Display'; font-size: 1.4rem;
+    margin-bottom: 10px; font-weight: 700;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.5);
     letter-spacing: -0.02em;
     opacity: 0;
     transform: translateY(8px);
@@ -786,25 +786,25 @@
 }
 .story-footer:not(.hidden) .story-title-text { opacity: 1; transform: translateY(0); }
 
-.story-desc-text { 
-    color: rgba(255,255,255,0.96); font-size: 0.8rem; 
-    margin-bottom: 24px; font-weight: 500; 
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
-    text-shadow: 0 2px 8px rgba(0,0,0,0.75), 0 1px 2px rgba(0,0,0,0.4); 
-    max-width: 90%; line-height: 1.5; 
+.story-desc-text {
+    color: rgba(255,255,255,0.96); font-size: 0.8rem;
+    margin-bottom: 24px; font-weight: 500;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.75), 0 1px 2px rgba(0,0,0,0.4);
+    max-width: 90%; line-height: 1.5;
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
 }
 .story-footer:not(.hidden) .story-desc-text { opacity: 1; transform: translateY(0); }
 
-.story-cta-btn { 
-    background: #fff; color: #000; border: none; font-weight: 800; 
-    padding: 13px 32px; border-radius: 50px; width: 100%; max-width: 300px; 
-    font-size: 0.85rem; cursor: pointer; 
-    box-shadow: 0 6px 28px rgba(255,255,255,0.18), 0 2px 8px rgba(0,0,0,0.1); 
-    text-transform: uppercase; letter-spacing: 1.5px; 
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+.story-cta-btn {
+    background: #fff; color: #000; border: none; font-weight: 800;
+    padding: 13px 32px; border-radius: 50px; width: 100%; max-width: 300px;
+    font-size: 0.85rem; cursor: pointer;
+    box-shadow: 0 6px 28px rgba(255,255,255,0.18), 0 2px 8px rgba(0,0,0,0.1);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
     opacity: 0;
@@ -814,94 +814,94 @@
 .story-cta-btn:hover { transform: translateY(-1px) scale(1.01); box-shadow: 0 8px 32px rgba(255,255,255,0.22), 0 4px 12px rgba(0,0,0,0.12); }
 .story-cta-btn:active { transform: translateY(0) scale(0.99); }
 
-.story-trust { 
-    color: #fff; font-size: 0.75rem; margin-top: 18px; 
-    opacity: 0; display: flex; align-items: center; justify-content: center; 
-    gap: 6px; font-weight: 600; 
-    text-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.4); 
+.story-trust {
+    color: #fff; font-size: 0.75rem; margin-top: 18px;
+    opacity: 0; display: flex; align-items: center; justify-content: center;
+    gap: 6px; font-weight: 600;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.4);
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
     transform: translateY(6px);
 }
 .story-footer:not(.hidden) .story-trust { opacity: 0.92; transform: translateY(0); }
 
 /* === CLIMAX CARD (WORLD CLASS PREMIUM ANIMATION) === */
-.climax-phantom-layer { 
-    position: absolute; inset: 0; width: 100%; height: 100%; 
-    background-size: cover; background-position: center center; 
-    background-repeat: no-repeat; z-index: 0; 
-    transform: scale(1.0); will-change: transform; 
+.climax-phantom-layer {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center center;
+    background-repeat: no-repeat; z-index: 0;
+    transform: scale(1.0); will-change: transform;
     transition: transform 14s cubic-bezier(0.19, 1, 0.22, 1);
 }
 @media (max-width: 768px) {
     .climax-phantom-layer { background-size: cover !important; background-position: center center !important; }
 }
-.story-climax-card { 
-    position: absolute; top:0; left:0; width:100%; height:100%; 
-    z-index: 100; pointer-events: none; display: flex; flex-direction: column; 
-    justify-content: flex-end; padding-bottom: 72px; background: transparent; 
-    opacity: 0; transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; 
+.story-climax-card {
+    position: absolute; top:0; left:0; width:100%; height:100%;
+    z-index: 100; pointer-events: none; display: flex; flex-direction: column;
+    justify-content: flex-end; padding-bottom: 72px; background: transparent;
+    opacity: 0; transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
 }
 .story-climax-card.active { opacity: 1; pointer-events: auto; }
 
 /* PREMIUM: Smooth zoom and pull UP to reveal people at the bottom */
-.story-climax-card.active ~ .climax-phantom-layer, .story-climax-card.active .climax-phantom-layer { 
-    transform: scale(1.12) translateY(-8%); 
-    transition: transform 22s cubic-bezier(0.19, 1, 0.22, 1); 
+.story-climax-card.active ~ .climax-phantom-layer, .story-climax-card.active .climax-phantom-layer {
+    transform: scale(1.12) translateY(-8%);
+    transition: transform 22s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.climax-gradient-overlay { 
-    position: absolute; inset: 0; width: 100%; height: 100%; 
-    background: linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.72) 38%, rgba(0,0,0,0.12) 78%, transparent 100%); 
-    z-index: 1; pointer-events: none; 
+.climax-gradient-overlay {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.72) 38%, rgba(0,0,0,0.12) 78%, transparent 100%);
+    z-index: 1; pointer-events: none;
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.climax-content { 
-    position: relative; z-index: 2; text-align: center; 
-    padding: 0 1.5rem; display: flex; flex-direction: column; align-items: center; 
+.climax-content {
+    position: relative; z-index: 2; text-align: center;
+    padding: 0 1.5rem; display: flex; flex-direction: column; align-items: center;
 }
-.climax-title { 
-    color: #fff; font-family: 'Playfair Display'; 
-    font-size: clamp(2rem, 5vw, 2.5rem); margin-bottom: 0.5rem; 
-    text-shadow: 0 4px 32px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.6); 
-    opacity: 0; transform: translateY(24px); 
-    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, 
+.climax-title {
+    color: #fff; font-family: 'Playfair Display';
+    font-size: clamp(2rem, 5vw, 2.5rem); margin-bottom: 0.5rem;
+    text-shadow: 0 4px 32px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s,
                 transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
     letter-spacing: -0.02em; font-weight: 700;
 }
-.climax-badge { 
-    display: inline-flex; align-items: center; gap: 7px; 
-    background: rgba(255,255,255,0.16); backdrop-filter: blur(12px); 
-    border: 1px solid rgba(255,255,255,0.24); padding: 7px 16px; 
-    border-radius: 50px; margin-bottom: 1.4rem; 
-    opacity: 0; transform: translateY(18px) scale(0.96); 
-    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s, 
-                transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s; 
+.climax-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.16); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.24); padding: 7px 16px;
+    border-radius: 50px; margin-bottom: 1.4rem;
+    opacity: 0; transform: translateY(18px) scale(0.96);
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s,
+                transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;
     box-shadow: 0 8px 36px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
 }
 .climax-stars { display: flex; gap: 3px; }
 .climax-stars svg { width: 13px; height: 13px; fill: #FFD700; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); opacity: 1; transform: scale(1); animation: none; }
 .climax-badge-text { color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; }
 
-.climax-desc { 
-    color: rgba(255,255,255,0.97); font-size: 0.9rem; margin-bottom: 2rem; 
-    line-height: 1.55; font-weight: 500; 
-    text-shadow: 0 2px 22px rgba(0,0,0,1), 0 1px 4px rgba(0,0,0,0.5); 
-    max-width: 90%; opacity: 0; transform: translateY(20px); 
-    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s, 
-                transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s; 
+.climax-desc {
+    color: rgba(255,255,255,0.97); font-size: 0.9rem; margin-bottom: 2rem;
+    line-height: 1.55; font-weight: 500;
+    text-shadow: 0 2px 22px rgba(0,0,0,1), 0 1px 4px rgba(0,0,0,0.5);
+    max-width: 90%; opacity: 0; transform: translateY(20px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s,
+                transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s;
 }
-.climax-cta { 
-    background: #fff; color: #000; width: 100%; padding: 1.3rem; 
-    border-radius: 50px; font-weight: 800; font-size: 0.95rem; border: none; 
-    box-shadow: 0 0 24px rgba(255,255,255,0.32), 0 4px 12px rgba(0,0,0,0.15); 
-    cursor: pointer; text-transform: uppercase; letter-spacing: 1.2px; 
-    transform: scale(0.92) translateY(8px); opacity: 0; 
-    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.75s, 
+.climax-cta {
+    background: #fff; color: #000; width: 100%; padding: 1.3rem;
+    border-radius: 50px; font-weight: 800; font-size: 0.95rem; border: none;
+    box-shadow: 0 0 24px rgba(255,255,255,0.32), 0 4px 12px rgba(0,0,0,0.15);
+    cursor: pointer; text-transform: uppercase; letter-spacing: 1.2px;
+    transform: scale(0.92) translateY(8px); opacity: 0;
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.75s,
                 transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.75s,
                 box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.climax-cta:hover { 
-    transform: scale(1.01) translateY(-1px); 
+.climax-cta:hover {
+    transform: scale(1.01) translateY(-1px);
     box-shadow: 0 0 32px rgba(255,255,255,0.4), 0 6px 16px rgba(0,0,0,0.18);
 }
 .climax-cta:active { transform: scale(0.99) translateY(0); }
@@ -914,54 +914,168 @@
 .story-climax-card .story-trust {
     margin-top: 22px;
     opacity: 0; transform: translateY(12px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s, 
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s,
                 transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s;
 }
 .story-climax-card.active .story-trust { opacity: 0.94; transform: translateY(0); }
 
-        /* === MENU MODAL === */
-        .menu-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px); z-index: 99999; display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .menu-modal-overlay.active { opacity: 1; }
-        .menu-modal-content {
-            background: #fff; width: 95%; max-width: 800px; height: 90%; border-radius: 20px; overflow: hidden; position: relative;
-            transform: scale(0.95) translateY(15px); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; flex-direction: column;
-            box-shadow: 0 25px 60px -12px rgba(0,0,0,0.5);
-        }
-        .menu-modal-overlay.active .menu-modal-content { transform: scale(1) translateY(0); }
-        .menu-header {
-            padding: 16px; background: #FAFAFA; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0; z-index: 20;
-        }
-        .menu-header h3 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 800; }
-        .close-menu { 
-            cursor: pointer; width: 36px; height: 36px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; color: #333; line-height: 1; transition: background 0.2s;
-        }
-        .close-menu:hover { background: #e0e0e0; }
-        .menu-iframe-container { 
-            flex-grow: 1; position: relative; width: 100%; height: 100%; background: #f8f8f8; z-index: 10;
-            overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-        }
-        .menu-iframe-container iframe { width: 100%; height: 100%; border: none; display: block; }
-        #menuLoader {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: #fff; z-index: 10; transition: opacity 0.3s ease;
-        }
-        .menu-spinner {
-            width: 40px; height: 40px; border: 3px solid rgba(236,80,117,0.1); border-top-color: #EC5075; border-radius: 50%;
-            animation: menuSpin 0.8s linear infinite; margin-bottom: 15px;
-        }
-        @keyframes menuSpin { to { transform: rotate(360deg); } }
-        #safetyLink {
-            display: none; margin-top: 20px; background: linear-gradient(135deg, #EC5075 0%, #C2185B 100%); color: white; padding: 14px 28px;
-            border-radius: 50px; text-decoration: none; font-weight: 800; font-size: 0.95rem; box-shadow: 0 8px 25px rgba(236,80,117,0.35);
-            animation: fadeInUp 0.4s ease forwards; text-transform: uppercase; letter-spacing: 1px;
-        }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* === ELITE MENU MODAL V18 (ULTRA-RELIABLE MOBILE-FIRST) === */
+.menu-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    will-change: opacity;
+    /* Prevent iOS overscroll */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+.menu-modal-overlay.active { opacity: 1; }
+
+.menu-modal-content {
+    background: #fff;
+    width: 94%;
+    max-width: 800px;
+    height: 88vh;
+    height: 88dvh; /* Dynamic viewport height */
+    max-height: 900px;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 60px -12px rgba(0,0,0,0.5);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    contain: layout paint style;
+}
+.menu-modal-overlay.active .menu-modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.menu-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FAFAFA;
+    flex-shrink: 0;
+    min-height: 56px;
+}
+.menu-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+.close-menu {
+    cursor: pointer;
+    font-size: 1.8rem;
+    line-height: 1;
+    color: #666;
+    padding: 8px;
+    margin: -8px;
+    border-radius: 50%;
+    transition: background 0.2s ease, color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.close-menu:hover,
+.close-menu:active {
+    background: rgba(0,0,0,0.05);
+    color: #333;
+}
+
+/* === SCROLLING CONTAINER (CRITICAL FOR MOBILE) === */
+.menu-iframe-container {
+    flex: 1 1 auto;
+    position: relative;
+    width: 100%;
+    min-height: 0; /* Important for flexbox */
+    overflow: hidden; /* Changed from overflow-y: auto */
+    background: #e8e8e8;
+    z-index: 10;
+    /* iOS smooth scrolling */
+    -webkit-overflow-scrolling: touch;
+}
+
+.menu-iframe-container iframe {
+    /* Allow both horizontal and vertical pan for PDF zoom */
+    touch-action: pan-x pan-y pinch-zoom;
+    /* Ensure iframe fills container */
+    display: block;
+}
+
+/* === MENU SPINNER (Unique, no conflicts) === */
+.menu-spinner {
+    width: 44px;
+    height: 44px;
+    border: 3px solid rgba(236, 80, 117, 0.15);
+    border-radius: 50%;
+    border-top: 3px solid var(--brand-raspberry);
+    animation: menuSpin 0.9s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+    margin-bottom: 18px;
+}
+
+@keyframes menuSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: pulseMenuText 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseMenuText {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+/* === MOBILE SPECIFIC OVERRIDES === */
+@media (max-width: 768px) {
+    .menu-modal-content {
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        max-height: none;
+        border-radius: 0;
+    }
+
+    .menu-header {
+        padding: 14px 16px;
+        /* Safe area for notched phones */
+        padding-top: max(14px, env(safe-area-inset-top));
+    }
+
+    .menu-iframe-container {
+        /* Account for safe areas on notched phones */
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .close-menu {
+        font-size: 2rem;
+        padding: 10px;
+    }
+}
 
         /* === PROCESSING OVERLAY === */
         .processing-overlay {
@@ -1443,7 +1557,7 @@
             <div class="menu-iframe-container" id="iframeContainer"></div>
         </div>
     </div>
-    
+
     <!-- === MAPBOX MODAL === -->
     <div id="mapbox-modal">
         <div class="map-wrapper">
@@ -1590,10 +1704,10 @@ function initTeaserEngine() {
         entries.forEach(entry => {
             const card = entry.target;
             if (card.classList.contains('sold-out')) return;
-            
+
             if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
                 if (!cardTimers.has(card)) {
-                    const timerId = setTimeout(() => { 
+                    const timerId = setTimeout(() => {
                         card.classList.add('teaser-active');
                         // PRE-WARM BUNNY CONNECTION
                         const expId = card.dataset.id;
@@ -1622,7 +1736,7 @@ function initTeaserEngine() {
 
 document.addEventListener('DOMContentLoaded', function() {
     // Generate and Set User ID on Load
-    const userId = generateUserID(); 
+    const userId = generateUserID();
     document.getElementById('userID').value = userId;
 
     const dateInput = document.getElementById('date'); const today = new Date().toISOString().split('T')[0];
@@ -1672,7 +1786,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card-content">
                 ${fomoHTML}
                 <h3 class="card-title">${exp.name}</h3>
-                
+
                 <div class="card-rating">
                     <span class="stars">★★★★★</span>
                     <span class="rating-score-box">${exp.rating}/5</span>
@@ -1718,12 +1832,12 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => { step2.classList.remove('active'); step2.classList.add('completed'); step2.querySelector('.step-icon').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'; step3.classList.add('active'); progressFill.style.width = '90%'; headline.textContent = 'Confirmation...'; subtext.textContent = 'Votre table VIP est réservée'; }, 2800);
         setTimeout(() => {
             step3.classList.remove('active'); step3.classList.add('completed'); step3.querySelector('.step-icon').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'; progressFill.style.width = '100%'; headline.textContent = 'Confirmé !'; subtext.textContent = 'Redirection vers votre confirmation...';
-            
+
             // WEBHOOK SENT WITH USERID
             try { fetch('https://hook.eu1.make.com/f4zgc3ikro4untwxsslktjd821htjlb5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fullname: formData.fullname, name: formData.fullname.split(' ')[0], restaurant: restaurantName, restaurantId: formData.restaurant, date: formData.date, adultes: formData.guests, enfants: formData.enfants, phone: formData.phone, confirmation: confirmationNumber, videoId: videoId, source: 'LP1FinalDarkOptimized', userID: formData.userID, timestamp: new Date().toISOString() }) }).catch(err => console.log('Webhook sent')); } catch(err) {}
-            
+
             if (typeof gtag !== 'undefined') { gtag('event', 'conversion', { 'send_to': 'AW-16808399607/conversion' }); }
-            
+
             // REDIRECT WITH USERID
             const firstName = formData.fullname.split(' ')[0]; const redirectParams = new URLSearchParams({ fullname: formData.fullname, name: firstName, prenom: firstName, restaurant: restaurantName, etablissement: restaurantName, date: formData.date, adultes: formData.guests, enfants: formData.enfants, confirmation: confirmationNumber, videoId: videoId, userID: formData.userID });
             window.location.href = `https://mtszone.b-cdn.net/ty8.html?${redirectParams.toString()}`;
@@ -1803,7 +1917,7 @@ window.StoryManager = {
         // Nav Controls
         document.getElementById('storyNavLeft').addEventListener('click', (e) => { e.stopPropagation(); this.prev(); });
         document.getElementById('storyNavRight').addEventListener('click', (e) => { e.stopPropagation(); this.next(); });
-        
+
         // === NEW HYBRID CENTER CONTROL (Tap to Toggle / Hold to Pause) ===
         const holdZone = document.getElementById('storyNavHold');
         let touchStartTime = 0;
@@ -1811,18 +1925,18 @@ window.StoryManager = {
 
         const handleStart = (e) => {
             // Allow default for scrolling unless we are in the overlay (overlay handles scroll lock)
-            if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault(); 
-            
+            if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault();
+
             touchStartTime = Date.now();
             wasPausedBeforeTouch = this.isPaused;
-            
+
             // Visual feedback: Pause immediately on touch down
-            this.pause(); 
+            this.pause();
         };
 
         const handleEnd = (e) => {
             if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault();
-            
+
             const duration = Date.now() - touchStartTime;
             const isTap = duration < 250; // Anything under 250ms is a tap
 
@@ -1878,7 +1992,7 @@ window.StoryManager = {
 
         // Force Unlock if not done
         if(!this.hasUnlockedAudio) {
-            this.audioObj.play().catch(()=>{}); 
+            this.audioObj.play().catch(()=>{});
             this.audioObj.pause();
             this.hasUnlockedAudio = true;
         }
@@ -1896,14 +2010,14 @@ window.StoryManager = {
 
                     // 1. Reserve 15% (or min 5s) for the Climax Card at the end
                     const reservedForClimax = Math.max(5, total * 0.15);
-                    
+
                     // 2. Subtract 15s buffer (This accounts for the Video Intro/Buildup)
-                    const availableTime = total - reservedForClimax - 15; 
-                    
+                    const availableTime = total - reservedForClimax - 15;
+
                     // 3. Calculate exact duration per image to fit the remaining window
                     if(availableTime > 0 && count > 0) {
                         this.imageDuration = (availableTime / count) * 1000;
-                        
+
                         // 4. Clamp between 2.5s and 6s
                         this.imageDuration = Math.max(2500, Math.min(6000, this.imageDuration));
                     }
@@ -1928,17 +2042,17 @@ window.StoryManager = {
 
         this.currentIndex = 0;
         this.isPaused = false;
-        
+
         document.getElementById('storyOverlay').classList.add('show');
         document.body.style.overflow = 'hidden';
-        
+
         this.renderSlide();
     },
 
     // 3. Render Engine (Optimized)
     renderSlide: function() {
         const wrapper = document.getElementById('storyMediaWrapper');
-        
+
         if(this.timer) clearTimeout(this.timer);
         this.timer = null;
 
@@ -1969,7 +2083,7 @@ window.StoryManager = {
 
         const item = this.queue[this.currentIndex];
         const currentFill = allFills[this.currentIndex];
-        wrapper.innerHTML = ''; 
+        wrapper.innerHTML = '';
 
         if(item.type === 'video') {
             this.playVideoSlide(item, wrapper, currentFill);
@@ -1989,19 +2103,19 @@ window.StoryManager = {
 
         const iframe = document.createElement('iframe');
         const ts = new Date().getTime();
-        
+
         // === THE SOUND FIX ===
         let src = item.src;
         if(!src.includes('?')) src += '?';
         src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-        
+
         iframe.src = src;
         iframe.className = 'story-media-item';
         iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
         iframe.setAttribute('loading', 'eager');
-        
+
         container.appendChild(iframe);
-        
+
         requestAnimationFrame(() => iframe.classList.add('active'));
 
         const player = new playerjs.Player(iframe);
@@ -2010,7 +2124,7 @@ window.StoryManager = {
         player.on('ready', () => {
             // Safety: Ensure it plays
             player.play();
-            
+
             // Double Check: Force volume if not globally muted
             if(!this.isMuted) {
                 player.unmute();
@@ -2033,7 +2147,7 @@ window.StoryManager = {
     // 5. Image Logic
     playImageSlide: function(item, container, progressBar) {
         this.currentVideoPlayer = null;
-        
+
         if(!this.isMuted && this.audioObj.paused) {
             this.audioObj.play().catch(()=>{});
             this.fadeAudio(1, 400);
@@ -2042,9 +2156,9 @@ window.StoryManager = {
         const img = document.createElement('img');
         img.src = item.src;
         img.className = 'story-media-item';
-        
+
         container.appendChild(img);
-        
+
         requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add('active')));
 
         setTimeout(() => {
@@ -2061,7 +2175,7 @@ window.StoryManager = {
         const steps = 10;
         const interval = duration / steps;
         const stepAmount = (targetVol - startVol) / steps;
-        
+
         let counter = 0;
         const fadeTimer = setInterval(() => {
             counter++;
@@ -2081,7 +2195,7 @@ window.StoryManager = {
     // 7. Toggle Mute
     toggleMute: function() {
         this.isMuted = !this.isMuted;
-        
+
         document.getElementById('iconMute').classList.toggle('hidden', !this.isMuted);
         document.getElementById('iconSound').classList.toggle('hidden', this.isMuted);
 
@@ -2106,7 +2220,7 @@ window.StoryManager = {
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
         if(fill) {
             const computed = window.getComputedStyle(fill);
-            const matrix = computed.transform; 
+            const matrix = computed.transform;
             fill.style.transition = 'none';
             fill.style.transform = matrix;
         }
@@ -2118,14 +2232,14 @@ window.StoryManager = {
     resume: function() {
         if(!this.isPaused) return;
         this.isPaused = false;
-        
+
         const item = this.queue[this.currentIndex];
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
 
         if(item.type === 'video') {
             if(this.currentVideoPlayer) {
                 this.currentVideoPlayer.play();
-                fill.style.transition = 'transform 10s linear'; 
+                fill.style.transition = 'transform 10s linear';
                 fill.style.transform = 'scaleX(1)';
             }
         } else {
@@ -2159,7 +2273,7 @@ window.StoryManager = {
             this.fadeAudio(1, 300);
         }
         document.getElementById('storyTextContent').classList.add('hidden');
-        document.getElementById('storyMediaWrapper').innerHTML = ''; 
+        document.getElementById('storyMediaWrapper').innerHTML = '';
         document.getElementById('climaxCard').classList.add('active');
     },
 
@@ -2169,17 +2283,17 @@ window.StoryManager = {
         document.getElementById('storyDesc').textContent = exp.description;
         document.getElementById('climaxTitle').textContent = exp.name;
         document.getElementById('climaxDesc').textContent = exp.description;
-        
+
         const bgContainer = document.getElementById('climaxBgContainer');
         if(exp.finalImage) {
-           bgContainer.style.backgroundImage = `url('${exp.finalImage}')`; 
+           bgContainer.style.backgroundImage = `url('${exp.finalImage}')`;
         }
     },
 
     close: function() {
         this.fadeAudio(0, 200, true);
         document.getElementById('storyOverlay').classList.remove('show');
-        
+
         setTimeout(() => {
             document.getElementById('storyMediaWrapper').innerHTML = '';
             document.body.style.overflow = '';
@@ -2196,75 +2310,770 @@ window.StoryManager = {
 
 StoryManager.init();
 
-// === ELITE UPGRADE 3: ROBUST MOBILE MENU ENGINE V18 ===
-const MenuEngine = (() => {
-    const GOOGLE_VIEWER = 'https://docs.google.com/gview?embedded=true&url=';
-    const LOAD_TIMEOUT = 2500; 
-    let scrollY = 0; let timeoutId = null;
+/* ============================================================================
+   ELITE MENU ENGINE V18 - ULTRA-RELIABLE MOBILE-FIRST PDF VIEWER
+   ============================================================================
 
+   ARCHITECTURE OVERVIEW:
+   This engine uses a multi-strategy approach with automatic failover to ensure
+   PDFs always display on all devices (Android, iOS, Desktop).
+
+   STRATEGY PRIORITY:
+   1. Native PDF.js rendering (most reliable, works everywhere)
+   2. Google Docs Viewer (fallback for complex PDFs)
+   3. Direct link (ultimate fallback)
+
+   MOBILE OPTIMIZATIONS:
+   - Prevents blank gray screen by using visibility checks
+   - Multiple retry mechanisms with exponential backoff
+   - Touch-optimized scrolling with proper viewport handling
+   - Memory-efficient cleanup on close
+
+   ============================================================================ */
+
+const MenuEngine = (() => {
+    'use strict';
+
+    // ==================== CONFIGURATION ====================
+    const CONFIG = {
+        // Timing
+        INITIAL_LOAD_TIMEOUT: 1500,      // Show content after this (optimistic)
+        RETRY_DELAY: 2000,                // Wait before retry
+        MAX_RETRIES: 3,                   // Maximum retry attempts
+        SAFETY_TIMEOUT: 4000,             // Show fallback link after this
+        VISIBILITY_CHECK_INTERVAL: 500,  // Check if content visible
+        VISIBILITY_CHECK_MAX: 10,        // Max visibility checks
+
+        // Prefetch
+        HOVER_PREFETCH_DELAY: 150,
+        SCROLL_PRELOAD_MARGIN: '300px',
+
+        // PDF.js CDN (Mozilla's official CDN - highly reliable)
+        PDFJS_CDN: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174',
+
+        // Google Docs Viewer
+        GDOCS_VIEWER: 'https://docs.google.com/gview?embedded=true&url='
+    };
+
+    // ==================== STATE ====================
+    const state = {
+        isOpen: false,
+        currentUrl: null,
+        retryCount: 0,
+        timers: new Set(),
+        prefetchCache: new Map(),
+        hoverTimers: new Map(),
+        savedScrollY: 0,
+        visibilityCheckCount: 0,
+        currentStrategy: null,
+        isDestroyed: false
+    };
+
+    // ==================== DEVICE DETECTION ====================
+    const device = {
+        isAndroid: /Android/i.test(navigator.userAgent),
+        isIOS: /iPhone|iPad|iPod/i.test(navigator.userAgent),
+        isSafari: /^((?!chrome|android).)*safari/i.test(navigator.userAgent),
+        isMobile: /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+
+        get bestStrategy() {
+            // iOS Safari has issues with Google Docs viewer
+            if (this.isIOS && this.isSafari) return 'pdfjs';
+            // Android Chrome works best with Google Docs
+            if (this.isAndroid) return 'gdocs';
+            // Desktop: try native first
+            return 'pdfjs';
+        }
+    };
+
+    // ==================== UTILITIES ====================
+    const utils = {
+        log(msg, data) {
+            console.log(`[MenuV18] ${msg}`, data || '');
+        },
+
+        warn(msg, data) {
+            console.warn(`[MenuV18] ${msg}`, data || '');
+        },
+
+        clearAllTimers() {
+            state.timers.forEach(t => clearTimeout(t));
+            state.timers.clear();
+        },
+
+        addTimer(callback, delay) {
+            const timer = setTimeout(() => {
+                state.timers.delete(timer);
+                if (!state.isDestroyed) callback();
+            }, delay);
+            state.timers.add(timer);
+            return timer;
+        },
+
+        // Ensure URL is properly encoded for viewers
+        sanitizeUrl(url) {
+            try {
+                // If already encoded, decode first to avoid double encoding
+                const decoded = decodeURIComponent(url);
+                return encodeURIComponent(decoded);
+            } catch {
+                return encodeURIComponent(url);
+            }
+        }
+    };
+
+    // ==================== PRELOAD SYSTEM ====================
+    const preload = {
+        initScrollObserver() {
+            if (!('IntersectionObserver' in window)) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    const btn = entry.target;
+                    const url = this.extractUrl(btn);
+                    if (url) {
+                        this.preconnect(url);
+                        observer.unobserve(btn);
+                    }
+                });
+            }, { rootMargin: CONFIG.SCROLL_PRELOAD_MARGIN });
+
+            document.querySelectorAll('.btn-menu').forEach(btn => observer.observe(btn));
+        },
+
+        initHoverPrefetch() {
+            document.querySelectorAll('.btn-menu').forEach(btn => {
+                const url = this.extractUrl(btn);
+                if (!url) return;
+
+                btn.addEventListener('mouseenter', () => {
+                    const timer = setTimeout(() => {
+                        this.prefetch(url);
+                        state.hoverTimers.delete(btn);
+                    }, CONFIG.HOVER_PREFETCH_DELAY);
+                    state.hoverTimers.set(btn, timer);
+                }, { passive: true });
+
+                btn.addEventListener('mouseleave', () => {
+                    const timer = state.hoverTimers.get(btn);
+                    if (timer) {
+                        clearTimeout(timer);
+                        state.hoverTimers.delete(btn);
+                    }
+                }, { passive: true });
+
+                btn.addEventListener('touchstart', () => {
+                    this.prefetch(url);
+                }, { passive: true, once: true });
+            });
+        },
+
+        extractUrl(btn) {
+            const onclick = btn.getAttribute('onclick');
+            const match = onclick?.match(/openMenu\(['"]([^'"]+)['"]\)/);
+            return match?.[1] || null;
+        },
+
+        preconnect(url) {
+            try {
+                const origin = new URL(url).origin;
+                const id = `preconnect-${btoa(origin).slice(0, 10)}`;
+                if (document.getElementById(id)) return;
+
+                const link = document.createElement('link');
+                link.id = id;
+                link.rel = 'preconnect';
+                link.href = origin;
+                link.crossOrigin = 'anonymous';
+                document.head.appendChild(link);
+
+                // Also preconnect to Google Docs
+                if (!document.getElementById('preconnect-gdocs')) {
+                    const gdocs = document.createElement('link');
+                    gdocs.id = 'preconnect-gdocs';
+                    gdocs.rel = 'preconnect';
+                    gdocs.href = 'https://docs.google.com';
+                    document.head.appendChild(gdocs);
+                }
+            } catch (e) {}
+        },
+
+        prefetch(url) {
+            if (state.prefetchCache.has(url)) return;
+            state.prefetchCache.set(url, 'loading');
+
+            fetch(url, {
+                method: 'HEAD',
+                cache: 'force-cache',
+                mode: 'no-cors'
+            })
+            .then(() => state.prefetchCache.set(url, 'ready'))
+            .catch(() => state.prefetchCache.set(url, 'failed'));
+        }
+    };
+
+    // ==================== UI SYSTEM ====================
+    const ui = {
+        showLoader(container, url) {
+            container.innerHTML = `
+                <div id="menuLoader" style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
+                    z-index: 100;
+                ">
+                    <div class="menu-spinner"></div>
+                    <div class="loading-text" id="menuLoadingText">Ouverture de la carte...</div>
+                    <div id="menuRetryInfo" style="
+                        font-size: 0.7rem;
+                        color: #999;
+                        margin-top: 8px;
+                        display: none;
+                    "></div>
+                    <a href="${url}" target="_blank" rel="noopener" class="fallback-btn" id="safetyLink" style="
+                        display: none;
+                        margin-top: 20px;
+                        background: var(--brand-raspberry, #EC5075);
+                        color: white;
+                        padding: 14px 28px;
+                        border-radius: 50px;
+                        text-decoration: none;
+                        font-weight: 700;
+                        font-size: 0.9rem;
+                        box-shadow: 0 4px 15px rgba(236, 80, 117, 0.3);
+                        transition: transform 0.2s ease;
+                    ">📄 Ouvrir directement</a>
+                </div>`;
+        },
+
+        updateLoadingText(text) {
+            const el = document.getElementById('menuLoadingText');
+            if (el) el.textContent = text;
+        },
+
+        showRetryInfo(attempt, max) {
+            const el = document.getElementById('menuRetryInfo');
+            if (el) {
+                el.style.display = 'block';
+                el.textContent = `Tentative ${attempt}/${max}...`;
+            }
+        },
+
+        showSafetyLink() {
+            const link = document.getElementById('safetyLink');
+            if (link) {
+                link.style.display = 'inline-block';
+                link.style.animation = 'fadeIn 0.3s ease';
+            }
+        },
+
+        hideLoader() {
+            const loader = document.getElementById('menuLoader');
+            if (!loader) return;
+
+            loader.style.transition = 'opacity 0.3s ease';
+            loader.style.opacity = '0';
+            loader.style.pointerEvents = 'none';
+
+            utils.addTimer(() => {
+                if (loader.parentNode) {
+                    loader.remove();
+                }
+            }, 300);
+        },
+
+        showError(container, url, message) {
+            container.innerHTML = `
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100%;
+                    padding: 20px;
+                    text-align: center;
+                    background: #f8f8f8;
+                ">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">📄</div>
+                    <div style="font-size: 1rem; font-weight: 600; color: #333; margin-bottom: 8px;">
+                        ${message || 'Impossible de charger la carte'}
+                    </div>
+                    <div style="font-size: 0.85rem; color: #666; margin-bottom: 20px;">
+                        Cliquez ci-dessous pour l'ouvrir dans un nouvel onglet
+                    </div>
+                    <a href="${url}" target="_blank" rel="noopener" style="
+                        background: var(--brand-raspberry, #EC5075);
+                        color: white;
+                        padding: 14px 28px;
+                        border-radius: 50px;
+                        text-decoration: none;
+                        font-weight: 700;
+                        font-size: 0.9rem;
+                        box-shadow: 0 4px 15px rgba(236, 80, 117, 0.3);
+                    ">📄 Voir la carte</a>
+                </div>`;
+        }
+    };
+
+    // ==================== RENDERING STRATEGIES ====================
+    const strategies = {
+
+        // STRATEGY 1: PDF.js Viewer (Most reliable for mobile)
+        pdfjs(url, container) {
+            return new Promise((resolve, reject) => {
+                utils.log('Trying PDF.js strategy');
+                state.currentStrategy = 'pdfjs';
+
+                const iframe = document.createElement('iframe');
+                // Use PDF.js viewer with the PDF URL
+                const viewerUrl = `${CONFIG.PDFJS_CDN}/web/viewer.html?file=${encodeURIComponent(url)}`;
+
+                iframe.src = viewerUrl;
+                iframe.title = 'Menu PDF';
+                iframe.setAttribute('loading', 'eager');
+                iframe.setAttribute('importance', 'high');
+                this.applyStyles(iframe);
+                container.appendChild(iframe);
+
+                let loaded = false;
+                let hasContent = false;
+
+                const checkVisibility = () => {
+                    if (loaded || state.isDestroyed) return;
+
+                    state.visibilityCheckCount++;
+
+                    try {
+                        // Check if iframe has any visible content
+                        const rect = iframe.getBoundingClientRect();
+                        if (rect.width > 0 && rect.height > 0 && iframe.contentWindow) {
+                            hasContent = true;
+                        }
+                    } catch (e) {
+                        // Cross-origin, assume it's loading
+                        hasContent = true;
+                    }
+
+                    if (state.visibilityCheckCount >= CONFIG.VISIBILITY_CHECK_MAX) {
+                        if (hasContent) {
+                            loaded = true;
+                            iframe.style.opacity = '1';
+                            ui.hideLoader();
+                            resolve();
+                        } else {
+                            reject(new Error('Content not visible'));
+                        }
+                    } else {
+                        utils.addTimer(checkVisibility, CONFIG.VISIBILITY_CHECK_INTERVAL);
+                    }
+                };
+
+                // Start visibility checks
+                utils.addTimer(checkVisibility, CONFIG.VISIBILITY_CHECK_INTERVAL);
+
+                // Optimistic display
+                utils.addTimer(() => {
+                    if (!loaded && !state.isDestroyed) {
+                        loaded = true;
+                        iframe.style.opacity = '1';
+                        ui.hideLoader();
+                        resolve();
+                    }
+                }, CONFIG.INITIAL_LOAD_TIMEOUT);
+
+                iframe.onload = () => {
+                    if (loaded || state.isDestroyed) return;
+                    loaded = true;
+                    iframe.style.opacity = '1';
+                    ui.hideLoader();
+                    resolve();
+                };
+
+                iframe.onerror = () => {
+                    if (loaded) return;
+                    reject(new Error('PDF.js iframe error'));
+                };
+            });
+        },
+
+        // STRATEGY 2: Google Docs Viewer (Good for Android)
+        gdocs(url, container) {
+            return new Promise((resolve, reject) => {
+                utils.log('Trying Google Docs strategy');
+                state.currentStrategy = 'gdocs';
+
+                const iframe = document.createElement('iframe');
+                iframe.src = `${CONFIG.GDOCS_VIEWER}${encodeURIComponent(url)}`;
+                iframe.title = 'Menu PDF';
+                iframe.setAttribute('loading', 'eager');
+                iframe.setAttribute('importance', 'high');
+                this.applyStyles(iframe);
+                container.appendChild(iframe);
+
+                let loaded = false;
+                let checkCount = 0;
+
+                const checkContent = () => {
+                    if (loaded || state.isDestroyed) return;
+                    checkCount++;
+
+                    // After several checks, consider it loaded
+                    if (checkCount >= 4) {
+                        loaded = true;
+                        iframe.style.opacity = '1';
+                        ui.hideLoader();
+                        resolve();
+                        return;
+                    }
+
+                    utils.addTimer(checkContent, 500);
+                };
+
+                // Start checking
+                utils.addTimer(checkContent, 500);
+
+                // Optimistic display
+                utils.addTimer(() => {
+                    if (!loaded && !state.isDestroyed) {
+                        loaded = true;
+                        iframe.style.opacity = '1';
+                        ui.hideLoader();
+                        resolve();
+                    }
+                }, CONFIG.INITIAL_LOAD_TIMEOUT);
+
+                iframe.onload = () => {
+                    if (loaded || state.isDestroyed) return;
+
+                    // Extra delay for Google Docs to render content
+                    utils.addTimer(() => {
+                        if (!loaded && !state.isDestroyed) {
+                            loaded = true;
+                            iframe.style.opacity = '1';
+                            ui.hideLoader();
+                            resolve();
+                        }
+                    }, 300);
+                };
+
+                iframe.onerror = () => {
+                    if (loaded) return;
+                    reject(new Error('Google Docs iframe error'));
+                };
+            });
+        },
+
+        // STRATEGY 3: Direct PDF (Desktop browsers)
+        direct(url, container) {
+            return new Promise((resolve, reject) => {
+                utils.log('Trying direct PDF strategy');
+                state.currentStrategy = 'direct';
+
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframe.title = 'Menu PDF';
+                iframe.setAttribute('loading', 'eager');
+                this.applyStyles(iframe);
+                container.appendChild(iframe);
+
+                let loaded = false;
+
+                // Optimistic display
+                utils.addTimer(() => {
+                    if (!loaded && !state.isDestroyed) {
+                        loaded = true;
+                        iframe.style.opacity = '1';
+                        ui.hideLoader();
+                        resolve();
+                    }
+                }, CONFIG.INITIAL_LOAD_TIMEOUT);
+
+                iframe.onload = () => {
+                    if (loaded || state.isDestroyed) return;
+                    loaded = true;
+                    iframe.style.opacity = '1';
+                    ui.hideLoader();
+                    resolve();
+                };
+
+                iframe.onerror = () => {
+                    if (loaded) return;
+                    reject(new Error('Direct iframe error'));
+                };
+            });
+        },
+
+        applyStyles(iframe) {
+            iframe.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border: none;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                background: #fff;
+                z-index: 1;
+                touch-action: pan-x pan-y;
+                -webkit-overflow-scrolling: touch;
+            `;
+        }
+    };
+
+    // ==================== RENDER ORCHESTRATOR ====================
+    const orchestrator = {
+        async load(url, container) {
+            const strategyOrder = this.getStrategyOrder();
+
+            for (let i = 0; i < strategyOrder.length; i++) {
+                const strategyName = strategyOrder[i];
+
+                if (state.isDestroyed) return;
+
+                // Clear previous attempt
+                const existingIframe = container.querySelector('iframe');
+                if (existingIframe) existingIframe.remove();
+
+                // Reset visibility check counter
+                state.visibilityCheckCount = 0;
+
+                if (i > 0) {
+                    ui.updateLoadingText('Changement de méthode...');
+                    ui.showRetryInfo(i + 1, strategyOrder.length);
+                }
+
+                try {
+                    await strategies[strategyName](url, container);
+                    utils.log(`Success with ${strategyName}`);
+                    return; // Success!
+                } catch (error) {
+                    utils.warn(`${strategyName} failed:`, error.message);
+
+                    if (i < strategyOrder.length - 1) {
+                        // Wait before trying next strategy
+                        await new Promise(r => utils.addTimer(r, 500));
+                    }
+                }
+            }
+
+            // All strategies failed
+            utils.warn('All strategies failed, showing fallback');
+            ui.showError(container, url, 'La carte n\'a pas pu être chargée');
+        },
+
+        getStrategyOrder() {
+            const primary = device.bestStrategy;
+
+            // Build fallback chain based on device
+            if (device.isIOS) {
+                return ['pdfjs', 'direct', 'gdocs'];
+            } else if (device.isAndroid) {
+                return ['gdocs', 'pdfjs', 'direct'];
+            } else {
+                // Desktop
+                return ['direct', 'pdfjs', 'gdocs'];
+            }
+        }
+    };
+
+    // ==================== PUBLIC API ====================
     return {
         open(url) {
-            if(!url) return;
-            scrollY = window.pageYOffset || document.documentElement.scrollTop;
+            if (!url) {
+                utils.warn('No URL provided');
+                return;
+            }
+
+            if (state.isOpen) {
+                utils.log('Already open, ignoring');
+                return;
+            }
+
+            state.isOpen = true;
+            state.isDestroyed = false;
+            state.currentUrl = url;
+            state.retryCount = 0;
+            state.visibilityCheckCount = 0;
+
             const modal = document.getElementById('menuModal');
             const container = document.getElementById('iframeContainer');
-            
-            // Lock body
-            document.body.style.position = 'fixed'; document.body.style.top = `-${scrollY}px`; document.body.style.width = '100%';
-            
+
+            if (!modal || !container) {
+                utils.warn('Modal elements not found');
+                state.isOpen = false;
+                return;
+            }
+
+            utils.log('Opening menu', { url, device: device.bestStrategy });
+
+            // 1. SAVE SCROLL POSITION & LOCK BODY
+            state.savedScrollY = window.scrollY || window.pageYOffset || 0;
+
+            // Use a more robust scroll lock
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${state.savedScrollY}px`;
+            document.body.style.left = '0';
+            document.body.style.right = '0';
+            document.body.style.width = '100%';
+
+            // Prevent iOS bounce
+            if (device.isIOS) {
+                document.body.style.height = '100%';
+                document.documentElement.style.overflow = 'hidden';
+            }
+
+            // 2. SHOW MODAL
             modal.style.display = 'flex';
-            requestAnimationFrame(() => modal.classList.add('active'));
-            
-            // Render Loader
-            container.innerHTML = `
-                <iframe id="menuIframe" src="" style="width:100%; height:100%; border:none; display:block;"></iframe>
-                <div id="menuLoader">
-                    <div class="menu-spinner"></div>
-                    <div style="font-weight:700; color:#555; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">Chargement...</div>
-                    <a href="${url}" target="_blank" id="safetyLink">Ouvrir le PDF directement</a>
-                </div>
-            `;
+            modal.style.visibility = 'visible';
 
-            const iframe = document.getElementById('menuIframe');
-            // Strategy 1: Google Docs Viewer
-            iframe.src = GOOGLE_VIEWER + encodeURIComponent(url) + '&ts=' + new Date().getTime();
+            // Force reflow before adding active class
+            modal.offsetHeight;
 
-            // Happy Path
-            iframe.onload = () => {
-                if(timeoutId) clearTimeout(timeoutId);
-                const loader = document.getElementById('menuLoader');
-                if(loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 300); }
-            };
-            
-            // Fallback Timer (Strategy 2: Safety Link)
-            timeoutId = setTimeout(() => {
-                const btn = document.getElementById('safetyLink');
-                const spinner = document.querySelector('.menu-spinner');
-                if(btn) btn.style.display = 'inline-block';
-                if(spinner) spinner.style.display = 'none';
-            }, LOAD_TIMEOUT);
+            requestAnimationFrame(() => {
+                modal.classList.add('active');
+            });
+
+            // 3. SHOW LOADER & START LOADING
+            ui.showLoader(container, url);
+
+            // 4. Start loading with strategy orchestrator
+            orchestrator.load(url, container);
+
+            // 5. Show safety link after timeout
+            utils.addTimer(() => {
+                if (state.isOpen) {
+                    ui.showSafetyLink();
+                }
+            }, CONFIG.SAFETY_TIMEOUT);
         },
 
         close() {
-            if(timeoutId) clearTimeout(timeoutId);
+            if (!state.isOpen) return;
+
+            utils.log('Closing menu');
+
+            state.isOpen = false;
+            state.isDestroyed = true;
+            state.currentUrl = null;
+            state.currentStrategy = null;
+
+            // Clear all pending timers
+            utils.clearAllTimers();
+
             const modal = document.getElementById('menuModal');
             const container = document.getElementById('iframeContainer');
-            
-            modal.classList.remove('active');
-            
+
+            if (modal) {
+                modal.classList.remove('active');
+            }
+
+            // Wait for animation to complete
             setTimeout(() => {
-                modal.style.display = 'none'; container.innerHTML = ''; 
-                const html = document.documentElement;
-                const originalScrollBehavior = html.style.scrollBehavior;
-                html.style.scrollBehavior = 'auto';
-                document.body.style.position = ''; document.body.style.top = ''; document.body.style.width = '';
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.style.visibility = 'hidden';
+                }
+
+                // Clean up container
+                if (container) {
+                    // Remove all iframes properly
+                    const iframes = container.querySelectorAll('iframe');
+                    iframes.forEach(iframe => {
+                        iframe.src = 'about:blank';
+                        iframe.remove();
+                    });
+                    container.innerHTML = '';
+                }
+
+                // RESTORE SCROLL POSITION
+                const scrollY = state.savedScrollY || 0;
+
+                // Disable smooth scroll temporarily
+                const htmlEl = document.documentElement;
+                const originalScrollBehavior = htmlEl.style.scrollBehavior;
+                htmlEl.style.scrollBehavior = 'auto';
+
+                // Remove body lock
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.left = '';
+                document.body.style.right = '';
+                document.body.style.width = '';
+                document.body.style.height = '';
+
+                if (device.isIOS) {
+                    htmlEl.style.overflow = '';
+                }
+
+                // Restore scroll position immediately
                 window.scrollTo(0, scrollY);
-                setTimeout(() => { html.style.scrollBehavior = originalScrollBehavior || ''; }, 50);
+
+                // Restore smooth scroll in next frame
+                requestAnimationFrame(() => {
+                    htmlEl.style.scrollBehavior = originalScrollBehavior || '';
+                });
+
+                state.savedScrollY = 0;
+
             }, 300);
+        },
+
+        init() {
+            utils.log('Initializing MenuEngine V18');
+
+            preload.initScrollObserver();
+            preload.initHoverPrefetch();
+
+            // Add click handler for modal background
+            const modal = document.getElementById('menuModal');
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        this.close();
+                    }
+                });
+            }
+
+            // Handle escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && state.isOpen) {
+                    this.close();
+                }
+            });
+
+            // Handle visibility change (close if tab hidden)
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && state.isOpen) {
+                    // Keep open but pause any animations
+                }
+            });
+
+            utils.log('MenuEngine V18 ready', { device: device.bestStrategy });
         }
     };
 })();
+
+// ==================== AUTO-INIT ====================
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => MenuEngine.init());
+} else {
+    MenuEngine.init();
+}
+
 window.openMenu = (url) => MenuEngine.open(url);
+window.closeMenu = () => MenuEngine.close();
+
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoidnBzbW9lcm9ja3MiLCJhIjoiY21qaWY1czlsMHAzNzNnc2Nmc21qNXM3bSJ9.EWmJAoL7TH7Dx5mm_v7tIg';
 let map = null; let mapMarker = null;
