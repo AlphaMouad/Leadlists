@@ -109,7 +109,10 @@
             position: absolute; top: 0; left: 0; width: 100%; z-index: 1000;
             padding: calc(1rem + var(--safe-area-top)) 1.25rem 1rem;
         }
-        .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
+        .header-container {
+            max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; align-items: center;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)); /* Faint White Glow */
+        }
         .logo-wordmark {
             font-family: 'Playfair Display', serif; font-weight: 900; text-transform: uppercase;
             line-height: 1; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -126,17 +129,23 @@
         .hero {
             position: relative; min-height: 100dvh; display: flex; flex-direction: column; justify-content: flex-start;
             padding: calc(5.5rem + var(--safe-area-top)) 1.25rem calc(4rem + var(--safe-area-bottom));
-            text-align: center; overflow: hidden; background: #000; padding-bottom: 5rem; transform: translateZ(0);
+            text-align: center; overflow: hidden; background: #000000; padding-bottom: 5rem; transform: translateZ(0);
         }
         @media (min-width: 768px) { .hero { padding-bottom: 6rem; } }
 
         .hero-video-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; background: #000; transform: translateZ(0); pointer-events: none;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; background: #000000; transform: translateZ(0); pointer-events: none;
+        }
+        /* Black Gradient Overlay to hide edge and blend */
+        .hero-video-bg::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 25%;
+            background: linear-gradient(to top, #000000 0%, transparent 100%); z-index: 2; pointer-events: none;
         }
         .hero-video-bg iframe {
             position: absolute; top: 50%; left: 50%; width: 177.78vh; height: 100vh; min-width: 100%; min-height: 100%;
-            transform: translate(-50%, -50%) translateZ(0); border: none; pointer-events: none;
+            transform: translate(-50%, -50%) translateZ(0); border: none; pointer-events: none; background: #000; opacity: 0; animation: videoFadeIn 1s ease forwards 0.5s;
         }
+        @keyframes videoFadeIn { to { opacity: 1; } }
 
         .hero-content {
             position: relative; z-index: 10; max-width: 500px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center;
@@ -1148,7 +1157,7 @@
     <main>
         <section class="hero" id="heroSection">
             <div class="hero-video-bg" id="heroVideoBg">
-                <iframe id="heroVideoIframe" src="https://iframe.mediadelivery.net/embed/555558/b43aea10-ac57-48d3-86c6-36e176736a2b?autoplay=true&loop=true&muted=true&preload=true&controls=false&quality=720" loading="eager" fetchpriority="high" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture" allowfullscreen importance="high"></iframe>
+                <iframe id="heroVideoIframe" src="https://iframe.mediadelivery.net/embed/555558/b43aea10-ac57-48d3-86c6-36e176736a2b?autoplay=true&loop=true&muted=true&preload=true&controls=0&playsinline=1&quality=720" loading="eager" fetchpriority="high" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture" allowfullscreen importance="high"></iframe>
             </div>
 
             <div class="hero-content">
@@ -1634,17 +1643,8 @@ function initTeaserEngine() {
                 if (!cardTimers.has(card)) {
                     const timerId = setTimeout(() => {
                         card.classList.add('teaser-active');
-                        // PRE-WARM BUNNY CONNECTION
-                        const expId = card.dataset.id;
-                        const exp = experiencesData.find(e => e.id === expId);
-                        if(exp && exp.video) {
-                            // Extract Library ID (555558) and Video ID for preconnect hint
-                            const vidUrl = new URL(exp.video);
-                            const preLink = document.createElement('link');
-                            preLink.rel = 'preconnect';
-                            preLink.href = vidUrl.origin;
-                            document.head.appendChild(preLink);
-                        }
+                        // PRE-WARM CONNECTION & ASSETS (ELITE)
+                        StoryManager.warmup(card.dataset.id);
                     }, 600);
                     cardTimers.set(card, timerId);
                 }
@@ -1701,7 +1701,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // === UPGRADE: REVIEWS HTML STRUCTURE ===
         card.innerHTML = `
-            <div class="card-image" onclick="StoryManager.open('${exp.id}')" onmouseenter="StoryManager.preload('${exp.id}')">
+            <div class="card-image" onclick="StoryManager.open('${exp.id}')">
                 <img loading="lazy" decoding="async" src="${exp.image}" alt="${exp.name}">
                 ${soldOutOverlay}
                 <div class="card-image-overlay" data-cta="${ctaText}"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg></div>
@@ -1721,7 +1721,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="card-description">${exp.description}</p>
                 <div class="card-meta"><span>${exp.time} • Tous les soirs</span> <span class="price-range" onclick="openMapWidget('${exp.id}', event)">${exp.price}</span></div>
                 <div class="card-actions-container">
-                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}')" onmouseenter="preloadMenu('${exp.menuUrl}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>MENU</button>
+                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>MENU</button>
                     <button class="card-btn btn-book" onclick="scrollToForm('${exp.id}')">RÉSERVER MA SOIRÉE (0€)</button>
                 </div>
                 <div class="trust-micro-signal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> Paiement sur place &bull; Zéro Frais</div>
@@ -2043,6 +2043,9 @@ window.StoryManager = {
 
         requestAnimationFrame(() => iframe.classList.add('active'));
 
+        // Sequential Preload: While video plays, load the next image (index + 1)
+        this.preloadNext(this.currentIndex + 1);
+
         await loadBunnyPlayer();
         const player = new playerjs.Player(iframe);
         this.currentVideoPlayer = player;
@@ -2086,6 +2089,10 @@ window.StoryManager = {
         container.appendChild(img);
 
         requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add('active')));
+
+        // Sequential Preload: While image plays, load the one AFTER the next (since next was already done)
+        // Actually, just always look ahead.
+        this.preloadNext(this.currentIndex + 1);
 
         setTimeout(() => {
             progressBar.style.transition = `transform ${this.imageDuration}ms linear`;
@@ -2232,19 +2239,36 @@ window.StoryManager = {
         }, 300);
     },
 
-    // 9. Preload Strategy (Elite UX)
-    preload: function(id) {
+    // 9. Preload Strategy (Elite UX) - Triggered by Teaser Engine
+    warmup: function(id) {
         const exp = (window.experiencesData || []).find(e => e.id === id);
         if(!exp) return;
 
-        // Preload first image
+        // 1. Warm up Video Player Code (if video exists)
+        if(exp.video) {
+            loadBunnyPlayer();
+            // Preconnect to video origin
+            const vidUrl = new URL(exp.video);
+            if(!document.querySelector(`link[href="${vidUrl.origin}"]`)) {
+                const link = document.createElement('link');
+                link.rel = 'preconnect'; link.href = vidUrl.origin; document.head.appendChild(link);
+            }
+        }
+
+        // 2. Preload First Image ONLY (Don't flood network)
         if(exp.gallery && exp.gallery.length > 0) {
             const img = new Image();
             img.src = exp.gallery[0];
         }
-        // If video, we can try to warm up the connection to the player CDN
-        if(exp.video) {
-            loadBunnyPlayer();
+    },
+
+    preloadNext: function(index) {
+        if(index < this.queue.length) {
+            const nextItem = this.queue[index];
+            if(nextItem.type === 'image') {
+                const img = new Image();
+                img.src = nextItem.src;
+            }
         }
     }
 };
@@ -2321,24 +2345,6 @@ const MenuEngine = (() => {
     };
 })();
 window.openMenu = (url) => MenuEngine.open(url);
-
-// === OPTIMIZATION: MENU PRELOADER ===
-const preloadedMenus = new Set();
-function preloadMenu(url) {
-    if(!url || preloadedMenus.has(url)) return;
-    preloadedMenus.add(url);
-
-    // Create hidden iframe to warm up the viewer
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = 'https://docs.google.com/gview?embedded=true&url=' + encodeURIComponent(url);
-    document.body.appendChild(iframe);
-
-    // Cleanup after 10s to save memory
-    setTimeout(() => {
-        if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
-    }, 10000);
-}
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoidnBzbW9lcm9ja3MiLCJhIjoiY21qaWY1czlsMHAzNzNnc2Nmc21qNXM3bSJ9.EWmJAoL7TH7Dx5mm_v7tIg';
 let map = null; let mapMarker = null;
