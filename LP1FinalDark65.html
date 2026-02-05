@@ -18,7 +18,6 @@
     <!-- === PERFORMANCE & PRELOADS === -->
     <link rel="preconnect" href="https://iframe.mediadelivery.net" crossorigin>
     <link rel="preconnect" href="https://vz-fe8cf04d-f49.b-cdn.net" crossorigin>
-    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/MalakV2/Malak7.jpg" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fast.wistia.com">
@@ -27,16 +26,6 @@
     <link rel="preconnect" href="https://MTSpull.b-cdn.net">
     <link rel="preconnect" href="https://docs.google.com" crossorigin>
     <link rel="dns-prefetch" href="https://docs.google.com">
-
-    <!-- MAPBOX CSS -->
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-
-    <!-- BUNNY.NET PLAYER API -->
-    <script src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"></script>
-
-    <!-- MAPBOX JS -->
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
 
     <!-- FONTS -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700;1,800;1,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -509,7 +498,7 @@
 
         .card-content { padding: 1.4rem; display: flex; flex-direction: column; background: #fff; gap: 0; }
         .card-title { font-size: 1.4rem; line-height: 1.1; margin-bottom: 0.3rem; color: var(--text-dark); }
-        
+
         /* UPGRADED CARD RATING CSS */
         .card-rating {
             display: flex;
@@ -539,7 +528,7 @@
             font-size: 0.75rem;
             font-weight: 500;
         }
-        
+
         .card-description { margin-bottom: 1rem; color: var(--text-body); font-size: 0.9rem; line-height: 1.5; }
         .card-meta {
             display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-dark);
@@ -651,110 +640,110 @@
 
 /* === V25 ULTIMATE STORY OVERLAY (EXACT SOURCE COPY) === */
 .story-overlay {
-    position: fixed; top: 0; left: 0; 
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%; height: 100dvh;
-    background: #000; z-index: 9999; 
+    background: #000; z-index: 9999;
     display: none; align-items: center; justify-content: center;
-    opacity: 0; 
+    opacity: 0;
     transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
     will-change: opacity;
     transform: translateZ(0);
 }
-.story-overlay.show { 
-    display: flex; 
-    opacity: 1; 
+.story-overlay.show {
+    display: flex;
+    opacity: 1;
 }
 
-.story-container { 
-    width: 100%; height: 100%; height: 100dvh; 
-    position: relative; overflow: hidden; background: #000; 
+.story-container {
+    width: 100%; height: 100%; height: 100dvh;
+    position: relative; overflow: hidden; background: #000;
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
 }
 
 @media(min-width: 768px) {
-    .story-container { 
-        width: 450px; height: 90vh; 
-        border-radius: 20px; 
-        box-shadow: 0 0 50px rgba(0,0,0,0.8); 
-        transform: translateZ(0); 
+    .story-container {
+        width: 450px; height: 90vh;
+        border-radius: 20px;
+        box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        transform: translateZ(0);
         -webkit-mask-image: -webkit-radial-gradient(white, black);
         mask-image: radial-gradient(white, black);
     }
 }
 
-.story-media-wrapper { 
-    width: 100%; height: 100%; 
-    position: relative; background: #000; z-index: 1; 
+.story-media-wrapper {
+    width: 100%; height: 100%;
+    position: relative; background: #000; z-index: 1;
     overflow: hidden;
 }
 
-.story-media-item { 
-    width: 100%; height: 100%; 
+.story-media-item {
+    width: 100%; height: 100%;
     object-fit: cover; object-position: center center;
-    position: absolute; top: 0; left: 0; 
-    opacity: 0; 
+    position: absolute; top: 0; left: 0;
+    opacity: 0;
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity;
 }
 
-.story-media-item.active { 
-    opacity: 1; z-index: 1; 
+.story-media-item.active {
+    opacity: 1; z-index: 1;
 }
 
 .story-media-item img {
-    width: 100%; height: 100%; 
+    width: 100%; height: 100%;
     object-fit: cover; object-position: center center;
     display: block;
 }
 
 .story-media-item iframe {
-    width: 100%; height: 100%; 
+    width: 100%; height: 100%;
     border: none; display: block;
 }
 
 /* UI LAYER */
 .story-ui-top {
     position: absolute; top: 0; left: 0; width: 100%;
-    padding: 15px 15px 30px 15px; 
+    padding: 15px 15px 30px 15px;
     background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
-    z-index: 300; pointer-events: none; 
+    z-index: 300; pointer-events: none;
 }
 
-.story-progress-bar { 
-    display: flex; gap: 4px; height: 2px; 
-    margin-bottom: 12px; pointer-events: auto; 
+.story-progress-bar {
+    display: flex; gap: 4px; height: 2px;
+    margin-bottom: 12px; pointer-events: auto;
     transform: translateZ(0);
 }
-.progress-segment { 
-    flex: 1; background: rgba(255,255,255,0.3); 
-    border-radius: 2px; overflow: hidden; height: 2px; 
+.progress-segment {
+    flex: 1; background: rgba(255,255,255,0.3);
+    border-radius: 2px; overflow: hidden; height: 2px;
 }
-.progress-fill { 
-    width: 100%; height: 100%; 
-    background: #fff; 
-    transform-origin: left; 
-    transform: scaleX(0); 
+.progress-fill {
+    width: 100%; height: 100%;
+    background: #fff;
+    transform-origin: left;
+    transform: scaleX(0);
     will-change: transform;
 }
 
 .story-controls-row { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
 
-.story-brand { 
-    color: #fff; font-size: 0.8rem; font-weight: 700; 
-    opacity: 0.95; text-transform: uppercase; letter-spacing: 1px; 
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+.story-brand {
+    color: #fff; font-size: 0.8rem; font-weight: 700;
+    opacity: 0.95; text-transform: uppercase; letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .story-actions { display: flex; gap: 10px; align-items: center; pointer-events: auto; }
 
-.story-icon { 
-    width: 32px; height: 32px; 
-    display: flex; align-items: center; justify-content: center; 
-    color: #fff; cursor: pointer; 
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); 
-    opacity: 0.95; transition: transform 0.2s; 
+.story-icon {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; cursor: pointer;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    opacity: 0.95; transition: transform 0.2s;
 }
 .story-icon svg { width: 24px; height: 24px; stroke-width: 2px; }
 .story-icon:hover { transform: scale(1.1); }
@@ -762,7 +751,7 @@
 .story-nav-zone { position: absolute; top: 0; bottom: 0; z-index: 40; height: 100%; }
 .nav-left { left: 0; width: 30%; }
 .nav-right { right: 0; width: 30%; }
-.nav-center { left: 30%; width: 40%; } 
+.nav-center { left: 30%; width: 40%; }
 
 .story-footer {
     position: absolute; bottom: 0; left: 0; width: 100%;
@@ -775,10 +764,10 @@
 
 .story-footer.hidden { transform: translateY(50px); opacity: 0; }
 
-.story-title-text { 
-    color: #fff; font-family: 'Playfair Display'; font-size: 1.4rem; 
-    margin-bottom: 10px; font-weight: 700; 
-    text-shadow: 0 2px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.5); 
+.story-title-text {
+    color: #fff; font-family: 'Playfair Display'; font-size: 1.4rem;
+    margin-bottom: 10px; font-weight: 700;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.5);
     letter-spacing: -0.02em;
     opacity: 0;
     transform: translateY(8px);
@@ -786,25 +775,25 @@
 }
 .story-footer:not(.hidden) .story-title-text { opacity: 1; transform: translateY(0); }
 
-.story-desc-text { 
-    color: rgba(255,255,255,0.96); font-size: 0.8rem; 
-    margin-bottom: 24px; font-weight: 500; 
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
-    text-shadow: 0 2px 8px rgba(0,0,0,0.75), 0 1px 2px rgba(0,0,0,0.4); 
-    max-width: 90%; line-height: 1.5; 
+.story-desc-text {
+    color: rgba(255,255,255,0.96); font-size: 0.8rem;
+    margin-bottom: 24px; font-weight: 500;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.75), 0 1px 2px rgba(0,0,0,0.4);
+    max-width: 90%; line-height: 1.5;
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
 }
 .story-footer:not(.hidden) .story-desc-text { opacity: 1; transform: translateY(0); }
 
-.story-cta-btn { 
-    background: #fff; color: #000; border: none; font-weight: 800; 
-    padding: 13px 32px; border-radius: 50px; width: 100%; max-width: 300px; 
-    font-size: 0.85rem; cursor: pointer; 
-    box-shadow: 0 6px 28px rgba(255,255,255,0.18), 0 2px 8px rgba(0,0,0,0.1); 
-    text-transform: uppercase; letter-spacing: 1.5px; 
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+.story-cta-btn {
+    background: #fff; color: #000; border: none; font-weight: 800;
+    padding: 13px 32px; border-radius: 50px; width: 100%; max-width: 300px;
+    font-size: 0.85rem; cursor: pointer;
+    box-shadow: 0 6px 28px rgba(255,255,255,0.18), 0 2px 8px rgba(0,0,0,0.1);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
     opacity: 0;
@@ -814,94 +803,94 @@
 .story-cta-btn:hover { transform: translateY(-1px) scale(1.01); box-shadow: 0 8px 32px rgba(255,255,255,0.22), 0 4px 12px rgba(0,0,0,0.12); }
 .story-cta-btn:active { transform: translateY(0) scale(0.99); }
 
-.story-trust { 
-    color: #fff; font-size: 0.75rem; margin-top: 18px; 
-    opacity: 0; display: flex; align-items: center; justify-content: center; 
-    gap: 6px; font-weight: 600; 
-    text-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.4); 
+.story-trust {
+    color: #fff; font-size: 0.75rem; margin-top: 18px;
+    opacity: 0; display: flex; align-items: center; justify-content: center;
+    gap: 6px; font-weight: 600;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.4);
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
     transform: translateY(6px);
 }
 .story-footer:not(.hidden) .story-trust { opacity: 0.92; transform: translateY(0); }
 
 /* === CLIMAX CARD (WORLD CLASS PREMIUM ANIMATION) === */
-.climax-phantom-layer { 
-    position: absolute; inset: 0; width: 100%; height: 100%; 
-    background-size: cover; background-position: center center; 
-    background-repeat: no-repeat; z-index: 0; 
-    transform: scale(1.0); will-change: transform; 
+.climax-phantom-layer {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center center;
+    background-repeat: no-repeat; z-index: 0;
+    transform: scale(1.0); will-change: transform;
     transition: transform 14s cubic-bezier(0.19, 1, 0.22, 1);
 }
 @media (max-width: 768px) {
     .climax-phantom-layer { background-size: cover !important; background-position: center center !important; }
 }
-.story-climax-card { 
-    position: absolute; top:0; left:0; width:100%; height:100%; 
-    z-index: 100; pointer-events: none; display: flex; flex-direction: column; 
-    justify-content: flex-end; padding-bottom: 72px; background: transparent; 
-    opacity: 0; transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; 
+.story-climax-card {
+    position: absolute; top:0; left:0; width:100%; height:100%;
+    z-index: 100; pointer-events: none; display: flex; flex-direction: column;
+    justify-content: flex-end; padding-bottom: 72px; background: transparent;
+    opacity: 0; transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
 }
 .story-climax-card.active { opacity: 1; pointer-events: auto; }
 
 /* PREMIUM: Smooth zoom and pull UP to reveal people at the bottom */
-.story-climax-card.active ~ .climax-phantom-layer, .story-climax-card.active .climax-phantom-layer { 
-    transform: scale(1.12) translateY(-8%); 
-    transition: transform 22s cubic-bezier(0.19, 1, 0.22, 1); 
+.story-climax-card.active ~ .climax-phantom-layer, .story-climax-card.active .climax-phantom-layer {
+    transform: scale(1.12) translateY(-8%);
+    transition: transform 22s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.climax-gradient-overlay { 
-    position: absolute; inset: 0; width: 100%; height: 100%; 
-    background: linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.72) 38%, rgba(0,0,0,0.12) 78%, transparent 100%); 
-    z-index: 1; pointer-events: none; 
+.climax-gradient-overlay {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.72) 38%, rgba(0,0,0,0.12) 78%, transparent 100%);
+    z-index: 1; pointer-events: none;
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.climax-content { 
-    position: relative; z-index: 2; text-align: center; 
-    padding: 0 1.5rem; display: flex; flex-direction: column; align-items: center; 
+.climax-content {
+    position: relative; z-index: 2; text-align: center;
+    padding: 0 1.5rem; display: flex; flex-direction: column; align-items: center;
 }
-.climax-title { 
-    color: #fff; font-family: 'Playfair Display'; 
-    font-size: clamp(2rem, 5vw, 2.5rem); margin-bottom: 0.5rem; 
-    text-shadow: 0 4px 32px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.6); 
-    opacity: 0; transform: translateY(24px); 
-    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, 
+.climax-title {
+    color: #fff; font-family: 'Playfair Display';
+    font-size: clamp(2rem, 5vw, 2.5rem); margin-bottom: 0.5rem;
+    text-shadow: 0 4px 32px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s,
                 transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
     letter-spacing: -0.02em; font-weight: 700;
 }
-.climax-badge { 
-    display: inline-flex; align-items: center; gap: 7px; 
-    background: rgba(255,255,255,0.16); backdrop-filter: blur(12px); 
-    border: 1px solid rgba(255,255,255,0.24); padding: 7px 16px; 
-    border-radius: 50px; margin-bottom: 1.4rem; 
-    opacity: 0; transform: translateY(18px) scale(0.96); 
-    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s, 
-                transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s; 
+.climax-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.16); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.24); padding: 7px 16px;
+    border-radius: 50px; margin-bottom: 1.4rem;
+    opacity: 0; transform: translateY(18px) scale(0.96);
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s,
+                transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;
     box-shadow: 0 8px 36px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
 }
 .climax-stars { display: flex; gap: 3px; }
 .climax-stars svg { width: 13px; height: 13px; fill: #FFD700; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); opacity: 1; transform: scale(1); animation: none; }
 .climax-badge-text { color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; }
 
-.climax-desc { 
-    color: rgba(255,255,255,0.97); font-size: 0.9rem; margin-bottom: 2rem; 
-    line-height: 1.55; font-weight: 500; 
-    text-shadow: 0 2px 22px rgba(0,0,0,1), 0 1px 4px rgba(0,0,0,0.5); 
-    max-width: 90%; opacity: 0; transform: translateY(20px); 
-    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s, 
-                transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s; 
+.climax-desc {
+    color: rgba(255,255,255,0.97); font-size: 0.9rem; margin-bottom: 2rem;
+    line-height: 1.55; font-weight: 500;
+    text-shadow: 0 2px 22px rgba(0,0,0,1), 0 1px 4px rgba(0,0,0,0.5);
+    max-width: 90%; opacity: 0; transform: translateY(20px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s,
+                transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s;
 }
-.climax-cta { 
-    background: #fff; color: #000; width: 100%; padding: 1.3rem; 
-    border-radius: 50px; font-weight: 800; font-size: 0.95rem; border: none; 
-    box-shadow: 0 0 24px rgba(255,255,255,0.32), 0 4px 12px rgba(0,0,0,0.15); 
-    cursor: pointer; text-transform: uppercase; letter-spacing: 1.2px; 
-    transform: scale(0.92) translateY(8px); opacity: 0; 
-    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.75s, 
+.climax-cta {
+    background: #fff; color: #000; width: 100%; padding: 1.3rem;
+    border-radius: 50px; font-weight: 800; font-size: 0.95rem; border: none;
+    box-shadow: 0 0 24px rgba(255,255,255,0.32), 0 4px 12px rgba(0,0,0,0.15);
+    cursor: pointer; text-transform: uppercase; letter-spacing: 1.2px;
+    transform: scale(0.92) translateY(8px); opacity: 0;
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.75s,
                 transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.75s,
                 box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.climax-cta:hover { 
-    transform: scale(1.01) translateY(-1px); 
+.climax-cta:hover {
+    transform: scale(1.01) translateY(-1px);
     box-shadow: 0 0 32px rgba(255,255,255,0.4), 0 6px 16px rgba(0,0,0,0.18);
 }
 .climax-cta:active { transform: scale(0.99) translateY(0); }
@@ -914,7 +903,7 @@
 .story-climax-card .story-trust {
     margin-top: 22px;
     opacity: 0; transform: translateY(12px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s, 
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s,
                 transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s;
 }
 .story-climax-card.active .story-trust { opacity: 0.94; transform: translateY(0); }
@@ -937,12 +926,12 @@
             flex-shrink: 0; z-index: 20;
         }
         .menu-header h3 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 800; }
-        .close-menu { 
+        .close-menu {
             cursor: pointer; width: 36px; height: 36px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-size: 1.5rem; color: #333; line-height: 1; transition: background 0.2s;
         }
         .close-menu:hover { background: #e0e0e0; }
-        .menu-iframe-container { 
+        .menu-iframe-container {
             flex-grow: 1; position: relative; width: 100%; height: 100%; background: #f8f8f8; z-index: 10;
             overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
         }
@@ -1160,7 +1149,7 @@
     <main>
         <section class="hero" id="heroSection">
             <div class="hero-video-bg" id="heroVideoBg">
-                <iframe id="heroVideoIframe" src="https://iframe.mediadelivery.net/embed/555558/b43aea10-ac57-48d3-86c6-36e176736a2b?autoplay=true&loop=true&muted=true&preload=true&controls=false&quality=720" loading="eager" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture" allowfullscreen importance="high"></iframe>
+                <iframe id="heroVideoIframe" src="https://iframe.mediadelivery.net/embed/555558/b43aea10-ac57-48d3-86c6-36e176736a2b?autoplay=true&loop=true&muted=true&preload=true&controls=false&quality=720" loading="eager" fetchpriority="high" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture" allowfullscreen importance="high"></iframe>
             </div>
 
             <div class="hero-content">
@@ -1443,7 +1432,7 @@
             <div class="menu-iframe-container" id="iframeContainer"></div>
         </div>
     </div>
-    
+
     <!-- === MAPBOX MODAL === -->
     <div id="mapbox-modal">
         <div class="map-wrapper">
@@ -1463,6 +1452,46 @@
     </a>
 
 <script>
+// === OPTIMIZATION: LAZY LOADERS ===
+const loadScript = (src) => new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) return resolve();
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+});
+
+const loadCSS = (href) => new Promise((resolve, reject) => {
+    if (document.querySelector(`link[href="${href}"]`)) return resolve();
+    const link = document.createElement('link');
+    link.href = href;
+    link.rel = 'stylesheet';
+    link.onload = resolve;
+    link.onerror = reject;
+    document.head.appendChild(link);
+});
+
+let mapboxLoaded = false;
+async function loadMapboxResources() {
+    if (mapboxLoaded) return;
+    try {
+        await loadCSS('https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css');
+        await loadScript('https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js');
+        await loadScript('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js');
+        mapboxLoaded = true;
+    } catch (e) { console.error('Mapbox load failed', e); }
+}
+
+let bunnyPlayerLoaded = false;
+async function loadBunnyPlayer() {
+    if (bunnyPlayerLoaded) return;
+    try {
+        await loadScript('https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js');
+        bunnyPlayerLoaded = true;
+    } catch (e) { console.error('Bunny Player load failed', e); }
+}
+
 const videoIdMap = {
     "stah": "o39c248x3j", "tanjia": "0q2d4cko4b", "folk": "t1873lqxyr", "ritziF": "sjy3c57qxz", "ritziD": "sjy3c57qxz",
     "nouba": "c349wcz8hz", "noto": "khj4dlqdv2", "ibrahim": "f1pummm5r9", "malak": "x1wjp5k66n"
@@ -1590,10 +1619,10 @@ function initTeaserEngine() {
         entries.forEach(entry => {
             const card = entry.target;
             if (card.classList.contains('sold-out')) return;
-            
+
             if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
                 if (!cardTimers.has(card)) {
-                    const timerId = setTimeout(() => { 
+                    const timerId = setTimeout(() => {
                         card.classList.add('teaser-active');
                         // PRE-WARM BUNNY CONNECTION
                         const expId = card.dataset.id;
@@ -1622,7 +1651,7 @@ function initTeaserEngine() {
 
 document.addEventListener('DOMContentLoaded', function() {
     // Generate and Set User ID on Load
-    const userId = generateUserID(); 
+    const userId = generateUserID();
     document.getElementById('userID').value = userId;
 
     const dateInput = document.getElementById('date'); const today = new Date().toISOString().split('T')[0];
@@ -1672,7 +1701,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card-content">
                 ${fomoHTML}
                 <h3 class="card-title">${exp.name}</h3>
-                
+
                 <div class="card-rating">
                     <span class="stars">★★★★★</span>
                     <span class="rating-score-box">${exp.rating}/5</span>
@@ -1718,12 +1747,12 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => { step2.classList.remove('active'); step2.classList.add('completed'); step2.querySelector('.step-icon').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'; step3.classList.add('active'); progressFill.style.width = '90%'; headline.textContent = 'Confirmation...'; subtext.textContent = 'Votre table VIP est réservée'; }, 2800);
         setTimeout(() => {
             step3.classList.remove('active'); step3.classList.add('completed'); step3.querySelector('.step-icon').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'; progressFill.style.width = '100%'; headline.textContent = 'Confirmé !'; subtext.textContent = 'Redirection vers votre confirmation...';
-            
+
             // WEBHOOK SENT WITH USERID
             try { fetch('https://hook.eu1.make.com/f4zgc3ikro4untwxsslktjd821htjlb5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fullname: formData.fullname, name: formData.fullname.split(' ')[0], restaurant: restaurantName, restaurantId: formData.restaurant, date: formData.date, adultes: formData.guests, enfants: formData.enfants, phone: formData.phone, confirmation: confirmationNumber, videoId: videoId, source: 'LP1FinalDarkOptimized', userID: formData.userID, timestamp: new Date().toISOString() }) }).catch(err => console.log('Webhook sent')); } catch(err) {}
-            
+
             if (typeof gtag !== 'undefined') { gtag('event', 'conversion', { 'send_to': 'AW-16808399607/conversion' }); }
-            
+
             // REDIRECT WITH USERID
             const firstName = formData.fullname.split(' ')[0]; const redirectParams = new URLSearchParams({ fullname: formData.fullname, name: firstName, prenom: firstName, restaurant: restaurantName, etablissement: restaurantName, date: formData.date, adultes: formData.guests, enfants: formData.enfants, confirmation: confirmationNumber, videoId: videoId, userID: formData.userID });
             window.location.href = `https://mtszone.b-cdn.net/ty8.html?${redirectParams.toString()}`;
@@ -1803,7 +1832,7 @@ window.StoryManager = {
         // Nav Controls
         document.getElementById('storyNavLeft').addEventListener('click', (e) => { e.stopPropagation(); this.prev(); });
         document.getElementById('storyNavRight').addEventListener('click', (e) => { e.stopPropagation(); this.next(); });
-        
+
         // === NEW HYBRID CENTER CONTROL (Tap to Toggle / Hold to Pause) ===
         const holdZone = document.getElementById('storyNavHold');
         let touchStartTime = 0;
@@ -1811,18 +1840,18 @@ window.StoryManager = {
 
         const handleStart = (e) => {
             // Allow default for scrolling unless we are in the overlay (overlay handles scroll lock)
-            if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault(); 
-            
+            if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault();
+
             touchStartTime = Date.now();
             wasPausedBeforeTouch = this.isPaused;
-            
+
             // Visual feedback: Pause immediately on touch down
-            this.pause(); 
+            this.pause();
         };
 
         const handleEnd = (e) => {
             if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault();
-            
+
             const duration = Date.now() - touchStartTime;
             const isTap = duration < 250; // Anything under 250ms is a tap
 
@@ -1878,7 +1907,7 @@ window.StoryManager = {
 
         // Force Unlock if not done
         if(!this.hasUnlockedAudio) {
-            this.audioObj.play().catch(()=>{}); 
+            this.audioObj.play().catch(()=>{});
             this.audioObj.pause();
             this.hasUnlockedAudio = true;
         }
@@ -1896,14 +1925,14 @@ window.StoryManager = {
 
                     // 1. Reserve 15% (or min 5s) for the Climax Card at the end
                     const reservedForClimax = Math.max(5, total * 0.15);
-                    
+
                     // 2. Subtract 15s buffer (This accounts for the Video Intro/Buildup)
-                    const availableTime = total - reservedForClimax - 15; 
-                    
+                    const availableTime = total - reservedForClimax - 15;
+
                     // 3. Calculate exact duration per image to fit the remaining window
                     if(availableTime > 0 && count > 0) {
                         this.imageDuration = (availableTime / count) * 1000;
-                        
+
                         // 4. Clamp between 2.5s and 6s
                         this.imageDuration = Math.max(2500, Math.min(6000, this.imageDuration));
                     }
@@ -1928,17 +1957,17 @@ window.StoryManager = {
 
         this.currentIndex = 0;
         this.isPaused = false;
-        
+
         document.getElementById('storyOverlay').classList.add('show');
         document.body.style.overflow = 'hidden';
-        
+
         this.renderSlide();
     },
 
     // 3. Render Engine (Optimized)
     renderSlide: function() {
         const wrapper = document.getElementById('storyMediaWrapper');
-        
+
         if(this.timer) clearTimeout(this.timer);
         this.timer = null;
 
@@ -1969,7 +1998,7 @@ window.StoryManager = {
 
         const item = this.queue[this.currentIndex];
         const currentFill = allFills[this.currentIndex];
-        wrapper.innerHTML = ''; 
+        wrapper.innerHTML = '';
 
         if(item.type === 'video') {
             this.playVideoSlide(item, wrapper, currentFill);
@@ -1979,7 +2008,7 @@ window.StoryManager = {
     },
 
     // 4. Video Logic (FIXED FOR SOUND)
-    playVideoSlide: function(item, container, progressBar) {
+    playVideoSlide: async function(item, container, progressBar) {
         if(this.isMuted) {
              this.audioObj.pause();
         } else {
@@ -1989,28 +2018,29 @@ window.StoryManager = {
 
         const iframe = document.createElement('iframe');
         const ts = new Date().getTime();
-        
+
         // === THE SOUND FIX ===
         let src = item.src;
         if(!src.includes('?')) src += '?';
         src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-        
+
         iframe.src = src;
         iframe.className = 'story-media-item';
         iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
         iframe.setAttribute('loading', 'eager');
-        
+
         container.appendChild(iframe);
-        
+
         requestAnimationFrame(() => iframe.classList.add('active'));
 
+        await loadBunnyPlayer();
         const player = new playerjs.Player(iframe);
         this.currentVideoPlayer = player;
 
         player.on('ready', () => {
             // Safety: Ensure it plays
             player.play();
-            
+
             // Double Check: Force volume if not globally muted
             if(!this.isMuted) {
                 player.unmute();
@@ -2033,7 +2063,7 @@ window.StoryManager = {
     // 5. Image Logic
     playImageSlide: function(item, container, progressBar) {
         this.currentVideoPlayer = null;
-        
+
         if(!this.isMuted && this.audioObj.paused) {
             this.audioObj.play().catch(()=>{});
             this.fadeAudio(1, 400);
@@ -2042,9 +2072,9 @@ window.StoryManager = {
         const img = document.createElement('img');
         img.src = item.src;
         img.className = 'story-media-item';
-        
+
         container.appendChild(img);
-        
+
         requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add('active')));
 
         setTimeout(() => {
@@ -2061,7 +2091,7 @@ window.StoryManager = {
         const steps = 10;
         const interval = duration / steps;
         const stepAmount = (targetVol - startVol) / steps;
-        
+
         let counter = 0;
         const fadeTimer = setInterval(() => {
             counter++;
@@ -2081,7 +2111,7 @@ window.StoryManager = {
     // 7. Toggle Mute
     toggleMute: function() {
         this.isMuted = !this.isMuted;
-        
+
         document.getElementById('iconMute').classList.toggle('hidden', !this.isMuted);
         document.getElementById('iconSound').classList.toggle('hidden', this.isMuted);
 
@@ -2106,7 +2136,7 @@ window.StoryManager = {
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
         if(fill) {
             const computed = window.getComputedStyle(fill);
-            const matrix = computed.transform; 
+            const matrix = computed.transform;
             fill.style.transition = 'none';
             fill.style.transform = matrix;
         }
@@ -2118,14 +2148,14 @@ window.StoryManager = {
     resume: function() {
         if(!this.isPaused) return;
         this.isPaused = false;
-        
+
         const item = this.queue[this.currentIndex];
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
 
         if(item.type === 'video') {
             if(this.currentVideoPlayer) {
                 this.currentVideoPlayer.play();
-                fill.style.transition = 'transform 10s linear'; 
+                fill.style.transition = 'transform 10s linear';
                 fill.style.transform = 'scaleX(1)';
             }
         } else {
@@ -2159,7 +2189,7 @@ window.StoryManager = {
             this.fadeAudio(1, 300);
         }
         document.getElementById('storyTextContent').classList.add('hidden');
-        document.getElementById('storyMediaWrapper').innerHTML = ''; 
+        document.getElementById('storyMediaWrapper').innerHTML = '';
         document.getElementById('climaxCard').classList.add('active');
     },
 
@@ -2169,17 +2199,17 @@ window.StoryManager = {
         document.getElementById('storyDesc').textContent = exp.description;
         document.getElementById('climaxTitle').textContent = exp.name;
         document.getElementById('climaxDesc').textContent = exp.description;
-        
+
         const bgContainer = document.getElementById('climaxBgContainer');
         if(exp.finalImage) {
-           bgContainer.style.backgroundImage = `url('${exp.finalImage}')`; 
+           bgContainer.style.backgroundImage = `url('${exp.finalImage}')`;
         }
     },
 
     close: function() {
         this.fadeAudio(0, 200, true);
         document.getElementById('storyOverlay').classList.remove('show');
-        
+
         setTimeout(() => {
             document.getElementById('storyMediaWrapper').innerHTML = '';
             document.body.style.overflow = '';
@@ -2199,7 +2229,7 @@ StoryManager.init();
 // === ELITE UPGRADE 3: ROBUST MOBILE MENU ENGINE V18 ===
 const MenuEngine = (() => {
     const GOOGLE_VIEWER = 'https://docs.google.com/gview?embedded=true&url=';
-    const LOAD_TIMEOUT = 2500; 
+    const LOAD_TIMEOUT = 2500;
     let scrollY = 0; let timeoutId = null;
 
     return {
@@ -2208,13 +2238,13 @@ const MenuEngine = (() => {
             scrollY = window.pageYOffset || document.documentElement.scrollTop;
             const modal = document.getElementById('menuModal');
             const container = document.getElementById('iframeContainer');
-            
+
             // Lock body
             document.body.style.position = 'fixed'; document.body.style.top = `-${scrollY}px`; document.body.style.width = '100%';
-            
+
             modal.style.display = 'flex';
             requestAnimationFrame(() => modal.classList.add('active'));
-            
+
             // Render Loader
             container.innerHTML = `
                 <iframe id="menuIframe" src="" style="width:100%; height:100%; border:none; display:block;"></iframe>
@@ -2235,7 +2265,7 @@ const MenuEngine = (() => {
                 const loader = document.getElementById('menuLoader');
                 if(loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 300); }
             };
-            
+
             // Fallback Timer (Strategy 2: Safety Link)
             timeoutId = setTimeout(() => {
                 const btn = document.getElementById('safetyLink');
@@ -2249,11 +2279,11 @@ const MenuEngine = (() => {
             if(timeoutId) clearTimeout(timeoutId);
             const modal = document.getElementById('menuModal');
             const container = document.getElementById('iframeContainer');
-            
+
             modal.classList.remove('active');
-            
+
             setTimeout(() => {
-                modal.style.display = 'none'; container.innerHTML = ''; 
+                modal.style.display = 'none'; container.innerHTML = '';
                 const html = document.documentElement;
                 const originalScrollBehavior = html.style.scrollBehavior;
                 html.style.scrollBehavior = 'auto';
@@ -2268,13 +2298,14 @@ window.openMenu = (url) => MenuEngine.open(url);
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoidnBzbW9lcm9ja3MiLCJhIjoiY21qaWY1czlsMHAzNzNnc2Nmc21qNXM3bSJ9.EWmJAoL7TH7Dx5mm_v7tIg';
 let map = null; let mapMarker = null;
-function openMapWidget(id, event) {
+async function openMapWidget(id, event) {
     if(event) event.stopPropagation(); const venue = VENUES[id]; if (!venue) return;
     const modal = document.getElementById('mapbox-modal'); document.body.style.overflow = 'hidden'; modal.style.display = 'flex';
     setTimeout(() => { modal.classList.add('active'); if (map) { setTimeout(() => { map.resize(); map.flyTo({ center: venue.coords, zoom: 15, duration: 1200 }); addMarker(venue.coords); }, 600); } }, 10);
     document.getElementById('v-name').textContent = venue.name; document.getElementById('v-address').textContent = venue.address;
     document.getElementById('v-wa-btn').href = `https://wa.me/212680802756?text=Bonjour Concierge, je suis intéressé par ${venue.name}. Pouvez-vous m'aider pour l'accès ou une navette ?`;
     if (!map) {
+        await loadMapboxResources();
         mapboxgl.accessToken = MAPBOX_TOKEN;
         map = new mapboxgl.Map({ container: 'map-canvas', style: 'mapbox://styles/mapbox/dark-v11', center: venue.coords, zoom: 15, pitch: 45, antialias: true });
         const language = new MapboxLanguage({ defaultLanguage: 'fr' }); map.addControl(language);
