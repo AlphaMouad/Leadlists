@@ -1843,7 +1843,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // === UPGRADE: REVIEWS HTML STRUCTURE ===
         card.innerHTML = `
             <div class="card-image" onclick="StoryManager.open('${exp.id}')">
-                <img loading="lazy" src="${exp.image}" alt="${exp.name}">
+                <img loading="lazy" decoding="async" src="${exp.image}" alt="${exp.name}">
                 ${soldOutOverlay}
                 <div class="card-image-overlay" data-cta="${ctaText}"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg></div>
                 <div class="media-badge"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> GALERIE & VIDÉO</div>
@@ -1874,8 +1874,8 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
         let valid = true; const requiredFields = ['fullname', 'restaurant', 'date', 'phone'];
-        const phoneInput = document.getElementById('phone'); const phoneRegex = /^[0-9\s\.]{8,15}$/;
-        if(!phoneRegex.test(phoneInput.value.replace(/\s/g, ''))) { valid = false; document.getElementById('container-phone').classList.add('error'); document.getElementById('error-phone').classList.add('visible'); document.getElementById('error-phone').textContent = 'Numéro incomplet ou incorrect'; }
+        const phoneInput = document.getElementById('phone'); const cleanPhone = phoneInput.value.replace(/\D/g, '');
+        if(cleanPhone.length < 6 || cleanPhone.length > 15) { valid = false; document.getElementById('container-phone').classList.add('error'); document.getElementById('error-phone').classList.add('visible'); document.getElementById('error-phone').textContent = 'Numéro incomplet ou incorrect'; }
         requiredFields.forEach(id => {
             const el = document.getElementById(id); const container = document.getElementById('container-' + id); const error = document.getElementById('error-' + id);
             if(!el.value || el.value.trim() === '') { if(container) container.classList.add('error'); if(error) error.classList.add('visible'); valid = false; } else { if(container) container.classList.remove('error'); if(error) error.classList.remove('visible'); }
@@ -1927,6 +1927,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
     initTeaserEngine(); initEliteWhatsApp(); initFomoEngine(); initReviewBadgeTimer();
+
+    // === ELITE UPGRADE: AUTO-REVEAL CARDS (3s) ===
+    setTimeout(() => {
+        const hiddenCards = document.querySelectorAll('.spectacle-card:not(.active), .reveal:not(.active)');
+        hiddenCards.forEach((card, index) => {
+             setTimeout(() => {
+                 card.classList.add('active');
+             }, index * 150);
+        });
+    }, 3000);
 });
 
 function scrollToForm(id) {
