@@ -223,7 +223,7 @@
         /* === FORM === */
         .hero-form-container {
             width: 100%; background: rgba(10, 10, 10, 0.92); border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 24px; padding: 1.5rem; margin-bottom: 1rem; position: relative; transform: translateZ(0);
+            border-radius: 24px; padding: 1.5rem; margin-bottom: 1rem; position: relative; z-index: 20; transform: translateZ(0);
             box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(236, 80, 117, 0.08);
             animation: formElevate 1.2s var(--ease-elite) 0.5s forwards; opacity: 0; transform: translateY(30px) scale(0.98);
             transition: box-shadow 0.4s var(--ease-luxury);
@@ -294,40 +294,57 @@
         .country-selector.active .selector-arrow { transform: rotate(180deg); stroke: var(--brand-raspberry); }
 
         .country-dropdown {
-            position: absolute; top: calc(100% + 8px); left: 0; width: 280px;
-            background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
-            z-index: 100; max-height: 300px; overflow-y: auto;
-            opacity: 0; transform: translateY(-10px); pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 6px;
+            position: absolute; top: calc(100% + 12px); left: 0; width: 300px; max-width: 85vw;
+            background: rgba(15, 15, 15, 0.99); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 18px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08);
+            z-index: 9999; max-height: 320px; overflow-y: auto;
+            opacity: 0; transform: translateY(-15px) scale(0.98); pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+            padding: 8px;
+            /* iOS Scroll Fix */
+            -webkit-overflow-scrolling: touch;
         }
-        .country-dropdown.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .country-dropdown.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 
         .dropdown-item {
-            display: flex; align-items: center; gap: 12px; padding: 10px 14px;
-            border-radius: 10px; cursor: pointer; transition: all 0.2s ease;
-            color: rgba(255, 255, 255, 0.8); font-size: 0.85rem; font-weight: 500;
+            display: flex; align-items: center; gap: 14px; padding: 14px 16px; /* Larger touch target */
+            border-radius: 12px; cursor: pointer; transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.85); font-size: 0.9rem; font-weight: 600;
+            margin-bottom: 2px;
         }
-        .dropdown-item:hover { background: rgba(255, 255, 255, 0.08); color: #fff; transform: translateX(4px); }
+        .dropdown-item:active { background: rgba(236, 80, 117, 0.15); transform: scale(0.98); } /* Instant touch feedback */
+        @media (hover: hover) {
+            .dropdown-item:hover { background: rgba(255, 255, 255, 0.08); color: #fff; transform: translateX(4px); }
+        }
         .dropdown-item .flag { font-size: 1.2rem; }
         .dropdown-item .c-code { margin-left: auto; color: rgba(255, 255, 255, 0.4); font-weight: 600; font-size: 0.75rem; }
         .dropdown-item.custom-option { border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 4px; border-radius: 0 0 10px 10px; }
 
-        /* === ELITE GLOW ANIMATION === */
-        .elite-glow-active {
-            animation: eliteGlowPop 2.5s ease-in-out forwards;
+        /* === ELITE GLOW ANIMATION V2 === */
+        .elite-trust-reveal .form-trust-text {
+            animation: eliteTextShimmer 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes eliteGlowPop {
-            0% { text-shadow: none; color: rgba(255, 255, 255, 0.5); transform: scale(1); }
-            50% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(236, 80, 117, 0.6); color: #fff; transform: scale(1.08); }
-            100% { text-shadow: none; color: rgba(255, 255, 255, 0.5); transform: scale(1); }
+        .elite-trust-reveal svg {
+            animation: eliteCheckPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes eliteTextShimmer {
+            0% { color: rgba(255, 255, 255, 0.5); text-shadow: none; transform: scale(1); letter-spacing: 1px; }
+            40% { color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(236, 80, 117, 0.4); transform: scale(1.02); letter-spacing: 1.5px; }
+            100% { color: rgba(255, 255, 255, 0.95); text-shadow: 0 0 10px rgba(255, 255, 255, 0.1); transform: scale(1); letter-spacing: 1px; }
+        }
+
+        @keyframes eliteCheckPop {
+            0% { stroke: rgba(255,255,255,0.5); transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0 rgba(16,185,129,0)); }
+            50% { stroke: #10B981; transform: scale(1.4) rotate(15deg); filter: drop-shadow(0 0 10px rgba(16,185,129,0.8)); }
+            100% { stroke: #10B981; transform: scale(1.1) rotate(0deg); filter: drop-shadow(0 0 5px rgba(16,185,129,0.4)); stroke-width: 3; }
         }
 
         /* FIX: Allow dropdown to overflow the input container */
         .input-container:has(.elite-phone-group) {
             overflow: visible !important;
+            z-index: 100; /* Ensure this container is above others */
         }
         /* Fallback for older browsers if :has isn't supported, though mostly mobile supports it now.
            We can also add a specific class via JS, but let's try to target the ID in CSS if possible. */
@@ -1805,20 +1822,28 @@ const AvailabilityEngine = {
     }
 };
 
-// === ELITE PHONE INPUT LOGIC ===
+// === ELITE PHONE INPUT LOGIC (UPGRADED) ===
 function toggleCountryDropdown(e) {
-    if(e.target.closest('.code-input')) return; // Don't toggle if clicking input
+    // Stop propagation to prevent immediate closing
     e.stopPropagation();
+    // Prevent default on touch to avoid double-firing or delay
+    if (e.type === 'touchstart') e.preventDefault();
+
+    if(e.target.closest('.code-input')) return;
+
     const dd = document.getElementById('countryDropdown');
     const selector = document.getElementById('countrySelector');
     const isVisible = dd.classList.contains('visible');
 
+    // Toggle
     if(isVisible) {
         dd.classList.remove('visible');
         selector.classList.remove('active');
     } else {
         dd.classList.add('visible');
         selector.classList.add('active');
+        // Vibrate for feedback on mobile
+        if(navigator.vibrate) navigator.vibrate(10);
     }
 }
 
@@ -1829,6 +1854,9 @@ function selectCountry(flag, code) {
 
     document.getElementById('countryDropdown').classList.remove('visible');
     document.getElementById('countrySelector').classList.remove('active');
+
+    // Haptic feedback
+    if(navigator.vibrate) navigator.vibrate(15);
 
     if(code) {
         document.getElementById('phone').focus();
@@ -1858,6 +1886,12 @@ function handleCodeInput(el) {
     }
 }
 
+// Add touchstart for faster mobile response
+const selector = document.getElementById('countrySelector');
+if(selector) {
+    selector.addEventListener('touchstart', toggleCountryDropdown, {passive: false});
+}
+
 document.addEventListener('click', function(e) {
     const dd = document.getElementById('countryDropdown');
     const selector = document.getElementById('countrySelector');
@@ -1867,9 +1901,11 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// Trigger Elite Animation
 setTimeout(() => {
-    const text = document.getElementById('trustText');
-    if(text) text.classList.add('elite-glow-active');
+    // Target the PARENT container for the full effect
+    const header = document.querySelector('.form-trust-header');
+    if(header) header.classList.add('elite-trust-reveal');
 }, 2500);
 
 // === USER ID GENERATOR: DDMM + 5 Random Chars ===
