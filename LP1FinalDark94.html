@@ -226,7 +226,7 @@
             border-radius: 24px; padding: 1.5rem; margin-bottom: 1rem; position: relative; z-index: 20; transform: translateZ(0);
             box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(236, 80, 117, 0.08);
             animation: formElevate 1.2s var(--ease-elite) 0.5s forwards; opacity: 0; transform: translateY(30px) scale(0.98);
-            transition: box-shadow 0.4s var(--ease-luxury); scroll-margin-top: 20px;
+            transition: box-shadow 0.4s var(--ease-luxury); scroll-margin-top: 30px;
         }
         .hero-form-container:focus-within {
             box-shadow: 0 0 0 1px rgba(236, 80, 117, 0.2), 0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 45px rgba(236, 80, 117, 0.15);
@@ -615,18 +615,18 @@
         .card-rating {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 12px;
         }
         .stars {
             color: #FBBF24;
             font-size: 0.9rem;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         .rating-score-box {
             background: transparent;
             color: var(--text-dark);
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 800;
             padding: 0;
             border: none;
@@ -1993,7 +1993,7 @@ function initTeaserEngine() {
                             // Note: Image preloading removed to prioritize video start performance
                         }, 200);
 
-                    }, 150);
+                    }, 50);
                     cardTimers.set(card, timerId);
                 }
             } else {
@@ -2252,7 +2252,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function scrollToForm(id) {
     const exp = experiencesData.find(e => e.id === id); if((exp && exp.soldOut) || AvailabilityEngine.isFullToday(id)) return;
-    document.getElementById('restaurant').value = id; document.getElementById('heroFormContainer').scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => { const fullnameInput = document.getElementById('fullname'); fullnameInput.focus(); }, 500);
+    document.getElementById('restaurant').value = id; document.getElementById('heroFormContainer').scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => { const fullnameInput = document.getElementById('fullname'); fullnameInput.focus({ preventScroll: true }); }, 500);
 }
 
 function filterExperiences(cat, btn) {
