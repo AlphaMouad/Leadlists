@@ -1214,6 +1214,20 @@
         .venue-marker { width: 30px; height: 30px; background: #EC5075; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 20px rgba(236, 80, 117, 0.4); }
         @keyframes pulseLive { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
 
+        /* === VIDEO PRELOAD CONTAINER === */
+        #video-preload-container {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+            visibility: hidden;
+        }
+
     </style>
 </head>
 <body>
@@ -1700,6 +1714,7 @@ function generateUserID() {
 // === ELITE UPGRADE 1: TEASER PRE-WARMING ENGINE ===
 function initTeaserEngine() {
     const cardTimers = new Map();
+    const preloadContainer = document.getElementById('video-preload-container');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             const card = entry.target;
@@ -1709,16 +1724,37 @@ function initTeaserEngine() {
                 if (!cardTimers.has(card)) {
                     const timerId = setTimeout(() => { 
                         card.classList.add('teaser-active');
-                        // PRE-WARM BUNNY CONNECTION
+
+                        // === VIDEO PRELOAD LOGIC ===
                         const expId = card.dataset.id;
                         const exp = experiencesData.find(e => e.id === expId);
+
                         if(exp && exp.video) {
-                            // Extract Library ID (555558) and Video ID for preconnect hint
-                            const vidUrl = new URL(exp.video);
-                            const preLink = document.createElement('link');
-                            preLink.rel = 'preconnect';
-                            preLink.href = vidUrl.origin;
-                            document.head.appendChild(preLink);
+                            // Check if already preloaded
+                            const existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
+
+                            if (!existingIframe && preloadContainer) {
+                                // Create hidden iframe
+                                const iframe = document.createElement('iframe');
+                                iframe.setAttribute('data-id', expId);
+
+                                // Bunny Parameters:
+                                // preload=true: Buffers content
+                                // autoplay=true & muted=true: Starts playback invisibly (instant play when shown)
+                                // controls=0: Hides controls
+                                // enablejsapi=1: Allows StoryManager to control playback (unmute, detect end)
+                                let src = exp.video;
+                                if(!src.includes('?')) src += '?';
+                                src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
+
+                                iframe.src = src;
+                                iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+                                iframe.style.width = "100%";
+                                iframe.style.height = "100%";
+                                iframe.style.border = "none";
+
+                                preloadContainer.appendChild(iframe);
+                            }
                         }
                     }, 600);
                     cardTimers.set(card, timerId);
@@ -2068,13 +2104,17 @@ window.StoryManager = {
             return;
         }
 
-        // --- OPTIMIZATION: PRELOAD NEXT IMAGE ---
+        // --- OPTIMIZATION: PRELOAD NEXT IMAGE & CLIMAX ---
         if(this.currentIndex + 1 < this.queue.length) {
             const next = this.queue[this.currentIndex + 1];
             if(next.type === 'image') {
                 const img = new Image();
                 img.src = next.src;
             }
+        } else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
+            // If we are at the last slide, preload the Climax image
+            const img = new Image();
+            img.src = this.currentExp.finalImage;
         }
         // --- END OPTIMIZATION ---
 
@@ -2092,7 +2132,7 @@ window.StoryManager = {
         }
     },
 
-    // 4. Video Logic (FIXED FOR SOUND)
+    // 4. Video Logic (FIXED FOR SOUND & PRELOAD)
     playVideoSlide: function(item, container, progressBar) {
         if(this.isMuted) {
              this.audioObj.pause();
@@ -2101,20 +2141,38 @@ window.StoryManager = {
              this.fadeAudio(0, 300, true);
         }
 
-        const iframe = document.createElement('iframe');
-        const ts = new Date().getTime();
+        // Check for preloaded iframe
+        const expId = this.currentExp.id;
+        const preloadedIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
         
-        // === THE SOUND FIX ===
-        let src = item.src;
-        if(!src.includes('?')) src += '?';
-        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-        
-        iframe.src = src;
-        iframe.className = 'story-media-item';
-        iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-        iframe.setAttribute('loading', 'eager');
-        
-        container.appendChild(iframe);
+        let iframe;
+
+        if (preloadedIframe) {
+            iframe = preloadedIframe;
+            // Moving iframe will trigger reload in DOM, but cache is warm.
+            container.appendChild(iframe);
+
+            // Reset styles
+            iframe.className = 'story-media-item';
+            iframe.style.width = "";
+            iframe.style.height = "";
+            iframe.style.border = "";
+        } else {
+            iframe = document.createElement('iframe');
+            const ts = new Date().getTime();
+
+            // === THE SOUND FIX ===
+            let src = item.src;
+            if(!src.includes('?')) src += '?';
+            src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
+
+            iframe.src = src;
+            iframe.className = 'story-media-item';
+            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+            iframe.setAttribute('loading', 'eager');
+
+            container.appendChild(iframe);
+        }
         
         requestAnimationFrame(() => iframe.classList.add('active'));
 
@@ -3093,5 +3151,9 @@ function openMapWidget(id, event) {
 function addMarker(coords) { if (mapMarker) mapMarker.remove(); const el = document.createElement('div'); el.className = 'venue-marker'; mapMarker = new mapboxgl.Marker(el).setLngLat(coords).addTo(map); }
 function closeMapWidget() { const modal = document.getElementById('mapbox-modal'); modal.classList.remove('active'); document.body.style.overflow = ''; setTimeout(() => { modal.style.display = 'none'; }, 400); }
 </script>
+
+<!-- === VIDEO PRELOAD CONTAINER === -->
+<div id="video-preload-container"></div>
+
 </body>
 </html>
