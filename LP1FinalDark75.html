@@ -1739,6 +1739,58 @@ window.videoPlayers = new Map();
 function initTeaserEngine() {
     const cardTimers = new Map();
     const preloadContainer = document.getElementById('video-preload-container');
+    const processedCards = new Set();
+
+    const triggerPreload = (card) => {
+        if (processedCards.has(card)) return;
+        processedCards.add(card);
+
+        const expId = card.dataset.id;
+        const exp = experiencesData.find(e => e.id === expId);
+
+        // VIDEO PRELOAD
+        if(exp && exp.video) {
+            let existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
+
+            if (!existingIframe && preloadContainer) {
+                const iframe = document.createElement('iframe');
+                iframe.setAttribute('data-id', expId);
+
+                let src = exp.video;
+                if(!src.includes('?')) src += '?';
+                src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
+
+                iframe.src = src;
+                iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+
+                preloadContainer.appendChild(iframe);
+
+                // Init Player API for later use
+                const player = new playerjs.Player(iframe);
+                window.videoPlayers.set(expId, player);
+
+                player.on('ready', () => {
+                    // Fix race condition: Don't mute if user already opened it (iframe is active)
+                    if (!iframe.classList.contains('active')) {
+                        player.mute();
+                    }
+                    player.play();
+                });
+            }
+        }
+
+        // IMAGE PRELOAD (First Image Only)
+        if(exp && exp.gallery && exp.gallery.length > 0) {
+            const firstImageSrc = exp.gallery[0];
+            if(window.StoryManager && window.StoryManager.preloadedUrls && !window.StoryManager.preloadedUrls.has(firstImageSrc)) {
+                const img = new Image();
+                img.src = firstImageSrc;
+                img.fetchPriority = "high";
+                window.StoryManager.preloadedUrls.add(firstImageSrc);
+            }
+        }
+    };
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             const card = entry.target;
@@ -1749,51 +1801,8 @@ function initTeaserEngine() {
                     // 1. Start Animation (CSS Transform)
                     const timerId = setTimeout(() => { 
                         card.classList.add('teaser-active');
-                        
-                        // 2. Delayed Heavy Logic (Iframe Injection)
-                        setTimeout(() => {
-                            const expId = card.dataset.id;
-                            const exp = experiencesData.find(e => e.id === expId);
-                            
-                            // VIDEO PRELOAD
-                            if(exp && exp.video) {
-                                let existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
-                                
-                                if (!existingIframe && preloadContainer) {
-                                    const iframe = document.createElement('iframe');
-                                    iframe.setAttribute('data-id', expId);
-
-                                    let src = exp.video;
-                                    if(!src.includes('?')) src += '?';
-                                    src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
-
-                                    iframe.src = src;
-                                    iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-
-                                    preloadContainer.appendChild(iframe);
-
-                                    // Init Player API for later use
-                                    const player = new playerjs.Player(iframe);
-                                    window.videoPlayers.set(expId, player);
-
-                                    player.on('ready', () => {
-                                        player.mute();
-                                        player.play();
-                                    });
-                                }
-                            }
-
-                            // IMAGE PRELOAD (First Image)
-                            if(exp && exp.gallery && exp.gallery.length > 0) {
-                                const firstImageSrc = exp.gallery[0];
-                                if(window.StoryManager && window.StoryManager.preloadedUrls && !window.StoryManager.preloadedUrls.has(firstImageSrc)) {
-                                    const img = new Image();
-                                    img.src = firstImageSrc;
-                                    img.fetchPriority = "high";
-                                    window.StoryManager.preloadedUrls.add(firstImageSrc);
-                                }
-                            }
-                        }, 200);
+                        // 2. Trigger Heavy Logic
+                        setTimeout(() => triggerPreload(card), 200);
                     }, 600);
                     cardTimers.set(card, timerId);
                 }
@@ -1805,7 +1814,14 @@ function initTeaserEngine() {
             }
         });
     }, { threshold: [0.1, 0.55] });
-    setTimeout(() => { document.querySelectorAll('.spectacle-card').forEach(card => observer.observe(card)); }, 100);
+
+    document.querySelectorAll('.spectacle-card').forEach(card => {
+        observer.observe(card);
+        // INSTANT WARMING ON INTERACTION
+        const instantWarm = () => triggerPreload(card);
+        card.addEventListener('mouseenter', instantWarm, { once: true });
+        card.addEventListener('touchstart', instantWarm, { once: true, passive: true });
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -2066,6 +2082,21 @@ window.StoryManager = {
             };
         }
 
+        // === SEAMLESS TRANSITION: Show Poster Immediately ===
+        const wrapper = document.getElementById('storyMediaWrapper');
+        // Clear previous temporary images
+        Array.from(wrapper.children).forEach(child => {
+            if(child.tagName === 'IMG' && child.classList.contains('temp-poster')) child.remove();
+        });
+
+        if (this.currentExp.finalImage) {
+            const poster = document.createElement('img');
+            poster.src = this.currentExp.finalImage;
+            poster.className = 'story-media-item temp-poster active';
+            poster.style.zIndex = '5'; // Higher than default video z-index
+            wrapper.appendChild(poster);
+        }
+
         this.queue = [];
         if(this.currentExp.video) this.queue.push({ type: 'video', src: this.currentExp.video });
         this.currentExp.gallery.forEach(img => this.queue.push({ type: 'image', src: img }));
@@ -2128,8 +2159,10 @@ window.StoryManager = {
         const item = this.queue[this.currentIndex];
         const currentFill = allFills[this.currentIndex];
 
-        // Hide all previous slides/videos
-        document.querySelectorAll('.story-media-item').forEach(el => el.classList.remove('active'));
+        // Hide all previous slides/videos (EXCEPT temp-poster)
+        document.querySelectorAll('.story-media-item').forEach(el => {
+            if(!el.classList.contains('temp-poster')) el.classList.remove('active');
+        });
         const activeIframes = document.querySelectorAll('#video-preload-container iframe');
         activeIframes.forEach(el => el.classList.remove('active'));
 
@@ -2150,6 +2183,15 @@ window.StoryManager = {
         const expId = this.currentExp.id;
         let iframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
         
+        // Helper to remove poster
+        const removePoster = () => {
+            const posters = document.querySelectorAll('.temp-poster');
+            posters.forEach(p => {
+                p.style.opacity = '0';
+                setTimeout(() => p.remove(), 600);
+            });
+        };
+
         if (iframe && window.videoPlayers.has(expId)) {
             iframe.classList.add('active'); // CSS handles visibility
             const player = window.videoPlayers.get(expId);
@@ -2161,6 +2203,15 @@ window.StoryManager = {
             }
             player.setCurrentTime(0);
             player.play();
+
+            // ELITE FLAWLESS LOGIC: Wait for TimeUpdate to ensure frames are rendering before hiding poster
+            const onTimeUpdate = () => {
+                removePoster();
+                player.off('timeupdate', onTimeUpdate);
+            };
+            player.on('timeupdate', onTimeUpdate);
+            // Safety timeout in case timeupdate doesn't fire
+            setTimeout(removePoster, 2500);
 
             player.getDuration((d) => {
                 const dur = d ? d : 15;
@@ -2192,6 +2243,10 @@ window.StoryManager = {
             player.on('ready', () => {
                 player.play();
                 if(!this.isMuted) { player.unmute(); player.setVolume(100); }
+
+                // Hide poster when playing
+                setTimeout(removePoster, 800);
+
                 player.getDuration((d) => {
                     const dur = d ? d : 15;
                     progressBar.style.transition = `transform ${dur}s linear`;
@@ -2205,13 +2260,16 @@ window.StoryManager = {
     playImageSlide: function(item, container, progressBar) {
         this.currentVideoPlayer = null;
         
+        // Remove poster if it exists (e.g. if starting with an image or skipping video)
+        document.querySelectorAll('.temp-poster').forEach(p => p.remove());
+
         if(!this.isMuted && this.audioObj.paused) {
             this.audioObj.play().catch(()=>{});
             this.fadeAudio(1, 400);
         }
 
         Array.from(container.children).forEach(child => {
-            if(child.tagName === 'IMG' || (child.tagName === 'IFRAME' && !child.parentElement.id.includes('video-preload'))) {
+            if((child.tagName === 'IMG' && !child.classList.contains('temp-poster')) || (child.tagName === 'IFRAME' && !child.parentElement.id.includes('video-preload'))) {
                 child.remove();
             }
         });
