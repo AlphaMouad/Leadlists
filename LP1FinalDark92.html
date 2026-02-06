@@ -225,7 +225,7 @@
             width: 100%; background: rgba(10, 10, 10, 0.92); border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 24px; padding: 1.5rem; margin-bottom: 1rem; position: relative; z-index: 20; transform: translateZ(0);
             box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(236, 80, 117, 0.08);
-            animation: formElevate 1.2s var(--ease-elite) 0.5s forwards; opacity: 0; transform: translateY(30px) scale(0.98);
+            opacity: 1; transform: translateY(0) scale(1);
             transition: box-shadow 0.4s var(--ease-luxury);
         }
         .hero-form-container:focus-within {
@@ -611,32 +611,42 @@
         .card-rating {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 12px;
         }
         .stars {
             color: #FBBF24;
             font-size: 0.95rem;
             letter-spacing: 1px;
-            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
         }
         .rating-score-box {
-            background: rgba(243, 244, 246, 1);
+            background: transparent;
             color: var(--text-dark);
-            font-size: 0.75rem;
+            font-size: 0.9rem;
             font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(0,0,0,0.08);
+            padding: 0;
+            border: none;
+            box-shadow: none;
             display: flex;
             align-items: center;
-            gap: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            gap: 0;
         }
         .review-text-clean {
             color: #9CA3AF;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 500;
+            margin-left: 2px;
+        }
+
+        /* === INTENT HELPERS === */
+        .festif-headline {
+            display: block;
+            margin-top: 0.4rem;
+            font-size: 1.15em;
+            line-height: 1.1;
+        }
+        .mobile-nowrap {
+            white-space: nowrap;
         }
         
         .card-description { margin-bottom: 1rem; color: var(--text-body); font-size: 0.9rem; line-height: 1.5; }
@@ -2034,12 +2044,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (intent === 'festif') {
         // Hero
         const title1 = document.querySelector('.title-line-1'); if(title1) title1.textContent = "Votre Accès Privé aux";
-        const title2 = document.getElementById('heroTitleLine2'); if(title2) title2.textContent = "Restaurants Festifs";
+        const title2 = document.getElementById('heroTitleLine2');
+        if(title2) {
+            title2.innerHTML = "Restaurants<br>Festifs";
+            title2.classList.add('festif-headline');
+        }
         const title3 = document.querySelector('.title-line-3'); if(title3) title3.textContent = "les plus prisés de Marrakech";
-        const sub = document.querySelector('.hero-subtitle'); if(sub) sub.innerHTML = "Accédez aux 7 adresses incontournables où l'ambiance monte crescendo. Réservation instantanée, sans acompte.";
+        // Sub-headline remains the same (default HTML)
         
         // Experiences
-        const expTitle = document.getElementById('experiences-title'); if(expTitle) expTitle.innerHTML = "7 Ambiances Electriques. Où ferez-vous la fête ce soir ?";
+        const expTitle = document.getElementById('experiences-title');
+        if(expTitle) expTitle.innerHTML = '<span class="mobile-nowrap">7 Ambiances Electriques.</span><br>Où ferez-vous la fête ce soir ?';
+
         const expSub = document.getElementById('experiences-subtitle'); if(expSub) expSub.textContent = "Oubliez les dîners classiques. Voici les 7 spots confidentiels où Marrakech s'enflamme réellement une fois la nuit tombée.";
         
         // Filter trigger
@@ -2051,12 +2067,18 @@ document.addEventListener('DOMContentLoaded', function() {
     } else if (intent === 'spectacle') {
         // Hero
         const title1 = document.querySelector('.title-line-1'); if(title1) title1.textContent = "Votre Table VIP pour un";
-        const title2 = document.getElementById('heroTitleLine2'); if(title2) title2.textContent = "Dîner Spectacle";
+        const title2 = document.getElementById('heroTitleLine2');
+        if(title2) {
+            title2.textContent = "Dîner Spectacle";
+            title2.classList.remove('festif-headline');
+        }
         const title3 = document.querySelector('.title-line-3'); if(title3) title3.textContent = "d'exception à Marrakech";
-        const sub = document.querySelector('.hero-subtitle'); if(sub) sub.innerHTML = "Accédez aux 7 scènes artistiques les plus époustouflantes de la ville rouge. Réservation instantanée, sans acompte.";
+        // Sub-headline remains the same (default HTML)
         
         // Experiences
-        const expTitle = document.getElementById('experiences-title'); if(expTitle) expTitle.innerHTML = "7 Shows Uniques. Quelle magie choisirez-vous ce soir ?";
+        const expTitle = document.getElementById('experiences-title');
+        if(expTitle) expTitle.innerHTML = '<span class="mobile-nowrap" style="font-size: 1.15em">7 Shows Uniques.</span><br>Quelle magie choisirez-vous ce soir ?';
+
         const expSub = document.getElementById('experiences-subtitle'); if(expSub) expSub.textContent = "Oubliez les adresses de masse. Voici les 7 scènes grandioses où la haute gastronomie rencontre le spectacle vivant ce soir.";
         
         bookButtonText = "DÉCOUVRIR LES SPECTACLES";
