@@ -272,25 +272,33 @@
         /* === ELITE PHONE INPUT GROUP === */
         .elite-phone-group { display: flex; align-items: stretch; width: 100%; position: relative; }
 
+        /* === ELITE TOUCH & INPUTS === */
         .country-selector {
             display: flex; align-items: center; gap: 4px;
-            padding: 0 8px 0 12px;
+            padding: 0 14px; /* Increased Touch Padding */
             background: rgba(255, 255, 255, 0.03);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer; position: relative; transition: all 0.3s ease;
-            min-width: 105px;
+            cursor: pointer; position: relative; transition: all 0.2s ease;
+            min-width: 115px; /* Wider hit area */
+            height: 100%;
         }
-        .country-selector:hover { background: rgba(255, 255, 255, 0.06); }
+        .country-selector:active { background: rgba(255, 255, 255, 0.09); transform: scale(0.98); } /* Haptic visual */
 
-        .selected-flag { font-size: 1.4rem; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .selected-flag { font-size: 1.6rem; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); pointer-events: none; }
 
         .code-input {
-            width: 42px; background: transparent; border: none; color: rgba(255, 255, 255, 0.9);
-            font-weight: 700; font-size: 0.9rem; padding: 0; outline: none; text-align: center;
+            width: 48px; height: 100%; background: transparent; border: none; color: rgba(255, 255, 255, 0.95);
+            font-weight: 700; font-size: 0.95rem; padding: 0; outline: none; text-align: center;
+            z-index: 2; /* Ensure clickable */
         }
-        .code-input:focus { color: #fff; }
+        .code-input:focus { background: rgba(0,0,0,0.2); border-radius: 4px; }
 
-        .selector-arrow { width: 12px; height: 12px; stroke: rgba(255,255,255,0.4); fill: none; stroke-width: 2px; transition: transform 0.3s ease; }
+        /* Huge hit target for the arrow */
+        .selector-arrow-container {
+            display: flex; align-items: center; justify-content: center;
+            width: 32px; height: 100%; margin-right: -8px;
+        }
+        .selector-arrow { width: 14px; height: 14px; stroke: rgba(255,255,255,0.5); fill: none; stroke-width: 2.5px; transition: transform 0.3s ease; pointer-events: none; }
         .country-selector.active .selector-arrow { transform: rotate(180deg); stroke: var(--brand-raspberry); }
 
         .country-dropdown {
@@ -1487,8 +1495,11 @@
                                 <div class="elite-phone-group">
                                     <div class="country-selector" id="countrySelector" onclick="toggleCountryDropdown(event)">
                                         <span class="selected-flag" id="selectedFlag">🇫🇷</span>
-                                        <input type="text" id="countryCode" name="countryCode" value="+33" class="code-input" inputmode="tel" maxlength="5" oninput="handleCodeInput(this)">
-                                        <svg class="selector-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <!-- Code input now handles its own focus, everything else toggles dropdown -->
+                                        <input type="text" id="countryCode" name="countryCode" value="+33" class="code-input" inputmode="tel" maxlength="5" oninput="handleCodeInput(this)" onclick="event.stopPropagation()">
+                                        <div class="selector-arrow-container">
+                                            <svg class="selector-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        </div>
                                     </div>
 
                                     <div class="country-dropdown" id="countryDropdown">
@@ -1822,14 +1833,23 @@ const AvailabilityEngine = {
     }
 };
 
-// === ELITE PHONE INPUT LOGIC (UPGRADED) ===
+// === ELITE PHONE INPUT LOGIC (UPGRADED V2) ===
 function toggleCountryDropdown(e) {
     // Stop propagation to prevent immediate closing
     e.stopPropagation();
-    // Prevent default on touch to avoid double-firing or delay
-    if (e.type === 'touchstart') e.preventDefault();
 
-    if(e.target.closest('.code-input')) return;
+    // Prevent default ONLY if it's a touch event on the container, to avoid double-firing.
+    // BUT if the target is the INPUT, we must NOT prevent default, otherwise focus won't work on iOS.
+    const isInput = e.target.closest('.code-input');
+
+    if (e.type === 'touchstart') {
+        if (!isInput) e.preventDefault(); // Prevent ghost click on selector, but let input focus
+    }
+
+    if(isInput) {
+        // Just focus, don't toggle
+        return;
+    }
 
     const dd = document.getElementById('countryDropdown');
     const selector = document.getElementById('countrySelector');
