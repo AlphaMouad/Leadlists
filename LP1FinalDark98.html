@@ -32,21 +32,18 @@
     <link rel="preconnect" href="https://docs.google.com" crossorigin>
     <link rel="dns-prefetch" href="https://docs.google.com">
 
-    <!-- MAPBOX CSS -->
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <!-- MAPBOX CSS (Lazy Loaded) -->
 
     <!-- BUNNY.NET PLAYER API -->
-    <script src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"></script>
+    <script defer src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"></script>
 
-    <!-- MAPBOX JS -->
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
+    <!-- MAPBOX JS (Lazy Loaded) -->
 
     <!-- FONTS -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700;1,800;1,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- === TRACKING === -->
-    <script src="https://t.contentsquare.net/uxa/aa67b454a79ef.js"></script>
+    <script defer src="https://t.contentsquare.net/uxa/aa67b454a79ef.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YE8JYR1X97"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -615,19 +612,20 @@
         .card-rating {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 12px;
         }
         .stars {
             color: #FBBF24;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
         .rating-score-box {
             background: transparent;
             color: var(--text-dark);
-            font-size: 0.8rem;
-            font-weight: 800;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             padding: 0;
             border: none;
             display: flex;
@@ -637,7 +635,9 @@
         .review-text-clean {
             color: #9CA3AF;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .card-description { margin-bottom: 1rem; color: var(--text-body); font-size: 0.9rem; line-height: 1.5; }
@@ -1714,6 +1714,28 @@
     </a>
 
 <script>
+// === ASSET LOADER UTILS ===
+function loadAsset(url, type) {
+    return new Promise((resolve, reject) => {
+        if (type === 'css') {
+            if (document.querySelector(`link[href="${url}"]`)) return resolve();
+            const link = document.createElement('link');
+            link.href = url;
+            link.rel = 'stylesheet';
+            link.onload = resolve;
+            link.onerror = reject;
+            document.head.appendChild(link);
+        } else {
+            if (document.querySelector(`script[src="${url}"]`)) return resolve();
+            const script = document.createElement('script');
+            script.src = url;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        }
+    });
+}
+
 const videoIdMap = {
     "stah": "o39c248x3j", "tanjia": "0q2d4cko4b", "folk": "t1873lqxyr", "ritziF": "sjy3c57qxz", "ritziD": "sjy3c57qxz",
     "nouba": "c349wcz8hz", "noto": "khj4dlqdv2", "ibrahim": "f1pummm5r9", "malak": "x1wjp5k66n"
@@ -3521,14 +3543,35 @@ let map = null; let mapMarker = null;
 function openMapWidget(id, event) {
     if(event) event.stopPropagation(); const venue = VENUES[id]; if (!venue) return;
     const modal = document.getElementById('mapbox-modal'); document.body.style.overflow = 'hidden'; modal.style.display = 'flex';
-    setTimeout(() => { modal.classList.add('active'); if (map) { setTimeout(() => { map.resize(); map.flyTo({ center: venue.coords, zoom: 15, duration: 1200 }); addMarker(venue.coords); }, 600); } }, 10);
+
+    const initMap = () => {
+        setTimeout(() => {
+            modal.classList.add('active');
+            if (map) {
+                setTimeout(() => { map.resize(); map.flyTo({ center: venue.coords, zoom: 15, duration: 1200 }); addMarker(venue.coords); }, 600);
+            } else {
+                 if (typeof mapboxgl !== 'undefined') {
+                    mapboxgl.accessToken = MAPBOX_TOKEN;
+                    map = new mapboxgl.Map({ container: 'map-canvas', style: 'mapbox://styles/mapbox/dark-v11', center: venue.coords, zoom: 15, pitch: 45, antialias: true });
+                    const language = new MapboxLanguage({ defaultLanguage: 'fr' }); map.addControl(language);
+                    map.on('load', () => { map.resize(); addMarker(venue.coords); });
+                 }
+            }
+        }, 10);
+    };
+
     document.getElementById('v-name').textContent = venue.name; document.getElementById('v-address').textContent = venue.address;
     document.getElementById('v-wa-btn').href = `https://wa.me/212680802756?text=Bonjour Concierge, je suis intéressé par ${venue.name}. Pouvez-vous m'aider pour l'accès ou une navette ?`;
-    if (!map) {
-        mapboxgl.accessToken = MAPBOX_TOKEN;
-        map = new mapboxgl.Map({ container: 'map-canvas', style: 'mapbox://styles/mapbox/dark-v11', center: venue.coords, zoom: 15, pitch: 45, antialias: true });
-        const language = new MapboxLanguage({ defaultLanguage: 'fr' }); map.addControl(language);
-        map.on('load', () => { map.resize(); addMarker(venue.coords); });
+
+    if (typeof mapboxgl === 'undefined') {
+        loadAsset('https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css', 'css');
+        loadAsset('https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js', 'js')
+            .then(() => loadAsset('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js', 'js'))
+            .then(() => {
+                initMap();
+            });
+    } else {
+        initMap();
     }
 }
 function addMarker(coords) { if (mapMarker) mapMarker.remove(); const el = document.createElement('div'); el.className = 'venue-marker'; mapMarker = new mapboxgl.Marker(el).setLngLat(coords).addTo(map); }
