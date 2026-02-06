@@ -1756,6 +1756,18 @@ function initTeaserEngine() {
                                 preloadContainer.appendChild(iframe);
                             }
                         }
+
+                        // === IMAGE PRELOAD LOGIC (First Image) ===
+                        // Preload the first image so it's ready immediately after the video
+                        if(exp && exp.gallery && exp.gallery.length > 0) {
+                            const firstImageSrc = exp.gallery[0];
+                            // Ensure StoryManager is available and track the preload
+                            if(window.StoryManager && window.StoryManager.preloadedUrls && !window.StoryManager.preloadedUrls.has(firstImageSrc)) {
+                                const img = new Image();
+                                img.src = firstImageSrc;
+                                window.StoryManager.preloadedUrls.add(firstImageSrc);
+                            }
+                        }
                     }, 600);
                     cardTimers.set(card, timerId);
                 }
@@ -1943,6 +1955,7 @@ window.StoryManager = {
     currentVideoPlayer: null,
     imageDuration: 4000,
     hasUnlockedAudio: false,
+    preloadedUrls: new Set(),
 
     // 1. Initialization & Smart Controls
     init: function() {
@@ -2105,16 +2118,24 @@ window.StoryManager = {
         }
 
         // --- OPTIMIZATION: PRELOAD NEXT IMAGE & CLIMAX ---
+        // 1. Preload Next Image
         if(this.currentIndex + 1 < this.queue.length) {
             const next = this.queue[this.currentIndex + 1];
-            if(next.type === 'image') {
+            if(next.type === 'image' && !this.preloadedUrls.has(next.src)) {
                 const img = new Image();
                 img.src = next.src;
+                img.fetchPriority = "high"; // Priority optimization
+                this.preloadedUrls.add(next.src);
             }
-        } else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
-            // If we are at the last slide, preload the Climax image
-            const img = new Image();
-            img.src = this.currentExp.finalImage;
+        }
+        // 2. Preload Climax (When showing last slide)
+        else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
+            if(!this.preloadedUrls.has(this.currentExp.finalImage)) {
+                const img = new Image();
+                img.src = this.currentExp.finalImage;
+                img.fetchPriority = "high";
+                this.preloadedUrls.add(this.currentExp.finalImage);
+            }
         }
         // --- END OPTIMIZATION ---
 
@@ -2144,35 +2165,28 @@ window.StoryManager = {
         // Check for preloaded iframe
         const expId = this.currentExp.id;
         const preloadedIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
-        
-        let iframe;
 
+        // CLEANUP: If preloaded iframe exists, remove it to stop background playback/resource usage
+        // We will create a NEW iframe to ensure fresh parameters (muted=0) while using the cached video data.
         if (preloadedIframe) {
-            iframe = preloadedIframe;
-            // Moving iframe will trigger reload in DOM, but cache is warm.
-            container.appendChild(iframe);
-
-            // Reset styles
-            iframe.className = 'story-media-item';
-            iframe.style.width = "";
-            iframe.style.height = "";
-            iframe.style.border = "";
-        } else {
-            iframe = document.createElement('iframe');
-            const ts = new Date().getTime();
-
-            // === THE SOUND FIX ===
-            let src = item.src;
-            if(!src.includes('?')) src += '?';
-            src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-
-            iframe.src = src;
-            iframe.className = 'story-media-item';
-            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-            iframe.setAttribute('loading', 'eager');
-
-            container.appendChild(iframe);
+            preloadedIframe.remove();
         }
+
+        const iframe = document.createElement('iframe');
+        const ts = new Date().getTime();
+
+        // === THE SOUND FIX ===
+        let src = item.src;
+        if(!src.includes('?')) src += '?';
+        // Ensure muted=0 for active playback
+        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
+
+        iframe.src = src;
+        iframe.className = 'story-media-item';
+        iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+        iframe.setAttribute('loading', 'eager');
+
+        container.appendChild(iframe);
         
         requestAnimationFrame(() => iframe.classList.add('active'));
 
