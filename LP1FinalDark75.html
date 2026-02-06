@@ -673,16 +673,15 @@
     position: fixed; top: 0; left: 0; 
     width: 100%; height: 100%; height: 100dvh;
     background: #000; z-index: 9999; 
-    display: none; align-items: center; justify-content: center;
-    opacity: 0; 
-    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex; align-items: center; justify-content: center;
+    visibility: hidden; opacity: 0; pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
     overflow: hidden;
     will-change: opacity;
     transform: translateZ(0);
 }
 .story-overlay.show { 
-    display: flex; 
-    opacity: 1; 
+    visibility: visible; opacity: 1; pointer-events: auto;
 }
 
 .story-container { 
@@ -1236,15 +1235,12 @@
         /* === VIDEO PRELOAD CONTAINER === */
         #video-preload-container {
             position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            overflow: hidden;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            z-index: -1;
-            visibility: hidden;
+            z-index: 0;
         }
 
     </style>
@@ -1544,7 +1540,9 @@
                     </div>
                 </div>
             </div>
-            <div class="story-media-wrapper" id="storyMediaWrapper"></div>
+            <div class="story-media-wrapper" id="storyMediaWrapper">
+                <div id="video-preload-container"></div>
+            </div>
             <div class="story-nav-zone nav-left" id="storyNavLeft"></div>
             <div class="story-nav-zone nav-center" id="storyNavHold"></div>
             <div class="story-nav-zone nav-right" id="storyNavRight"></div>
@@ -1759,6 +1757,7 @@ function initTeaserEngine() {
                                 // Create hidden iframe
                                 const iframe = document.createElement('iframe');
                                 iframe.setAttribute('data-id', expId);
+                                iframe.className = 'story-media-item';
                                 
                                 // Bunny Parameters: 
                                 // preload=true: Buffers content
@@ -1774,6 +1773,7 @@ function initTeaserEngine() {
                                 iframe.style.width = "100%";
                                 iframe.style.height = "100%";
                                 iframe.style.border = "none";
+                                iframe.style.opacity = "0";
                                 
                                 preloadContainer.appendChild(iframe);
                             }
@@ -2078,18 +2078,10 @@ window.StoryManager = {
                 const total = this.audioObj.duration;
                 if(total > 10) {
                     const count = this.currentExp.gallery.length;
-
-                    // 1. Reserve 15% (or min 5s) for the Climax Card at the end
                     const reservedForClimax = Math.max(5, total * 0.15);
-                    
-                    // 2. Subtract 15s buffer (This accounts for the Video Intro/Buildup)
                     const availableTime = total - reservedForClimax - 15; 
-                    
-                    // 3. Calculate exact duration per image to fit the remaining window
                     if(availableTime > 0 && count > 0) {
                         this.imageDuration = (availableTime / count) * 1000;
-                        
-                        // 4. Clamp between 2.5s and 6s
                         this.imageDuration = Math.max(2500, Math.min(6000, this.imageDuration));
                     }
                 }
@@ -2127,7 +2119,7 @@ window.StoryManager = {
         if(this.timer) clearTimeout(this.timer);
         this.timer = null;
 
-        // Reset Progress Bars (Using Transform for GPU performance)
+        // Reset Progress Bars
         const allFills = document.querySelectorAll('.progress-segment .progress-fill');
         allFills.forEach((fill, i) => {
             fill.style.transition = 'none';
@@ -2139,34 +2131,35 @@ window.StoryManager = {
             return;
         }
 
-        // --- OPTIMIZATION: PRELOAD NEXT IMAGE & CLIMAX ---
-        // 1. Preload Next Image
+        // Preload Next
         if(this.currentIndex + 1 < this.queue.length) {
             const next = this.queue[this.currentIndex + 1];
             if(next.type === 'image' && !this.preloadedUrls.has(next.src)) {
-                const img = new Image();
-                img.src = next.src;
-                img.fetchPriority = "high"; // Priority optimization
+                const img = new Image(); img.src = next.src; img.fetchPriority = "high";
                 this.preloadedUrls.add(next.src);
             }
-        } 
-        // 2. Preload Climax (When showing last slide)
-        else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
+        } else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
             if(!this.preloadedUrls.has(this.currentExp.finalImage)) {
-                const img = new Image();
-                img.src = this.currentExp.finalImage;
-                img.fetchPriority = "high";
+                const img = new Image(); img.src = this.currentExp.finalImage; img.fetchPriority = "high";
                 this.preloadedUrls.add(this.currentExp.finalImage);
             }
         }
-        // --- END OPTIMIZATION ---
 
         document.getElementById('climaxCard').classList.remove('active');
         document.getElementById('storyTextContent').classList.remove('hidden');
 
+        // CLEANUP: Hide active items, remove old images
+        const activeItems = wrapper.querySelectorAll('.story-media-item.active');
+        activeItems.forEach(el => el.classList.remove('active'));
+
+        const oldImages = wrapper.querySelectorAll('img.story-media-item');
+        oldImages.forEach(img => {
+             // Remove after transition
+             setTimeout(() => { if(img.parentNode) img.remove(); }, 500);
+        });
+
         const item = this.queue[this.currentIndex];
         const currentFill = allFills[this.currentIndex];
-        wrapper.innerHTML = ''; 
 
         if(item.type === 'video') {
             this.playVideoSlide(item, wrapper, currentFill);
@@ -2175,67 +2168,77 @@ window.StoryManager = {
         }
     },
 
-    // 4. Video Logic (FIXED FOR SOUND & PRELOAD)
+    // 4. Video Logic (REUSE PRELOADED)
     playVideoSlide: function(item, container, progressBar) {
         if(this.isMuted) {
              this.audioObj.pause();
         } else {
-             // Fade out music to let video audio take over
              this.fadeAudio(0, 300, true);
         }
 
-        // Check for preloaded iframe
         const expId = this.currentExp.id;
-        const preloadedIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
+        let iframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
         
-        // CLEANUP: If preloaded iframe exists, remove it to stop background playback/resource usage
-        // We will create a NEW iframe to ensure fresh parameters (muted=0) while using the cached video data.
-        if (preloadedIframe) {
-            preloadedIframe.remove();
-        }
+        if (iframe) {
+            // REUSE EXISTING
+            iframe.classList.add('active');
+            iframe.style.opacity = '1';
 
-        const iframe = document.createElement('iframe');
-        const ts = new Date().getTime();
-        
-        // === THE SOUND FIX ===
-        let src = item.src;
-        if(!src.includes('?')) src += '?';
-        // Ensure muted=0 for active playback
-        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-        
-        iframe.src = src;
-        iframe.className = 'story-media-item';
-        iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-        iframe.setAttribute('loading', 'eager');
-        
-        container.appendChild(iframe);
-        
-        requestAnimationFrame(() => iframe.classList.add('active'));
+            const player = new playerjs.Player(iframe);
+            this.currentVideoPlayer = player;
 
-        const player = new playerjs.Player(iframe);
-        this.currentVideoPlayer = player;
-
-        player.on('ready', () => {
-            // Safety: Ensure it plays
-            player.play();
-            
-            // Double Check: Force volume if not globally muted
-            if(!this.isMuted) {
-                player.unmute();
-                player.setVolume(100);
-            }
-
-            // Sync Progress
-            player.getDuration((d) => {
-                const dur = d ? d : 15;
-                progressBar.style.transition = `transform ${dur}s linear`;
-                progressBar.style.transform = 'scaleX(1)';
+            player.on('ready', () => {
+                player.play();
+                if(!this.isMuted) {
+                    player.unmute();
+                    player.setVolume(100);
+                }
+                player.getDuration((d) => {
+                    const dur = d ? d : 15;
+                    progressBar.style.transition = `transform ${dur}s linear`;
+                    progressBar.style.transform = 'scaleX(1)';
+                });
             });
-        });
 
-        player.on('ended', () => {
-            this.next();
-        });
+            try {
+                player.play();
+                if(!this.isMuted) { player.unmute(); player.setVolume(100); }
+            } catch(e) {}
+
+            player.on('ended', () => {
+                this.next();
+            });
+
+        } else {
+            // FALLBACK: CREATE NEW
+            iframe = document.createElement('iframe');
+            const ts = new Date().getTime();
+            let src = item.src;
+            if(!src.includes('?')) src += '?';
+            src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
+            
+            iframe.src = src;
+            iframe.className = 'story-media-item';
+            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+            iframe.setAttribute('loading', 'eager');
+
+            container.appendChild(iframe);
+            requestAnimationFrame(() => iframe.classList.add('active'));
+
+            const player = new playerjs.Player(iframe);
+            this.currentVideoPlayer = player;
+
+            player.on('ready', () => {
+                player.play();
+                if(!this.isMuted) { player.unmute(); player.setVolume(100); }
+                player.getDuration((d) => {
+                    const dur = d ? d : 15;
+                    progressBar.style.transition = `transform ${dur}s linear`;
+                    progressBar.style.transform = 'scaleX(1)';
+                });
+            });
+            player.on('ended', () => { this.next(); });
+        }
     },
 
     // 5. Image Logic
@@ -2388,8 +2391,28 @@ window.StoryManager = {
         this.fadeAudio(0, 200, true);
         document.getElementById('storyOverlay').classList.remove('show');
         
+        if (this.currentVideoPlayer) {
+            this.currentVideoPlayer.mute();
+        }
+
         setTimeout(() => {
-            document.getElementById('storyMediaWrapper').innerHTML = '';
+            // Clean up UI but DON'T destroy iframes in preload container
+            const wrapper = document.getElementById('storyMediaWrapper');
+            const activeItems = wrapper.querySelectorAll('.active');
+            activeItems.forEach(el => {
+                el.classList.remove('active');
+                if(el.tagName === 'IMG') el.remove();
+            });
+
+            const looseImages = wrapper.querySelectorAll('img');
+            looseImages.forEach(img => img.remove());
+
+            const iframes = wrapper.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.classList.remove('active');
+                iframe.style.opacity = '0';
+            });
+
             document.body.style.overflow = '';
             this.audioObj.pause();
             this.audioObj.currentTime = 0;
@@ -3187,9 +3210,6 @@ function openMapWidget(id, event) {
 function addMarker(coords) { if (mapMarker) mapMarker.remove(); const el = document.createElement('div'); el.className = 'venue-marker'; mapMarker = new mapboxgl.Marker(el).setLngLat(coords).addTo(map); }
 function closeMapWidget() { const modal = document.getElementById('mapbox-modal'); modal.classList.remove('active'); document.body.style.overflow = ''; setTimeout(() => { modal.style.display = 'none'; }, 400); }
 </script>
-
-<!-- === VIDEO PRELOAD CONTAINER === -->
-<div id="video-preload-container"></div>
 
 </body>
 </html>
