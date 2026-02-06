@@ -1543,7 +1543,7 @@
             <section class="section reveal" id="experiences">
                 <div class="section-header">
                     <h2 id="experiences-title">7 Spectacles Uniques.<br>Quelle magie choisirez-vous ce soir ?</h2>
-                    <p>Oubliez les adresses de masse. Voici les 7 scènes confidentielles où Marrakech bat réellement son plein ce soir.</p>
+                    <p id="experiences-subtitle">Oubliez les adresses de masse. Voici les 7 scènes confidentielles où Marrakech bat réellement son plein ce soir.</p>
                 </div>
                 <div id="explore-anchor"></div>
                 <div class="filters">
@@ -2027,6 +2027,48 @@ function validatePhone(phone, countryCode) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // === INTENT LOGIC ===
+    const urlParams = new URLSearchParams(window.location.search);
+    const intent = urlParams.get('intent');
+    let bookButtonText = "RÉSERVER MA SOIRÉE (0€)"; // Default
+
+    if (intent === 'festif') {
+        // Hero
+        const title1 = document.querySelector('.title-line-1'); if(title1) title1.textContent = "Votre Accès Privé aux";
+        const title2 = document.getElementById('heroTitleLine2'); if(title2) title2.textContent = "Restaurants Festifs";
+        const title3 = document.querySelector('.title-line-3'); if(title3) title3.textContent = "les plus prisés de Marrakech";
+        const sub = document.querySelector('.hero-subtitle'); if(sub) sub.innerHTML = "Accédez aux 7 adresses incontournables où l'ambiance monte crescendo. Réservation instantanée, sans acompte.";
+
+        // Experiences
+        const expTitle = document.getElementById('experiences-title'); if(expTitle) expTitle.innerHTML = "7 Ambiances Electriques. Où ferez-vous la fête ce soir ?";
+        const expSub = document.getElementById('experiences-subtitle'); if(expSub) expSub.textContent = "Oubliez les dîners classiques. Voici les 7 spots confidentiels où Marrakech s'enflamme réellement une fois la nuit tombée.";
+
+        // Filter trigger
+        setTimeout(() => {
+            const btn = document.querySelector('.filter-btn[onclick*="party"]');
+            if(btn) btn.click();
+        }, 100);
+
+    } else if (intent === 'spectacle') {
+        // Hero
+        const title1 = document.querySelector('.title-line-1'); if(title1) title1.textContent = "Votre Table VIP pour un";
+        const title2 = document.getElementById('heroTitleLine2'); if(title2) title2.textContent = "Dîner Spectacle";
+        const title3 = document.querySelector('.title-line-3'); if(title3) title3.textContent = "d'exception à Marrakech";
+        const sub = document.querySelector('.hero-subtitle'); if(sub) sub.innerHTML = "Accédez aux 7 scènes artistiques les plus époustouflantes de la ville rouge. Réservation instantanée, sans acompte.";
+
+        // Experiences
+        const expTitle = document.getElementById('experiences-title'); if(expTitle) expTitle.innerHTML = "7 Shows Uniques. Quelle magie choisirez-vous ce soir ?";
+        const expSub = document.getElementById('experiences-subtitle'); if(expSub) expSub.textContent = "Oubliez les adresses de masse. Voici les 7 scènes grandioses où la haute gastronomie rencontre le spectacle vivant ce soir.";
+
+        bookButtonText = "DÉCOUVRIR LES SPECTACLES";
+
+        // Filter trigger
+        setTimeout(() => {
+            const btn = document.querySelector('.filter-btn[onclick*="grand-spectacle"]');
+            if(btn) btn.click();
+        }, 100);
+    }
+
     // Generate and Set User ID on Load
     const userId = generateUserID(); 
     document.getElementById('userID').value = userId;
@@ -2089,7 +2131,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card-meta"><span>${exp.time} • Tous les soirs</span> <span class="price-range" onclick="openMapWidget('${exp.id}', event)">${exp.price}</span></div>
                 <div class="card-actions-container">
                     <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>MENU</button>
-                    <button class="card-btn btn-book" onclick="scrollToForm('${exp.id}')">RÉSERVER MA SOIRÉE (0€)</button>
+                    <button class="card-btn btn-book" onclick="scrollToForm('${exp.id}')">${bookButtonText}</button>
                 </div>
                 <div class="trust-micro-signal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> Paiement sur place &bull; Zéro Frais</div>
             </div>`;
