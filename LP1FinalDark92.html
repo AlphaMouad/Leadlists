@@ -623,7 +623,7 @@
             background: transparent;
             color: var(--text-dark);
             font-size: 0.9rem;
-            font-weight: 800;
+            font-weight: 700;
             padding: 0;
             border: none;
             box-shadow: none;
@@ -2042,15 +2042,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (intent === 'festif') {
-        // Hero
-        const title1 = document.querySelector('.title-line-1'); if(title1) title1.textContent = "Votre Accès Privé aux";
-        const title2 = document.getElementById('heroTitleLine2');
-        if(title2) {
-            title2.innerHTML = "Restaurants<br>Festifs";
-            title2.classList.add('festif-headline');
-        }
-        const title3 = document.querySelector('.title-line-3'); if(title3) title3.textContent = "les plus prisés de Marrakech";
-        // Sub-headline remains the same (default HTML)
+        // Hero remains UNCHANGED for festif intent (Default HTML is used)
         
         // Experiences
         const expTitle = document.getElementById('experiences-title');
@@ -2069,15 +2061,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const title1 = document.querySelector('.title-line-1'); if(title1) title1.textContent = "Votre Table VIP pour un";
         const title2 = document.getElementById('heroTitleLine2');
         if(title2) {
-            title2.textContent = "Dîner Spectacle";
-            title2.classList.remove('festif-headline');
+            title2.innerHTML = "Dîner<br>Spectacle";
+            title2.classList.add('festif-headline'); // Reuse the class for 2-line layout
         }
         const title3 = document.querySelector('.title-line-3'); if(title3) title3.textContent = "d'exception à Marrakech";
-        // Sub-headline remains the same (default HTML)
         
         // Experiences
         const expTitle = document.getElementById('experiences-title');
-        if(expTitle) expTitle.innerHTML = '<span class="mobile-nowrap" style="font-size: 1.15em">7 Shows Uniques.</span><br>Quelle magie choisirez-vous ce soir ?';
+        if(expTitle) expTitle.innerHTML = '<span class="mobile-nowrap">7 Shows Uniques.</span><br>Quelle magie choisirez-vous ce soir ?';
 
         const expSub = document.getElementById('experiences-subtitle'); if(expSub) expSub.textContent = "Oubliez les adresses de masse. Voici les 7 scènes grandioses où la haute gastronomie rencontre le spectacle vivant ce soir.";
         
