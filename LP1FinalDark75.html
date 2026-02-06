@@ -1745,51 +1745,47 @@ function initTeaserEngine() {
             if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
                 if (!cardTimers.has(card)) {
                     const timerId = setTimeout(() => { 
+                        // 1. Trigger UI Animation (Smooth)
                         card.classList.add('teaser-active');
                         
-                        // === VIDEO PRELOAD LOGIC ===
-                        const expId = card.dataset.id;
-                        const exp = experiencesData.find(e => e.id === expId);
-                        
-                        if(exp && exp.video) {
-                            // Check if already preloaded
-                            const existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
+                        // 2. Delayed Video Preload (200ms delay to prevent main-thread jank during CSS animation)
+                        setTimeout(() => {
+                            // === VIDEO PRELOAD LOGIC ===
+                            const expId = card.dataset.id;
+                            const exp = experiencesData.find(e => e.id === expId);
                             
-                            if (!existingIframe && preloadContainer) {
-                                // Create hidden iframe
-                                const iframe = document.createElement('iframe');
-                                iframe.setAttribute('data-id', expId);
+                            if(exp && exp.video) {
+                                // Check if already preloaded
+                                const existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
                                 
-                                // Bunny Parameters: 
-                                // preload=true: Buffers content
-                                // autoplay=true & muted=true: Starts playback invisibly (instant play when shown)
-                                // controls=0: Hides controls
-                                // enablejsapi=1: Allows StoryManager to control playback (unmute, detect end)
-                                let src = exp.video;
-                                if(!src.includes('?')) src += '?';
-                                src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
-                                
-                                iframe.src = src;
-                                iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-                                iframe.style.width = "100%";
-                                iframe.style.height = "100%";
-                                iframe.style.border = "none";
-                                
-                                preloadContainer.appendChild(iframe);
-                            }
-                        }
+                                if (!existingIframe && preloadContainer) {
+                                    // Create hidden iframe
+                                    const iframe = document.createElement('iframe');
+                                    iframe.setAttribute('data-id', expId);
 
-                        // === IMAGE PRELOAD LOGIC (First Image) ===
-                        // Preload the first image so it's ready immediately after the video
-                        if(exp && exp.gallery && exp.gallery.length > 0) {
-                            const firstImageSrc = exp.gallery[0];
-                            // Ensure StoryManager is available and track the preload
-                            if(window.StoryManager && window.StoryManager.preloadedUrls && !window.StoryManager.preloadedUrls.has(firstImageSrc)) {
-                                const img = new Image();
-                                img.src = firstImageSrc;
-                                window.StoryManager.preloadedUrls.add(firstImageSrc);
+                                    // Bunny Parameters:
+                                    // preload=true: Buffers content
+                                    // autoplay=true & muted=true: Starts playback invisibly (instant play when shown)
+                                    // controls=0: Hides controls
+                                    // enablejsapi=1: Allows StoryManager to control playback (unmute, detect end)
+                                    let src = exp.video;
+                                    if(!src.includes('?')) src += '?';
+                                    src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
+
+                                    iframe.src = src;
+                                    iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+                                    iframe.style.width = "100%";
+                                    iframe.style.height = "100%";
+                                    iframe.style.border = "none";
+                                    iframe.style.opacity = '0'; // Ensure invisible initially
+                                    iframe.className = 'story-media-item'; // Add class for seamless integration later
+
+                                    preloadContainer.appendChild(iframe);
+                                }
                             }
-                        }
+                            // Note: Image preloading removed to prioritize video start performance
+                        }, 200);
+
                     }, 600);
                     cardTimers.set(card, timerId);
                 }
@@ -2139,18 +2135,16 @@ window.StoryManager = {
             return;
         }
 
-        // --- OPTIMIZATION: PRELOAD NEXT IMAGE & CLIMAX ---
-        // 1. Preload Next Image
+        // --- OPTIMIZATION: PRELOAD NEXT IMAGE & CLIMAX (DAISY CHAIN) ---
         if(this.currentIndex + 1 < this.queue.length) {
             const next = this.queue[this.currentIndex + 1];
             if(next.type === 'image' && !this.preloadedUrls.has(next.src)) {
                 const img = new Image();
                 img.src = next.src;
-                img.fetchPriority = "high"; // Priority optimization
+                img.fetchPriority = "high";
                 this.preloadedUrls.add(next.src);
             }
         } 
-        // 2. Preload Climax (When showing last slide)
         else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
             if(!this.preloadedUrls.has(this.currentExp.finalImage)) {
                 const img = new Image();
@@ -2159,14 +2153,16 @@ window.StoryManager = {
                 this.preloadedUrls.add(this.currentExp.finalImage);
             }
         }
-        // --- END OPTIMIZATION ---
 
         document.getElementById('climaxCard').classList.remove('active');
         document.getElementById('storyTextContent').classList.remove('hidden');
 
         const item = this.queue[this.currentIndex];
         const currentFill = allFills[this.currentIndex];
+
+        // CLEANUP PREVIOUS SLIDE (Video stops here if playing)
         wrapper.innerHTML = ''; 
+        this.currentVideoPlayer = null;
 
         if(item.type === 'video') {
             this.playVideoSlide(item, wrapper, currentFill);
@@ -2188,50 +2184,71 @@ window.StoryManager = {
         const expId = this.currentExp.id;
         const preloadedIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
         
-        // CLEANUP: If preloaded iframe exists, remove it to stop background playback/resource usage
-        // We will create a NEW iframe to ensure fresh parameters (muted=0) while using the cached video data.
-        if (preloadedIframe) {
-            preloadedIframe.remove();
-        }
+        let iframe;
+        let isReused = false;
 
-        const iframe = document.createElement('iframe');
-        const ts = new Date().getTime();
-        
-        // === THE SOUND FIX ===
-        let src = item.src;
-        if(!src.includes('?')) src += '?';
-        // Ensure muted=0 for active playback
-        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-        
-        iframe.src = src;
-        iframe.className = 'story-media-item';
-        iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-        iframe.setAttribute('loading', 'eager');
-        
-        container.appendChild(iframe);
-        
-        requestAnimationFrame(() => iframe.classList.add('active'));
+        if (preloadedIframe) {
+            // === ELITE OPTIMIZATION: REUSE PRELOADED IFRAME ===
+            iframe = preloadedIframe;
+
+            // Move from preload container to story wrapper (Adoption)
+            container.appendChild(iframe);
+
+            // Reset visibility
+            iframe.style.opacity = '1';
+            iframe.classList.add('active');
+            isReused = true;
+        } else {
+            // Fallback: Create new iframe
+            iframe = document.createElement('iframe');
+            const ts = new Date().getTime();
+
+            let src = item.src;
+            if(!src.includes('?')) src += '?';
+            // Force muted=0 for immediate sound potential
+            src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
+
+            iframe.src = src;
+            iframe.className = 'story-media-item active';
+            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+            iframe.setAttribute('loading', 'eager');
+
+            container.appendChild(iframe);
+        }
 
         const player = new playerjs.Player(iframe);
         this.currentVideoPlayer = player;
 
-        player.on('ready', () => {
-            // Safety: Ensure it plays
-            player.play();
-            
-            // Double Check: Force volume if not globally muted
+        // Logic to run when player is ready (or re-ready)
+        const onPlayerReady = () => {
             if(!this.isMuted) {
                 player.unmute();
                 player.setVolume(100);
             }
 
-            // Sync Progress
+            // CRITICAL: Ensure video starts from 0 (fixes "not starting from start")
+            player.setCurrentTime(0);
+            player.play();
+
             player.getDuration((d) => {
                 const dur = d ? d : 15;
                 progressBar.style.transition = `transform ${dur}s linear`;
                 progressBar.style.transform = 'scaleX(1)';
             });
-        });
+        };
+
+        player.on('ready', onPlayerReady);
+
+        // If reused, the player might already be 'ready' internally, but re-attaching listener is safe.
+        // We can also optimistically call play/unmute if we suspect it's already loaded.
+        if (isReused) {
+             // Attempt immediate control in case event doesn't refire
+             setTimeout(() => {
+                 if(!this.isMuted) player.unmute();
+                 player.setCurrentTime(0);
+                 player.play();
+             }, 50);
+        }
 
         player.on('ended', () => {
             this.next();
@@ -2386,6 +2403,15 @@ window.StoryManager = {
 
     close: function() {
         this.fadeAudio(0, 200, true);
+
+        // Immediate video stop
+        if (this.currentVideoPlayer) {
+            try {
+                this.currentVideoPlayer.pause();
+                this.currentVideoPlayer.mute();
+            } catch(e){}
+        }
+
         document.getElementById('storyOverlay').classList.remove('show');
         
         setTimeout(() => {
