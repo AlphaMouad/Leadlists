@@ -317,13 +317,21 @@
 
         /* === ELITE GLOW ANIMATION === */
         .elite-glow-active {
-            animation: eliteGlowPop 2s forwards;
+            animation: eliteGlowPop 2.5s ease-in-out forwards;
         }
         @keyframes eliteGlowPop {
             0% { text-shadow: none; color: rgba(255, 255, 255, 0.5); transform: scale(1); }
-            50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(236, 80, 117, 0.4); color: #fff; transform: scale(1.05); }
-            100% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.95); transform: scale(1); }
+            50% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(236, 80, 117, 0.6); color: #fff; transform: scale(1.08); }
+            100% { text-shadow: none; color: rgba(255, 255, 255, 0.5); transform: scale(1); }
         }
+
+        /* FIX: Allow dropdown to overflow the input container */
+        .input-container:has(.elite-phone-group) {
+            overflow: visible !important;
+        }
+        /* Fallback for older browsers if :has isn't supported, though mostly mobile supports it now.
+           We can also add a specific class via JS, but let's try to target the ID in CSS if possible. */
+        #container-phone { overflow: visible !important; }
 
         .phone-input-group input { flex: 1; padding-left: 14px; }
 
@@ -2124,10 +2132,59 @@ document.addEventListener('DOMContentLoaded', function() {
     const kidsValue = document.getElementById('kidsValue'); const kidsCountInput = document.getElementById('kidsCount'); const kidsDecrease = document.getElementById('kidsDecrease'); const kidsIncrease = document.getElementById('kidsIncrease'); const kidsCountBadge = document.getElementById('kidsCountBadge'); const toggleIndicatorText = document.getElementById('toggleIndicatorText'); const guestsSelect = document.getElementById('guests');
     let kidsCount = 0; let isKidsExpanded = false;
     guestsSelect.addEventListener('change', function() { if (this.value) { kidsToggleWrapper.classList.add('visible'); } });
-    kidsToggleContainer.addEventListener('click', function(e) { e.preventDefault(); isKidsExpanded = !isKidsExpanded; if (isKidsExpanded) { kidsToggleContainer.classList.add('expanded'); kidsSelectionPanel.classList.add('visible'); toggleIndicatorText.textContent = 'Fermer'; if (kidsCount === 0) { kidsCount = 1; updateKidsDisplay(); } } else { kidsToggleContainer.classList.remove('expanded'); kidsSelectionPanel.classList.remove('visible'); toggleIndicatorText.textContent = kidsCount > 0 ? 'Modifier' : 'Ajouter'; } });
+    kidsToggleContainer.addEventListener('click', function(e) {
+        e.preventDefault();
+        isKidsExpanded = !isKidsExpanded;
+        if (isKidsExpanded) {
+            kidsToggleContainer.classList.add('expanded');
+            kidsSelectionPanel.classList.add('visible');
+            toggleIndicatorText.textContent = 'Fermer';
+            if (kidsCount === 0) { kidsCount = 1; updateKidsDisplay(); }
+        } else {
+            // CANCEL/COLLAPSE LOGIC
+            kidsToggleContainer.classList.remove('expanded');
+            kidsSelectionPanel.classList.remove('visible');
+            // If they collapse it, we assume "mistake/cancel", so reset to 0
+            kidsCount = 0;
+            updateKidsDisplay();
+            toggleIndicatorText.textContent = 'Ajouter';
+        }
+    });
+
     kidsIncrease.addEventListener('click', function(e) { e.stopPropagation(); if (kidsCount < 10) { kidsCount++; updateKidsDisplay(); animateValueBump(); } });
-    kidsDecrease.addEventListener('click', function(e) { e.stopPropagation(); if (kidsCount > 0) { kidsCount--; updateKidsDisplay(); animateValueBump(); if (kidsCount === 0) { isKidsExpanded = false; kidsToggleContainer.classList.remove('expanded'); kidsSelectionPanel.classList.remove('visible'); kidsCountBadge.classList.remove('visible'); toggleIndicatorText.textContent = 'Ajouter'; } } });
-    function updateKidsDisplay() { kidsValue.textContent = kidsCount; kidsCountInput.value = kidsCount; kidsDecrease.disabled = kidsCount <= 1; kidsIncrease.disabled = kidsCount >= 10; if (kidsCount > 0) { kidsCountBadge.textContent = kidsCount; kidsCountBadge.classList.add('visible'); } else { kidsCountBadge.classList.remove('visible'); } const label = document.querySelector('.kids-counter-label'); if (label) label.textContent = kidsCount === 1 ? 'enfant' : 'enfants'; }
+
+    kidsDecrease.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (kidsCount > 0) {
+            kidsCount--;
+            updateKidsDisplay();
+            animateValueBump();
+            if (kidsCount === 0) {
+                isKidsExpanded = false;
+                kidsToggleContainer.classList.remove('expanded');
+                kidsSelectionPanel.classList.remove('visible');
+                toggleIndicatorText.textContent = 'Ajouter';
+            }
+        }
+    });
+
+    function updateKidsDisplay() {
+        kidsValue.textContent = kidsCount;
+        kidsCountInput.value = kidsCount;
+        // Logic change: Allow decrement to 0 to close section
+        kidsDecrease.disabled = kidsCount <= 0;
+        kidsIncrease.disabled = kidsCount >= 10;
+
+        if (kidsCount > 0) {
+            kidsCountBadge.textContent = kidsCount;
+            kidsCountBadge.classList.add('visible');
+        } else {
+            kidsCountBadge.classList.remove('visible');
+        }
+
+        const label = document.querySelector('.kids-counter-label');
+        if (label) label.textContent = kidsCount === 1 ? 'enfant' : 'enfants';
+    }
     function animateValueBump() { kidsValue.classList.add('bump'); setTimeout(() => kidsValue.classList.remove('bump'), 300); }
 
     document.querySelectorAll('input, select').forEach(input => { input.addEventListener('focus', function() { const container = this.closest('.input-container'); if(container) container.classList.remove('error'); const group = this.closest('.form-group'); if(group) { const err = group.querySelector('.error-msg'); if(err) err.classList.remove('visible'); } }); });
