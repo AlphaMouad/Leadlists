@@ -1333,7 +1333,7 @@
                         <span class="form-trust-text">Réservation Gratuite & Sans Engagement</span>
                     </div>
 
-                    <form id="heroForm" autocomplete="on">
+                    <form id="heroForm" autocomplete="on" novalidate>
                         <input type="hidden" id="userID" name="userID" value="">
                         <div class="form-group">
                             <label for="fullname">Nom Complet</label>
@@ -1412,9 +1412,20 @@
                             <div class="input-container" id="container-phone">
                                 <div class="phone-input-group">
                                     <select class="country-code" id="countryCode" name="countryCode">
-                                        <option value="+33">+33</option><option value="+212">+212</option><option value="+44">+44</option><option value="+32">+32</option><option value="+41">+41</option><option value="+1">+1</option><option value="+34">+34</option><option value="+49">+49</option>
+                                        <option value="+33" selected>🇫🇷 +33</option>
+                                        <option value="+212">🇲🇦 +212</option>
+                                        <option value="+44">🇬🇧 +44</option>
+                                        <option value="+32">🇧🇪 +32</option>
+                                        <option value="+41">🇨🇭 +41</option>
+                                        <option value="+1">🇺🇸 +1</option>
+                                        <option value="+34">🇪🇸 +34</option>
+                                        <option value="+49">🇩🇪 +49</option>
+                                        <option value="+39">🇮🇹 +39</option>
+                                        <option value="+31">🇳🇱 +31</option>
+                                        <option value="+971">🇦🇪 +971</option>
+                                        <option value="+966">🇸🇦 +966</option>
                                     </select>
-                                    <input type="tel" id="phone" name="phone" placeholder="6 12 34 56 78" autocomplete="tel" inputmode="numeric" required>
+                                    <input type="tel" id="phone" name="phone" placeholder="6 12 34 56 78" autocomplete="tel" inputmode="tel" required>
                                 </div>
                             </div>
                             <div class="error-msg" id="error-phone">Numéro invalide</div>
@@ -1870,21 +1881,110 @@ document.addEventListener('DOMContentLoaded', function() {
         grid.appendChild(card);
     });
 
+    // === ELITE VALIDATION LOGIC ===
+    const validateField = (input) => {
+        const container = input.closest('.input-container');
+        // Use ID-based lookup primarily for stability, fallback to relative
+        const errorMsg = document.getElementById(`error-${input.id}`) || input.closest('.form-group')?.querySelector('.error-msg');
+        let isValid = true;
+        let msg = '';
+
+        // Clear previous state
+        if(container) container.classList.remove('error');
+        if(errorMsg) errorMsg.classList.remove('visible');
+
+        if (input.id === 'fullname') {
+            if (input.value.trim().length < 2) {
+                isValid = false; msg = 'Veuillez entrer votre nom complet';
+            }
+        } else if (input.id === 'restaurant') {
+            if (!input.value) {
+                isValid = false; msg = 'Veuillez choisir une atmosphère';
+            }
+        } else if (input.id === 'date') {
+            if (!input.value) {
+                isValid = false; msg = 'Date requise';
+            } else {
+                const selected = new Date(input.value);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                if(selected < today) {
+                    isValid = false; msg = 'Date invalide (passée)';
+                }
+            }
+        } else if (input.id === 'phone') {
+            const raw = input.value.replace(/[\s\.\-\(\)]/g, '');
+            if (raw.length < 8 || raw.length > 15) {
+                 isValid = false; msg = 'Numéro invalide (trop court/long)';
+            }
+        }
+
+        if (!isValid) {
+            if(container) container.classList.add('error');
+            if(errorMsg) { errorMsg.textContent = msg; errorMsg.classList.add('visible'); }
+        }
+        return isValid;
+    };
+
+    // Attach Live Validation
+    const formInputs = document.querySelectorAll('#heroForm input, #heroForm select');
+    formInputs.forEach(input => {
+        if(input.type === 'hidden') return;
+        input.addEventListener('blur', () => validateField(input));
+        input.addEventListener('input', () => {
+            const container = input.closest('.input-container');
+            const errorMsg = document.getElementById(`error-${input.id}`);
+            if(container) container.classList.remove('error');
+            if(errorMsg) errorMsg.classList.remove('visible');
+        });
+    });
+
     document.getElementById('heroForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
-        let valid = true; const requiredFields = ['fullname', 'restaurant', 'date', 'phone'];
-        const phoneInput = document.getElementById('phone'); const phoneRegex = /^[0-9\s\.]{8,15}$/;
-        if(!phoneRegex.test(phoneInput.value.replace(/\s/g, ''))) { valid = false; document.getElementById('container-phone').classList.add('error'); document.getElementById('error-phone').classList.add('visible'); document.getElementById('error-phone').textContent = 'Numéro incomplet ou incorrect'; }
-        requiredFields.forEach(id => {
-            const el = document.getElementById(id); const container = document.getElementById('container-' + id); const error = document.getElementById('error-' + id);
-            if(!el.value || el.value.trim() === '') { if(container) container.classList.add('error'); if(error) error.classList.add('visible'); valid = false; } else { if(container) container.classList.remove('error'); if(error) error.classList.remove('visible'); }
+
+        let isFormValid = true;
+        let firstInvalid = null;
+
+        // Validate all fields
+        formInputs.forEach(input => {
+            if(input.type === 'hidden') return;
+            if(!validateField(input)) {
+                isFormValid = false;
+                if(!firstInvalid) firstInvalid = input;
+            }
         });
-        if(valid) {
-            const restId = document.getElementById('restaurant').value; const dateVal = document.getElementById('date').value; const status = AvailabilityEngine.check(restId, dateVal);
-            if(!status.valid) { valid = false; const dateContainer = document.getElementById('container-date'); const dateError = document.getElementById('error-date'); dateContainer.classList.add('error'); dateError.textContent = status.msg; dateError.classList.add('visible'); const formContainer = document.getElementById('heroFormContainer'); formContainer.classList.add('shake-anim'); setTimeout(() => formContainer.classList.remove('shake-anim'), 500); if(navigator.vibrate) navigator.vibrate(200); return; }
+
+        if (!isFormValid) {
+            if(navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            const formContainer = document.getElementById('heroFormContainer');
+            formContainer.classList.add('shake-anim');
+            setTimeout(() => formContainer.classList.remove('shake-anim'), 500);
+            if(firstInvalid) {
+                firstInvalid.focus();
+                // Ensure visibility (scroll to)
+                firstInvalid.closest('.form-group')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
         }
-        if(!valid) { if(navigator.vibrate) navigator.vibrate([50, 50, 50]); return; }
+
+        // Availability Check
+        const restId = document.getElementById('restaurant').value;
+        const dateVal = document.getElementById('date').value;
+        const status = AvailabilityEngine.check(restId, dateVal);
+
+        if(!status.valid) {
+            const dateContainer = document.getElementById('container-date');
+            const dateError = document.getElementById('error-date');
+            dateContainer.classList.add('error');
+            dateError.textContent = status.msg;
+            dateError.classList.add('visible');
+            const formContainer = document.getElementById('heroFormContainer');
+            formContainer.classList.add('shake-anim');
+            setTimeout(() => formContainer.classList.remove('shake-anim'), 500);
+            if(navigator.vibrate) navigator.vibrate(200);
+            return;
+        }
 
         const formData = { fullname: document.getElementById('fullname').value.trim(), restaurant: document.getElementById('restaurant').value, date: document.getElementById('date').value, guests: document.getElementById('guests').value, enfants: document.getElementById('kidsCount').value, phone: document.getElementById('countryCode').value + document.getElementById('phone').value.replace(/\s/g, ''), countryCode: document.getElementById('countryCode').value, userID: document.getElementById('userID').value };
         const selectedRestaurant = experiencesData.find(e => e.id === formData.restaurant); const restaurantName = selectedRestaurant ? selectedRestaurant.name : formData.restaurant;
@@ -1921,7 +2021,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateKidsDisplay() { kidsValue.textContent = kidsCount; kidsCountInput.value = kidsCount; kidsDecrease.disabled = kidsCount <= 1; kidsIncrease.disabled = kidsCount >= 10; if (kidsCount > 0) { kidsCountBadge.textContent = kidsCount; kidsCountBadge.classList.add('visible'); } else { kidsCountBadge.classList.remove('visible'); } const label = document.querySelector('.kids-counter-label'); if (label) label.textContent = kidsCount === 1 ? 'enfant' : 'enfants'; }
     function animateValueBump() { kidsValue.classList.add('bump'); setTimeout(() => kidsValue.classList.remove('bump'), 300); }
 
-    document.querySelectorAll('input, select').forEach(input => { input.addEventListener('focus', function() { const container = this.closest('.input-container'); if(container) container.classList.remove('error'); const group = this.closest('.form-group'); if(group) { const err = group.querySelector('.error-msg'); if(err) err.classList.remove('visible'); } }); });
 
     const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } }); }, { threshold: 0, rootMargin: "0px 0px 250px 0px" });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
