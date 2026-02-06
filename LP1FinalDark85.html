@@ -269,13 +269,62 @@
         }
         .input-container select option { background: #0a0a0a; color: white; padding: 12px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-        .phone-input-group { display: flex; align-items: stretch; width: 100%; }
-        .phone-input-group .country-code {
-            width: 85px; border-right: 1px solid rgba(255, 255, 255, 0.08); padding: 0 6px 0 14px; font-weight: 600;
-            color: rgba(255, 255, 255, 0.75);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 4px center; background-size: 10px; flex-shrink: 0;
+        /* === ELITE PHONE INPUT GROUP === */
+        .elite-phone-group { display: flex; align-items: stretch; width: 100%; position: relative; }
+
+        .country-selector {
+            display: flex; align-items: center; gap: 4px;
+            padding: 0 8px 0 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer; position: relative; transition: all 0.3s ease;
+            min-width: 105px;
         }
+        .country-selector:hover { background: rgba(255, 255, 255, 0.06); }
+
+        .selected-flag { font-size: 1.4rem; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+
+        .code-input {
+            width: 42px; background: transparent; border: none; color: rgba(255, 255, 255, 0.9);
+            font-weight: 700; font-size: 0.9rem; padding: 0; outline: none; text-align: center;
+        }
+        .code-input:focus { color: #fff; }
+
+        .selector-arrow { width: 12px; height: 12px; stroke: rgba(255,255,255,0.4); fill: none; stroke-width: 2px; transition: transform 0.3s ease; }
+        .country-selector.active .selector-arrow { transform: rotate(180deg); stroke: var(--brand-raspberry); }
+
+        .country-dropdown {
+            position: absolute; top: calc(100% + 8px); left: 0; width: 280px;
+            background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+            z-index: 100; max-height: 300px; overflow-y: auto;
+            opacity: 0; transform: translateY(-10px); pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 6px;
+        }
+        .country-dropdown.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+        .dropdown-item {
+            display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+            border-radius: 10px; cursor: pointer; transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.8); font-size: 0.85rem; font-weight: 500;
+        }
+        .dropdown-item:hover { background: rgba(255, 255, 255, 0.08); color: #fff; transform: translateX(4px); }
+        .dropdown-item .flag { font-size: 1.2rem; }
+        .dropdown-item .c-code { margin-left: auto; color: rgba(255, 255, 255, 0.4); font-weight: 600; font-size: 0.75rem; }
+        .dropdown-item.custom-option { border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 4px; border-radius: 0 0 10px 10px; }
+
+        /* === ELITE GLOW ANIMATION === */
+        .elite-glow-active {
+            animation: eliteGlowPop 2s forwards;
+        }
+        @keyframes eliteGlowPop {
+            0% { text-shadow: none; color: rgba(255, 255, 255, 0.5); transform: scale(1); }
+            50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(236, 80, 117, 0.4); color: #fff; transform: scale(1.05); }
+            100% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.95); transform: scale(1); }
+        }
+
         .phone-input-group input { flex: 1; padding-left: 14px; }
 
         .kids-toggle-wrapper { margin-bottom: 0; margin-top: 0; transition: all 0.5s var(--ease-elite); opacity: 0; max-height: 0; overflow: hidden; pointer-events: none; }
@@ -1330,7 +1379,7 @@
                 <div class="hero-form-container" id="heroFormContainer">
                     <div class="form-trust-header">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <span class="form-trust-text">Réservation Gratuite & Sans Engagement</span>
+                        <span class="form-trust-text" id="trustText">Réservation Gratuite & Sans Engagement</span>
                     </div>
 
                     <form id="heroForm" autocomplete="on" novalidate>
@@ -1410,10 +1459,27 @@
                         <div class="form-group">
                             <label for="phone">WhatsApp (Confirmation)</label>
                             <div class="input-container" id="container-phone">
-                                <div class="phone-input-group">
-                                    <select class="country-code" id="countryCode" name="countryCode">
-                                        <option value="+33">+33</option><option value="+212">+212</option><option value="+44">+44</option><option value="+32">+32</option><option value="+41">+41</option><option value="+1">+1</option><option value="+34">+34</option><option value="+49">+49</option>
-                                    </select>
+                                <div class="elite-phone-group">
+                                    <div class="country-selector" id="countrySelector" onclick="toggleCountryDropdown(event)">
+                                        <span class="selected-flag" id="selectedFlag">🇫🇷</span>
+                                        <input type="text" id="countryCode" name="countryCode" value="+33" class="code-input" inputmode="tel" maxlength="5" oninput="handleCodeInput(this)">
+                                        <svg class="selector-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                    </div>
+
+                                    <div class="country-dropdown" id="countryDropdown">
+                                        <div class="dropdown-item" onclick="selectCountry('🇫🇷', '+33')"><span class="flag">🇫🇷</span> <span class="c-name">France</span> <span class="c-code">+33</span></div>
+                                        <div class="dropdown-item" onclick="selectCountry('🇲🇦', '+212')"><span class="flag">🇲🇦</span> <span class="c-name">Maroc</span> <span class="c-code">+212</span></div>
+                                        <div class="dropdown-item" onclick="selectCountry('🇬🇧', '+44')"><span class="flag">🇬🇧</span> <span class="c-name">UK</span> <span class="c-code">+44</span></div>
+                                        <div class="dropdown-item" onclick="selectCountry('🇧🇪', '+32')"><span class="flag">🇧🇪</span> <span class="c-name">Belgique</span> <span class="c-code">+32</span></div>
+                                        <div class="dropdown-item" onclick="selectCountry('🇨🇭', '+41')"><span class="flag">🇨🇭</span> <span class="c-name">Suisse</span> <span class="c-code">+41</span></div>
+                                        <div class="dropdown-item" onclick="selectCountry('🇺🇸', '+1')"><span class="flag">🇺🇸</span> <span class="c-name">USA</span> <span class="c-code">+1</span></div>
+                                        <div class="dropdown-item" onclick="selectCountry('🇪🇸', '+34')"><span class="flag">🇪🇸</span> <span class="c-name">Espagne</span> <span class="c-code">+34</span></div>
+                                        <div class="dropdown-item" onclick="selectCountry('🇩🇪', '+49')"><span class="flag">🇩🇪</span> <span class="c-name">Allemagne</span> <span class="c-code">+49</span></div>
+                                        <div class="dropdown-item" onclick="selectCountry('🇮🇹', '+39')"><span class="flag">🇮🇹</span> <span class="c-name">Italie</span> <span class="c-code">+39</span></div>
+                                        <div class="dropdown-item" onclick="selectCountry('🇦🇪', '+971')"><span class="flag">🇦🇪</span> <span class="c-name">UAE</span> <span class="c-code">+971</span></div>
+                                        <div class="dropdown-item custom-option" onclick="selectCountry('🌐', '')"><span class="flag">🌐</span> <span class="c-name">Autre (Saisie)</span></div>
+                                    </div>
+
                                     <input type="tel" id="phone" name="phone" placeholder="6 12 34 56 78" autocomplete="tel" inputmode="tel" required>
                                 </div>
                             </div>
@@ -1730,6 +1796,73 @@ const AvailabilityEngine = {
         return rule.forbiddenDays.includes(todayName);
     }
 };
+
+// === ELITE PHONE INPUT LOGIC ===
+function toggleCountryDropdown(e) {
+    if(e.target.closest('.code-input')) return; // Don't toggle if clicking input
+    e.stopPropagation();
+    const dd = document.getElementById('countryDropdown');
+    const selector = document.getElementById('countrySelector');
+    const isVisible = dd.classList.contains('visible');
+
+    if(isVisible) {
+        dd.classList.remove('visible');
+        selector.classList.remove('active');
+    } else {
+        dd.classList.add('visible');
+        selector.classList.add('active');
+    }
+}
+
+function selectCountry(flag, code) {
+    document.getElementById('selectedFlag').textContent = flag;
+    const input = document.getElementById('countryCode');
+    input.value = code;
+
+    document.getElementById('countryDropdown').classList.remove('visible');
+    document.getElementById('countrySelector').classList.remove('active');
+
+    if(code) {
+        document.getElementById('phone').focus();
+    } else {
+        input.focus();
+    }
+}
+
+function handleCodeInput(el) {
+    if(!el.value.startsWith('+')) {
+        el.value = '+' + el.value.replace(/[^\d]/g, '');
+    } else {
+        el.value = '+' + el.value.substring(1).replace(/[^\d]/g, '');
+    }
+
+    const val = el.value;
+    const flagMap = {
+        '+33': '🇫🇷', '+212': '🇲🇦', '+44': '🇬🇧', '+32': '🇧🇪',
+        '+41': '🇨🇭', '+1': '🇺🇸', '+34': '🇪🇸', '+49': '🇩🇪',
+        '+39': '🇮🇹', '+971': '🇦🇪'
+    };
+
+    if(flagMap[val]) {
+        document.getElementById('selectedFlag').textContent = flagMap[val];
+    } else {
+        document.getElementById('selectedFlag').textContent = '🌐';
+    }
+}
+
+document.addEventListener('click', function(e) {
+    const dd = document.getElementById('countryDropdown');
+    const selector = document.getElementById('countrySelector');
+    if(dd && dd.classList.contains('visible') && !selector.contains(e.target)) {
+        dd.classList.remove('visible');
+        selector.classList.remove('active');
+    }
+});
+
+setTimeout(() => {
+    const text = document.getElementById('trustText');
+    if(text) text.classList.add('elite-glow-active');
+}, 2500);
 
 // === USER ID GENERATOR: DDMM + 5 Random Chars ===
 function generateUserID() {
