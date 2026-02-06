@@ -226,7 +226,7 @@
             border-radius: 24px; padding: 1.5rem; margin-bottom: 1rem; position: relative; z-index: 20; transform: translateZ(0);
             box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(236, 80, 117, 0.08);
             animation: formElevate 1.2s var(--ease-elite) 0.5s forwards; opacity: 0; transform: translateY(30px) scale(0.98);
-            transition: box-shadow 0.4s var(--ease-luxury);
+            transition: box-shadow 0.4s var(--ease-luxury); scroll-margin-top: 20px;
         }
         .hero-form-container:focus-within {
             box-shadow: 0 0 0 1px rgba(236, 80, 117, 0.2), 0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 45px rgba(236, 80, 117, 0.15);
@@ -624,13 +624,12 @@
             letter-spacing: 1px;
         }
         .rating-score-box {
-            background: #F3F4F6;
+            background: transparent;
             color: var(--text-dark);
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(0,0,0,0.05);
+            padding: 0;
+            border: none;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -638,7 +637,7 @@
         .review-text-clean {
             color: #9CA3AF;
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
         }
         
         .card-description { margin-bottom: 1rem; color: var(--text-body); font-size: 0.9rem; line-height: 1.5; }
@@ -1994,7 +1993,7 @@ function initTeaserEngine() {
                             // Note: Image preloading removed to prioritize video start performance
                         }, 200);
 
-                    }, 600);
+                    }, 150);
                     cardTimers.set(card, timerId);
                 }
             } else {
@@ -2253,7 +2252,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function scrollToForm(id) {
     const exp = experiencesData.find(e => e.id === id); if((exp && exp.soldOut) || AvailabilityEngine.isFullToday(id)) return;
-    document.getElementById('restaurant').value = id; document.getElementById('heroFormContainer').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => { const fullnameInput = document.getElementById('fullname'); if(!fullnameInput.value) fullnameInput.focus(); }, 600);
+    document.getElementById('restaurant').value = id; document.getElementById('heroFormContainer').scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => { const fullnameInput = document.getElementById('fullname'); fullnameInput.focus(); }, 500);
 }
 
 function filterExperiences(cat, btn) {
