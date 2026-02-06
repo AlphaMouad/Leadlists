@@ -2035,13 +2035,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (intent === 'festif') {
         // Hero
         const title1 = document.querySelector('.title-line-1'); if(title1) title1.textContent = "Votre Accès Privé aux";
-        const title2 = document.getElementById('heroTitleLine2'); if(title2) title2.textContent = "Restaurants Festifs";
+        const title2 = document.getElementById('heroTitleLine2'); if(title2) title2.innerHTML = "Restaurants<br>Festifs";
         const title3 = document.querySelector('.title-line-3'); if(title3) title3.textContent = "les plus prisés de Marrakech";
-        const sub = document.querySelector('.hero-subtitle'); if(sub) sub.innerHTML = "Accédez aux 7 adresses incontournables où l'ambiance monte crescendo. Réservation instantanée, sans acompte.";
+        const sub = document.querySelector('.hero-subtitle'); if(sub) sub.innerHTML = "Accédez aux <strong>7 meilleurs restaurants festifs</strong>. Réservation sans acompte en 60s.";
 
         // Experiences
-        const expTitle = document.getElementById('experiences-title'); if(expTitle) expTitle.innerHTML = "7 Ambiances Electriques. Où ferez-vous la fête ce soir ?";
-        const expSub = document.getElementById('experiences-subtitle'); if(expSub) expSub.textContent = "Oubliez les dîners classiques. Voici les 7 spots confidentiels où Marrakech s'enflamme réellement une fois la nuit tombée.";
+        const expTitle = document.getElementById('experiences-title'); if(expTitle) expTitle.innerHTML = "7 Ambiances Electriques.<br>Où ferez-vous la fête ce soir ?";
+        const expSub = document.getElementById('experiences-subtitle'); if(expSub) expSub.textContent = "Oubliez les dîners classiques. Voici les 7 spots confidentiels où Marrakech s'enflamme une fois la nuit tombée.";
 
         // Filter trigger
         setTimeout(() => {
@@ -2052,13 +2052,13 @@ document.addEventListener('DOMContentLoaded', function() {
     } else if (intent === 'spectacle') {
         // Hero
         const title1 = document.querySelector('.title-line-1'); if(title1) title1.textContent = "Votre Table VIP pour un";
-        const title2 = document.getElementById('heroTitleLine2'); if(title2) title2.textContent = "Dîner Spectacle";
+        const title2 = document.getElementById('heroTitleLine2'); if(title2) title2.innerHTML = "Dîner<br>Spectacle";
         const title3 = document.querySelector('.title-line-3'); if(title3) title3.textContent = "d'exception à Marrakech";
-        const sub = document.querySelector('.hero-subtitle'); if(sub) sub.innerHTML = "Accédez aux 7 scènes artistiques les plus époustouflantes de la ville rouge. Réservation instantanée, sans acompte.";
+        const sub = document.querySelector('.hero-subtitle'); if(sub) sub.innerHTML = "Accédez aux <strong>7 meilleurs dîners spectacles</strong>. Réservation sans acompte en 60s.";
 
         // Experiences
-        const expTitle = document.getElementById('experiences-title'); if(expTitle) expTitle.innerHTML = "7 Shows Uniques. Quelle magie choisirez-vous ce soir ?";
-        const expSub = document.getElementById('experiences-subtitle'); if(expSub) expSub.textContent = "Oubliez les adresses de masse. Voici les 7 scènes grandioses où la haute gastronomie rencontre le spectacle vivant ce soir.";
+        const expTitle = document.getElementById('experiences-title'); if(expTitle) expTitle.innerHTML = "7 Shows Uniques.<br>Quelle magie choisirez-vous ce soir ?";
+        const expSub = document.getElementById('experiences-subtitle'); if(expSub) expSub.textContent = "Oubliez les adresses de masse. Voici les 7 scènes grandioses où la haute gastronomie rencontre le spectacle vivant.";
 
         bookButtonText = "DÉCOUVRIR LES SPECTACLES";
 
