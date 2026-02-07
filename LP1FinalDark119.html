@@ -1143,25 +1143,25 @@ iframe.story-media-item {
 }
 .menu-actions { display: flex; align-items: center; gap: 16px; }
 
-/* === NEW RESERVATION BUTTON IN MENU (ELITE COMPACT DESIGN) === */
+/* === NEW RESERVATION BUTTON IN MENU (ULTRA COMPACT ELITE) === */
 .btn-menu-book {
-    display: flex; align-items: center; gap: 6px;
+    display: flex; align-items: center; gap: 5px;
     background: var(--brand-gradient); color: #fff;
-    padding: 8px 16px; border-radius: 12px;
-    font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+    padding: 6px 14px; border-radius: 8px; /* Sharper radius */
+    font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
     text-decoration: none; cursor: pointer; border: none;
-    box-shadow: 0 4px 12px rgba(236, 80, 117, 0.3);
+    box-shadow: 0 3px 10px rgba(236, 80, 117, 0.25);
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
     -webkit-tap-highlight-color: transparent;
-    height: 36px; /* Explicit height for alignment */
+    height: 32px; /* Smaller height */
 }
-.btn-menu-book:active { transform: scale(0.96); box-shadow: 0 2px 6px rgba(236, 80, 117, 0.2); }
+.btn-menu-book:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(236, 80, 117, 0.2); }
 
 /* === OPTIMIZED CLOSE BUTTON (TOUCH TARGET 44px+) === */
 .close-menu-container {
-    width: 44px; height: 44px;
+    width: 40px; height: 40px;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; margin-right: -12px; /* Pull closer to edge */
+    cursor: pointer; margin-right: -8px; /* Adjusted margin */
     border-radius: 50%;
     transition: background 0.2s ease;
     -webkit-tap-highlight-color: transparent;
@@ -2967,14 +2967,16 @@ const MenuEngine = (() => {
         },
 
         book: () => {
-            MenuEngine.close();
-            // Wait slightly for close animation to finish/scroll restore
+            // Close without restoring scroll (we will scroll to form instead)
+            MenuEngine.close(true);
+
+            // Wait for modal to fade out visually, then scroll
             setTimeout(() => {
                 if(state.currentId) scrollToForm(state.currentId);
-            }, 50);
+            }, 350);
         },
 
-        close: () => {
+        close: (skipRestore = false) => {
             if (!state.isOpen) return;
             state.isOpen = false;
             state.isDestroyed = true;
@@ -2988,22 +2990,25 @@ const MenuEngine = (() => {
                 modal.style.display = 'none';
                 container.innerHTML = '';
                 
-                // 5. RESTORE SCROLL (INSTANT JUMP, NO ANIMATION)
-                const html = document.documentElement;
-                const scrollBehavior = html.style.scrollBehavior;
-                html.style.scrollBehavior = 'auto'; // Kill smooth scroll
-
+                // Unlock Body
                 document.body.style.position = '';
                 document.body.style.top = '';
                 document.body.style.width = '';
                 document.body.style.overflow = '';
 
-                window.scrollTo(0, state.savedScrollY);
+                if (!skipRestore) {
+                    // 5. RESTORE SCROLL (INSTANT JUMP, NO ANIMATION)
+                    const html = document.documentElement;
+                    const scrollBehavior = html.style.scrollBehavior;
+                    html.style.scrollBehavior = 'auto'; // Kill smooth scroll
 
-                // Restore preferences
-                requestAnimationFrame(() => {
-                    html.style.scrollBehavior = scrollBehavior;
-                });
+                    window.scrollTo(0, state.savedScrollY);
+
+                    // Restore preferences
+                    requestAnimationFrame(() => {
+                        html.style.scrollBehavior = scrollBehavior;
+                    });
+                }
             }, 300);
         }
     };
