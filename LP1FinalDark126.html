@@ -813,28 +813,18 @@ img.story-media-item {
 
 iframe.story-media-item {
     width: 100%; height: 100%; 
+    min-width: 100%; min-height: 100%;
     border: none; display: block;
-            position: absolute; top: 0 !important; left: 0 !important;
-    object-fit: cover;
-            object-position: top center !important;
-    /* Ensure video is full screen */
-            transform: none !important;
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    /* Ensure video is full screen and hardware accelerated */
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 /* UI LAYER */
         .story-overlay-icon {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
-            width: 80px; height: 80px;
-            background: transparent;
-            display: flex; align-items: center; justify-content: center;
-            color: white; pointer-events: none;
-            opacity: 0; transition: opacity 0.15s ease-out, transform 0.15s ease-out;
-            z-index: 500;
+            display: none !important;
         }
-        .story-overlay-icon.visible {
-            opacity: 1; transform: translate(-50%, -50%) scale(1);
-        }
-        .story-overlay-icon svg { width: 64px; height: 64px; fill: white; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5)); }
 
 .story-ui-top {
     position: absolute; top: 0; left: 0; width: 100%;
@@ -2404,25 +2394,18 @@ window.StoryManager = {
         let wasPausedBeforeTouch = false;
 
         const handleStart = (e) => {
-            // Only allow manual pause for VIDEO items
-            const currentItem = this.queue[this.currentIndex];
-            if (currentItem && currentItem.type !== 'video') return;
-
+            // Allow manual pause for ALL items (Video & Image)
             // Allow default for scrolling unless we are in the overlay (overlay handles scroll lock)
             if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault(); 
             
             touchStartTime = Date.now();
             wasPausedBeforeTouch = this.isPaused;
             
-            // Visual feedback: Pause immediately on touch down
+            // Pause immediately on touch down
             this.pause(); 
         };
 
         const handleEnd = (e) => {
-            // Only allow manual resume for VIDEO items
-            const currentItem = this.queue[this.currentIndex];
-            if (currentItem && currentItem.type !== 'video') return;
-
             if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault();
             
             const duration = Date.now() - touchStartTime;
@@ -2761,12 +2744,6 @@ window.StoryManager = {
     pause: function() {
         this.isPaused = true;
 
-        // Show Play Icon ONLY for Video
-        const currentItem = this.queue[this.currentIndex];
-        if (currentItem && currentItem.type === 'video') {
-            document.getElementById('storyOverlayIcon').classList.add('visible');
-        }
-
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
         if(fill) {
             const computed = window.getComputedStyle(fill);
@@ -2782,8 +2759,6 @@ window.StoryManager = {
     resume: function() {
         if(!this.isPaused) return;
         this.isPaused = false;
-        // Hide Play Icon
-        document.getElementById('storyOverlayIcon').classList.remove('visible');
         
         const item = this.queue[this.currentIndex];
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
