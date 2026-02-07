@@ -1143,33 +1143,35 @@ iframe.story-media-item {
 }
 .menu-actions { display: flex; align-items: center; gap: 16px; }
 
-/* === NEW RESERVATION BUTTON IN MENU === */
+/* === NEW RESERVATION BUTTON IN MENU (ELITE COMPACT DESIGN) === */
 .btn-menu-book {
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: 6px;
     background: var(--brand-gradient); color: #fff;
-    padding: 10px 20px; border-radius: 50px;
-    font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+    padding: 8px 16px; border-radius: 12px;
+    font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
     text-decoration: none; cursor: pointer; border: none;
-    box-shadow: 0 4px 15px rgba(236, 80, 117, 0.4);
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(236, 80, 117, 0.3);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
     -webkit-tap-highlight-color: transparent;
+    height: 36px; /* Explicit height for alignment */
 }
-.btn-menu-book:active { transform: scale(0.95); }
+.btn-menu-book:active { transform: scale(0.96); box-shadow: 0 2px 6px rgba(236, 80, 117, 0.2); }
 
 /* === OPTIMIZED CLOSE BUTTON (TOUCH TARGET 44px+) === */
 .close-menu-container {
     width: 44px; height: 44px;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; margin-right: -10px;
+    cursor: pointer; margin-right: -12px; /* Pull closer to edge */
     border-radius: 50%;
     transition: background 0.2s ease;
     -webkit-tap-highlight-color: transparent;
 }
-.close-menu-container:active { background: rgba(255,255,255,0.15); }
+.close-menu-container:active { background: rgba(255,255,255,0.1); }
 
 .close-menu-icon {
-    font-size: 2rem; line-height: 1; color: rgba(255,255,255,0.7);
+    font-size: 1.8rem; line-height: 1; color: rgba(255,255,255,0.6);
     transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    font-weight: 300; /* Thinner elegant X */
 }
 .close-menu-container:hover .close-menu-icon { color: #fff; transform: rotate(90deg); }
 
@@ -1758,7 +1760,7 @@ iframe.story-media-item {
                 <h3 id="menu-title">Carte & Menu</h3>
                 <div class="menu-actions">
                     <button class="btn-menu-book" onclick="MenuEngine.book()">
-                        RÉSERVER
+                        RÉSERVER MA SOIRÉE
                     </button>
                     <div class="close-menu-container" onclick="MenuEngine.close()">
                         <span class="close-menu-icon">×</span>
