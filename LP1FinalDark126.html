@@ -815,11 +815,27 @@ iframe.story-media-item {
     width: 100%; height: 100%; 
     border: none; display: block;
     object-fit: cover;
+            object-position: top center !important;
     /* Ensure video is full screen */
-    transform: translateZ(0);
+            transform: none !important;
 }
 
 /* UI LAYER */
+        .story-overlay-icon {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+            width: 80px; height: 80px;
+            background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(8px);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; pointer-events: none;
+            opacity: 0; transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 500;
+        }
+        .story-overlay-icon.visible {
+            opacity: 1; transform: translate(-50%, -50%) scale(1);
+        }
+        .story-overlay-icon svg { width: 36px; height: 36px; fill: white; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+
 .story-ui-top {
     position: absolute; top: 0; left: 0; width: 100%;
     padding: 15px 15px 30px 15px; 
@@ -1716,6 +1732,9 @@ iframe.story-media-item {
                 </div>
             </div>
             <div class="story-media-wrapper" id="storyMediaWrapper"></div>
+            <div class="story-overlay-icon" id="storyOverlayIcon">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
             <div class="story-nav-zone nav-left" id="storyNavLeft"></div>
             <div class="story-nav-zone nav-center" id="storyNavHold"></div>
             <div class="story-nav-zone nav-right" id="storyNavRight"></div>
@@ -2552,12 +2571,8 @@ window.StoryManager = {
         
         const item = this.queue[this.currentIndex];
         
-        // Hide footer for videos, show for images
-        if (item.type === 'video') {
-            document.getElementById('storyTextContent').classList.add('hidden');
-        } else {
-            document.getElementById('storyTextContent').classList.remove('hidden');
-        }
+        // Ensure footer is visible for both images and videos
+        document.getElementById('storyTextContent').classList.remove('hidden');
 
         const currentFill = allFills[this.currentIndex];
         
@@ -2596,7 +2611,7 @@ window.StoryManager = {
             container.appendChild(iframe);
             
             // Reset visibility
-            iframe.style.opacity = '1';
+            iframe.style.opacity = '0';
             iframe.classList.add('active');
             isReused = true;
         } else {
@@ -2611,11 +2626,19 @@ window.StoryManager = {
             
             iframe.src = src;
             iframe.className = 'story-media-item active';
+            iframe.style.opacity = '0';
             iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
             iframe.setAttribute('loading', 'eager');
             
             container.appendChild(iframe);
         }
+
+        // Smooth transition for video appearance
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                iframe.style.opacity = '1';
+            });
+        });
 
         const player = new playerjs.Player(iframe);
         this.currentVideoPlayer = player;
@@ -2729,6 +2752,9 @@ window.StoryManager = {
     // 8. Navigation & Controls
     pause: function() {
         this.isPaused = true;
+        // Show Play Icon
+        document.getElementById('storyOverlayIcon').classList.add('visible');
+
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
         if(fill) {
             const computed = window.getComputedStyle(fill);
@@ -2744,6 +2770,8 @@ window.StoryManager = {
     resume: function() {
         if(!this.isPaused) return;
         this.isPaused = false;
+        // Hide Play Icon
+        document.getElementById('storyOverlayIcon').classList.remove('visible');
         
         const item = this.queue[this.currentIndex];
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
