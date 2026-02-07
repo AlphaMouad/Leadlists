@@ -3011,18 +3011,6 @@ const MenuEngine = (() => {
             await strategies.direct(url, container);
         }
 
-        // 3. Always show a "Safety Link" button at the bottom after a timeout
-        // in case the viewer is blank (common issue with iframes)
-        setTimeout(() => {
-            if (state.isOpen && !state.isDestroyed) {
-                const btn = document.createElement('a');
-                btn.href = url;
-                btn.target = '_blank';
-                btn.innerHTML = '📄 Ouvrir le PDF (Lien direct)';
-                btn.style.cssText = 'position:absolute; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:white; padding:10px 20px; border-radius:30px; text-decoration:none; font-weight:700; font-size:0.8rem; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:100; border:1px solid rgba(255,255,255,0.2); animation: fadeSlideUp 0.5s ease;';
-                container.appendChild(btn);
-            }
-        }, 2000);
     };
 
     return {
@@ -3088,12 +3076,22 @@ const MenuEngine = (() => {
                 modal.style.display = 'none';
                 container.innerHTML = ''; // Cleanup
                 
-                // Unlock Body
+                // Unlock Body & Restore Scroll Instantly
+                const html = document.documentElement;
+                const scrollBehavior = html.style.scrollBehavior;
+                html.style.scrollBehavior = 'auto'; // Disable smooth scroll for instant jump
+
                 document.body.style.overflow = '';
                 document.body.style.position = '';
                 document.body.style.width = '';
                 document.body.style.top = '';
+
                 window.scrollTo(0, state.savedScrollY);
+
+                // Restore smooth scroll in next frame
+                requestAnimationFrame(() => {
+                    html.style.scrollBehavior = scrollBehavior;
+                });
             }, 300);
         }
     };
