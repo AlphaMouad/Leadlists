@@ -1106,7 +1106,7 @@ iframe.story-media-item {
 }
 .story-climax-card.active .story-trust { opacity: 0.94; transform: translateY(0); }
 
-/* === ELITE MENU MODAL V18 (DARK EDITION) === */
+/* === ELITE MENU MODAL V21 (DARK EDITION) === */
 .menu-modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100dvh;
@@ -1136,29 +1136,42 @@ iframe.story-media-item {
     border-bottom: 1px solid rgba(255,255,255,0.08); 
     display: flex; justify-content: space-between; align-items: center; 
     background: rgba(255,255,255,0.02); 
-    flex-shrink: 0; min-height: 60px;
+    flex-shrink: 0; min-height: 70px;
 }
 .menu-header h3 { 
     font-size: 1.1rem; margin: 0; color: #fff; font-weight: 700; letter-spacing: 0.5px;
 }
-.menu-actions { display: flex; align-items: center; gap: 12px; }
+.menu-actions { display: flex; align-items: center; gap: 16px; }
 
-.btn-open-ext {
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.1); color: #fff;
-    padding: 8px 14px; border-radius: 50px;
-    font-size: 0.75rem; font-weight: 700; text-decoration: none;
-    transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.05);
+/* === NEW RESERVATION BUTTON IN MENU === */
+.btn-menu-book {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--brand-gradient); color: #fff;
+    padding: 10px 20px; border-radius: 50px;
+    font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+    text-decoration: none; cursor: pointer; border: none;
+    box-shadow: 0 4px 15px rgba(236, 80, 117, 0.4);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
 }
-.btn-open-ext:hover { background: rgba(255,255,255,0.2); transform: translateY(-1px); }
-.btn-open-ext svg { width: 14px; height: 14px; stroke-width: 2.5; }
+.btn-menu-book:active { transform: scale(0.95); }
 
-.close-menu { 
-    cursor: pointer; font-size: 1.8rem; line-height: 1; color: rgba(255,255,255,0.6); 
-    padding: 8px; margin: -8px; border-radius: 50%;
-    transition: all 0.2s ease;
+/* === OPTIMIZED CLOSE BUTTON (TOUCH TARGET 44px+) === */
+.close-menu-container {
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; margin-right: -10px;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
-.close-menu:hover { background: rgba(255,255,255,0.1); color: #fff; transform: rotate(90deg); }
+.close-menu-container:active { background: rgba(255,255,255,0.15); }
+
+.close-menu-icon {
+    font-size: 2rem; line-height: 1; color: rgba(255,255,255,0.7);
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.close-menu-container:hover .close-menu-icon { color: #fff; transform: rotate(90deg); }
 
 .menu-iframe-container {
     flex: 1 1 auto; position: relative; width: 100%; min-height: 0; 
@@ -1738,17 +1751,18 @@ iframe.story-media-item {
         </div>
     </div>
 
-    <!-- === MENU MODAL V18 === -->
+    <!-- === MENU MODAL V21 === -->
     <div class="menu-modal-overlay" id="menuModal">
         <div class="menu-modal-content">
             <div class="menu-header">
                 <h3 id="menu-title">Carte & Menu</h3>
                 <div class="menu-actions">
-                    <a href="#" id="menu-external-link" target="_blank" class="btn-open-ext">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                        Ouvrir PDF
-                    </a>
-                    <div class="close-menu" onclick="MenuEngine.close()">×</div>
+                    <button class="btn-menu-book" onclick="MenuEngine.book()">
+                        RÉSERVER
+                    </button>
+                    <div class="close-menu-container" onclick="MenuEngine.close()">
+                        <span class="close-menu-icon">×</span>
+                    </div>
                 </div>
             </div>
             <div class="menu-iframe-container" id="iframeContainer"></div>
@@ -2140,7 +2154,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="card-description">${exp.description}</p>
                 <div class="card-meta"><span>${exp.time} • Tous les soirs</span> <span class="price-range" onclick="openMapWidget('${exp.id}', event)">${exp.price}</span></div>
                 <div class="card-actions-container">
-                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>MENU</button>
+                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}', '${exp.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>MENU</button>
                     <button class="card-btn btn-book" onclick="scrollToForm('${exp.id}')">RÉSERVER MA SOIRÉE (0€)</button>
                 </div>
                 <div class="trust-micro-signal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> Paiement sur place &bull; Zéro Frais</div>
@@ -2825,7 +2839,7 @@ window.StoryManager = {
 StoryManager.init();
 
 /* ============================================================================
-   ELITE MENU ENGINE V20 - NATIVE PERFORMANCE & SCROLL LOCK
+   ELITE MENU ENGINE V21 - RESERVATION INTEGRATION & OPTIMIZED UX
    ============================================================================ */
 
 const MenuEngine = (() => {
@@ -2839,12 +2853,13 @@ const MenuEngine = (() => {
     const state = {
         isOpen: false,
         currentUrl: null,
+        currentId: null, // Store restaurant ID for booking
         isDestroyed: false,
         savedScrollY: 0
     };
 
     const utils = {
-        log: (msg) => console.log(`[MenuEngine V20] ${msg}`),
+        log: (msg) => console.log(`[MenuEngine V21] ${msg}`),
         
         isIOS: () => /iPad|iPhone|iPod/i.test(navigator.userAgent) && !window.MSStream,
         isAndroid: () => /Android/i.test(navigator.userAgent)
@@ -2920,21 +2935,19 @@ const MenuEngine = (() => {
             });
         },
 
-        open: (url) => {
+        open: (url, id) => {
             if (!url) return;
             if (state.isOpen) return;
 
             state.isOpen = true;
             state.isDestroyed = false;
+            state.currentId = id; // Capture ID
 
             // 1. CAPTURE SCROLL POSITION ACCURATELY
             state.savedScrollY = window.scrollY || document.documentElement.scrollTop;
             
             const modal = document.getElementById('menuModal');
             const container = document.getElementById('iframeContainer');
-            const extLink = document.getElementById('menu-external-link');
-            
-            if(extLink) extLink.href = url;
             
             // 2. LOCK BODY (Prevents background scroll)
             document.body.style.position = 'fixed';
@@ -2949,6 +2962,14 @@ const MenuEngine = (() => {
 
             // 4. RUN ENGINE
             run(url, container);
+        },
+
+        book: () => {
+            MenuEngine.close();
+            // Wait slightly for close animation to finish/scroll restore
+            setTimeout(() => {
+                if(state.currentId) scrollToForm(state.currentId);
+            }, 50);
         },
 
         close: () => {
@@ -2993,7 +3014,7 @@ if (document.readyState === 'loading') {
     MenuEngine.init();
 }
 
-window.openMenu = (url) => MenuEngine.open(url);
+window.openMenu = (url, id) => MenuEngine.open(url, id);
 window.closeMenu = () => MenuEngine.close();
 
 
