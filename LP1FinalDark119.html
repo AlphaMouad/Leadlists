@@ -2825,759 +2825,276 @@ window.StoryManager = {
 StoryManager.init();
 
 /* ============================================================================
-   ELITE MENU ENGINE V18 - ULTRA-RELIABLE MOBILE-FIRST PDF VIEWER
-   ============================================================================
-   
-   ARCHITECTURE OVERVIEW:
-   This engine uses a multi-strategy approach with automatic failover to ensure
-   PDFs always display on all devices (Android, iOS, Desktop).
-   
-   STRATEGY PRIORITY:
-   1. Native PDF.js rendering (most reliable, works everywhere)
-   2. Google Docs Viewer (fallback for complex PDFs)
-   3. Direct link (ultimate fallback)
-   
-   MOBILE OPTIMIZATIONS:
-   - Prevents blank gray screen by using visibility checks
-   - Multiple retry mechanisms with exponential backoff
-   - Touch-optimized scrolling with proper viewport handling
-   - Memory-efficient cleanup on close
-   
+   ELITE MENU ENGINE V19 - ULTIMATE HYBRID PDF RENDERER (MOBILE OPTIMIZED)
    ============================================================================ */
 
 const MenuEngine = (() => {
     'use strict';
 
-    // ==================== CONFIGURATION ====================
     const CONFIG = {
-        // Timing
-        INITIAL_LOAD_TIMEOUT: 1500,      // Show content after this (optimistic)
-        RETRY_DELAY: 2000,                // Wait before retry
-        MAX_RETRIES: 3,                   // Maximum retry attempts
-        SAFETY_TIMEOUT: 4000,             // Show fallback link after this
-        VISIBILITY_CHECK_INTERVAL: 500,  // Check if content visible
-        VISIBILITY_CHECK_MAX: 10,        // Max visibility checks
+        // Updated CDN configuration using reliable cdnjs for PDF.js library
+        PDFJS_LIB_URL: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+        PDFJS_WORKER_URL: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+        GDOCS_VIEWER: 'https://docs.google.com/gview?embedded=true&url=',
+        OFFICE_VIEWER: 'https://view.officeapps.live.com/op/embed.aspx?src=',
         
-        // Prefetch
-        HOVER_PREFETCH_DELAY: 150,
-        SCROLL_PRELOAD_MARGIN: '300px',
-        
-        // PDF.js CDN (Mozilla's official CDN - highly reliable)
-        PDFJS_CDN: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174',
-        
-        // Google Docs Viewer
-        GDOCS_VIEWER: 'https://docs.google.com/gview?embedded=true&url='
+        // Timeouts
+        LOAD_TIMEOUT: 2500,
+        RETRY_DELAY: 500
     };
 
-    // ==================== STATE ====================
     const state = {
         isOpen: false,
         currentUrl: null,
-        retryCount: 0,
-        timers: new Set(),
-        prefetchCache: new Map(),
-        hoverTimers: new Map(),
+        isDestroyed: false,
         savedScrollY: 0,
-        visibilityCheckCount: 0,
-        currentStrategy: null,
-        isDestroyed: false
+        pdfJsLoaded: false,
+        abortController: null
     };
 
-    // ==================== DEVICE DETECTION ====================
-    const device = {
-        isAndroid: /Android/i.test(navigator.userAgent),
-        isIOS: /iPhone|iPad|iPod/i.test(navigator.userAgent),
-        isSafari: /^((?!chrome|android).)*safari/i.test(navigator.userAgent),
-        isMobile: /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-        
-        get bestStrategy() {
-            // iOS Safari has issues with Google Docs viewer
-            if (this.isIOS && this.isSafari) return 'pdfjs';
-            // Android Chrome works best with Google Docs
-            if (this.isAndroid) return 'gdocs';
-            // Desktop: try native first
-            return 'pdfjs';
-        }
-    };
-
-    // ==================== UTILITIES ====================
     const utils = {
-        log(msg, data) {
-            console.log(`[MenuV18] ${msg}`, data || '');
-        },
+        log: (msg) => console.log(`[MenuEngine V19] ${msg}`),
         
-        warn(msg, data) {
-            console.warn(`[MenuV18] ${msg}`, data || '');
-        },
-        
-        clearAllTimers() {
-            state.timers.forEach(t => clearTimeout(t));
-            state.timers.clear();
-        },
-        
-        addTimer(callback, delay) {
-            const timer = setTimeout(() => {
-                state.timers.delete(timer);
-                if (!state.isDestroyed) callback();
-            }, delay);
-            state.timers.add(timer);
-            return timer;
-        },
-        
-        // Ensure URL is properly encoded for viewers
-        sanitizeUrl(url) {
-            try {
-                // If already encoded, decode first to avoid double encoding
-                const decoded = decodeURIComponent(url);
-                return encodeURIComponent(decoded);
-            } catch {
-                return encodeURIComponent(url);
-            }
-        }
-    };
-
-    // ==================== PRELOAD SYSTEM ====================
-    const preload = {
-        initScrollObserver() {
-            if (!('IntersectionObserver' in window)) return;
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (!entry.isIntersecting) return;
-                    const btn = entry.target;
-                    const url = this.extractUrl(btn);
-                    if (url) {
-                        this.preconnect(url);
-                        observer.unobserve(btn);
-                    }
-                });
-            }, { rootMargin: CONFIG.SCROLL_PRELOAD_MARGIN });
-            
-            document.querySelectorAll('.btn-menu').forEach(btn => observer.observe(btn));
-        },
-        
-        initHoverPrefetch() {
-            document.querySelectorAll('.btn-menu').forEach(btn => {
-                const url = this.extractUrl(btn);
-                if (!url) return;
-                
-                btn.addEventListener('mouseenter', () => {
-                    const timer = setTimeout(() => {
-                        this.prefetch(url);
-                        state.hoverTimers.delete(btn);
-                    }, CONFIG.HOVER_PREFETCH_DELAY);
-                    state.hoverTimers.set(btn, timer);
-                }, { passive: true });
-                
-                btn.addEventListener('mouseleave', () => {
-                    const timer = state.hoverTimers.get(btn);
-                    if (timer) {
-                        clearTimeout(timer);
-                        state.hoverTimers.delete(btn);
-                    }
-                }, { passive: true });
-                
-                btn.addEventListener('touchstart', () => {
-                    this.prefetch(url);
-                }, { passive: true, once: true });
+        loadScript: (url) => {
+            return new Promise((resolve, reject) => {
+                if (document.querySelector(`script[src="${url}"]`)) return resolve();
+                const script = document.createElement('script');
+                script.src = url;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
             });
         },
-        
-        extractUrl(btn) {
-            const onclick = btn.getAttribute('onclick');
-            const match = onclick?.match(/openMenu\(['"]([^'"]+)['"]\)/);
-            return match?.[1] || null;
-        },
-        
-        preconnect(url) {
-            try {
-                const origin = new URL(url).origin;
-                const id = `preconnect-${btoa(origin).slice(0, 10)}`;
-                if (document.getElementById(id)) return;
-                
-                const link = document.createElement('link');
-                link.id = id;
-                link.rel = 'preconnect';
-                link.href = origin;
-                link.crossOrigin = 'anonymous';
-                document.head.appendChild(link);
-                
-                // Also preconnect to Google Docs
-                if (!document.getElementById('preconnect-gdocs')) {
-                    const gdocs = document.createElement('link');
-                    gdocs.id = 'preconnect-gdocs';
-                    gdocs.rel = 'preconnect';
-                    gdocs.href = 'https://docs.google.com';
-                    document.head.appendChild(gdocs);
-                }
-            } catch (e) {}
-        },
-        
-        prefetch(url) {
-            if (state.prefetchCache.has(url)) return;
-            state.prefetchCache.set(url, 'loading');
-            
-            fetch(url, { 
-                method: 'HEAD', 
-                cache: 'force-cache', 
-                mode: 'no-cors' 
-            })
-            .then(() => state.prefetchCache.set(url, 'ready'))
-            .catch(() => state.prefetchCache.set(url, 'failed'));
-        }
+
+        isIOS: () => /iPad|iPhone|iPod/i.test(navigator.userAgent) && !window.MSStream,
+        isAndroid: () => /Android/i.test(navigator.userAgent)
     };
 
-    // ==================== UI SYSTEM ====================
-    const ui = {
-        showLoader(container, url) {
-            container.innerHTML = `
-                <div id="menuLoader" style="
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    background: #111;
-                    z-index: 100;
-                ">
-                    <div class="menu-spinner"></div>
-                    <div class="loading-text" id="menuLoadingText" style="color: #fff;">Ouverture de la carte...</div>
-                    <div id="menuRetryInfo" style="
-                        font-size: 0.7rem;
-                        color: rgba(255,255,255,0.5);
-                        margin-top: 8px;
-                        display: none;
-                    "></div>
-                    <a href="${url}" target="_blank" rel="noopener" class="fallback-btn" id="safetyLink" style="
-                        display: none;
-                        margin-top: 20px;
-                        background: linear-gradient(135deg, #EC5075 0%, #C2185B 100%);
-                        color: white;
-                        padding: 14px 28px;
-                        border-radius: 50px;
-                        text-decoration: none;
-                        font-weight: 700;
-                        font-size: 0.9rem;
-                        box-shadow: 0 4px 15px rgba(236, 80, 117, 0.3);
-                        transition: transform 0.2s ease;
-                    ">📄 Ouvrir directement</a>
-                </div>`;
-        },
-        
-        updateLoadingText(text) {
-            const el = document.getElementById('menuLoadingText');
-            if (el) el.textContent = text;
-        },
-        
-        showRetryInfo(attempt, max) {
-            const el = document.getElementById('menuRetryInfo');
-            if (el) {
-                el.style.display = 'block';
-                el.textContent = `Tentative ${attempt}/${max}...`;
-            }
-        },
-        
-        showSafetyLink() {
-            const link = document.getElementById('safetyLink');
-            if (link) {
-                link.style.display = 'inline-block';
-                link.style.animation = 'fadeIn 0.3s ease';
-            }
-        },
-        
-        hideLoader() {
-            const loader = document.getElementById('menuLoader');
-            if (!loader) return;
-            
-            loader.style.transition = 'opacity 0.3s ease';
-            loader.style.opacity = '0';
-            loader.style.pointerEvents = 'none';
-            
-            utils.addTimer(() => {
-                if (loader.parentNode) {
-                    loader.remove();
-                }
-            }, 300);
-        },
-        
-        showError(container, url, message) {
-            container.innerHTML = `
-                <div style="
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    height: 100%;
-                    padding: 20px;
-                    text-align: center;
-                    background: #f8f8f8;
-                ">
-                    <div style="font-size: 3rem; margin-bottom: 15px;">📄</div>
-                    <div style="font-size: 1rem; font-weight: 600; color: #333; margin-bottom: 8px;">
-                        ${message || 'Impossible de charger la carte'}
-                    </div>
-                    <div style="font-size: 0.85rem; color: #666; margin-bottom: 20px;">
-                        Cliquez ci-dessous pour l'ouvrir dans un nouvel onglet
-                    </div>
-                    <a href="${url}" target="_blank" rel="noopener" style="
-                        background: var(--brand-raspberry, #EC5075);
-                        color: white;
-                        padding: 14px 28px;
-                        border-radius: 50px;
-                        text-decoration: none;
-                        font-weight: 700;
-                        font-size: 0.9rem;
-                        box-shadow: 0 4px 15px rgba(236, 80, 117, 0.3);
-                    ">📄 Voir la carte</a>
-                </div>`;
-        }
-    };
-
-    // ==================== RENDERING STRATEGIES ====================
     const strategies = {
-        
-        // STRATEGY 1: PDF.js Viewer (Most reliable for mobile)
-        pdfjs(url, container) {
-            return new Promise((resolve, reject) => {
-                utils.log('Trying PDF.js strategy');
-                state.currentStrategy = 'pdfjs';
+        // STRATEGY 1: CUSTOM PDF.JS RENDERER (ELITE UX)
+        // Renders pages to Canvas for perfect control, zoom, and no external UI clutter.
+        // Falls back instantly if CORS fails.
+        async pdfjsLib(url, container) {
+            utils.log('Attempting PDF.js Custom Render...');
+            
+            try {
+                // 1. Load Library if needed
+                if (!window.pdfjsLib) {
+                    await utils.loadScript(CONFIG.PDFJS_LIB_URL);
+                    window.pdfjsLib.GlobalWorkerOptions.workerSrc = CONFIG.PDFJS_WORKER_URL;
+                    state.pdfJsLoaded = true;
+                }
+
+                // 2. Fetch Document
+                const loadingTask = window.pdfjsLib.getDocument(url);
+                const pdf = await loadingTask.promise;
                 
-                const iframe = document.createElement('iframe');
-                // Use PDF.js viewer with the PDF URL
-                const viewerUrl = `${CONFIG.PDFJS_CDN}/web/viewer.html?file=${encodeURIComponent(url)}`;
+                utils.log(`PDF Loaded. Pages: ${pdf.numPages}`);
                 
-                iframe.src = viewerUrl;
-                iframe.title = 'Menu PDF';
-                iframe.setAttribute('loading', 'eager');
-                iframe.setAttribute('importance', 'high');
-                this.applyStyles(iframe);
-                container.appendChild(iframe);
+                // 3. Clear container & Set Styles for Canvas Stack
+                container.innerHTML = '';
+                container.style.overflowY = 'auto';
+                container.style.webkitOverflowScrolling = 'touch';
+                container.style.display = 'flex';
+                container.style.flexDirection = 'column';
+                container.style.alignItems = 'center';
+                container.style.padding = '10px 0 40px 0'; // Bottom padding for easy scroll
                 
-                let loaded = false;
-                let hasContent = false;
-                
-                const checkVisibility = () => {
-                    if (loaded || state.isDestroyed) return;
+                // 4. Render All Pages
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    if (state.isDestroyed) break;
                     
-                    state.visibilityCheckCount++;
+                    const page = await pdf.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 1.5 }); // High quality scale
                     
-                    try {
-                        // Check if iframe has any visible content
-                        const rect = iframe.getBoundingClientRect();
-                        if (rect.width > 0 && rect.height > 0 && iframe.contentWindow) {
-                            hasContent = true;
-                        }
-                    } catch (e) {
-                        // Cross-origin, assume it's loading
-                        hasContent = true;
-                    }
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
                     
-                    if (state.visibilityCheckCount >= CONFIG.VISIBILITY_CHECK_MAX) {
-                        if (hasContent) {
-                            loaded = true;
-                            iframe.style.opacity = '1';
-                            ui.hideLoader();
-                            resolve();
-                        } else {
-                            reject(new Error('Content not visible'));
-                        }
-                    } else {
-                        utils.addTimer(checkVisibility, CONFIG.VISIBILITY_CHECK_INTERVAL);
-                    }
-                };
+                    // Fit to width of mobile screen, max width 800px
+                    const screenWidth = Math.min(window.innerWidth - 20, 800);
+                    const scale = screenWidth / viewport.width;
+                    const scaledViewport = page.getViewport({ scale: scale * (window.devicePixelRatio || 1) });
+
+                    canvas.height = scaledViewport.height;
+                    canvas.width = scaledViewport.width;
+                    canvas.style.width = "100%";
+                    canvas.style.maxWidth = "800px";
+                    canvas.style.height = "auto";
+                    canvas.style.marginBottom = "10px";
+                    canvas.style.boxShadow = "0 4px 15px rgba(0,0,0,0.3)";
+                    canvas.style.borderRadius = "4px";
+
+                    container.appendChild(canvas);
+
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: scaledViewport
+                    };
+
+                    await page.render(renderContext).promise;
+                }
                 
-                // Start visibility checks
-                utils.addTimer(checkVisibility, CONFIG.VISIBILITY_CHECK_INTERVAL);
-                
-                // Optimistic display
-                utils.addTimer(() => {
-                    if (!loaded && !state.isDestroyed) {
-                        loaded = true;
-                        iframe.style.opacity = '1';
-                        ui.hideLoader();
-                        resolve();
-                    }
-                }, CONFIG.INITIAL_LOAD_TIMEOUT);
-                
-                iframe.onload = () => {
-                    if (loaded || state.isDestroyed) return;
-                    loaded = true;
-                    iframe.style.opacity = '1';
-                    ui.hideLoader();
-                    resolve();
-                };
-                
-                iframe.onerror = () => {
-                    if (loaded) return;
-                    reject(new Error('PDF.js iframe error'));
-                };
-            });
+                return true; // Success
+
+            } catch (error) {
+                utils.log(`PDF.js Failed: ${error.message}`);
+                // If it's a CORS error (likely), this catch block handles it.
+                return false; // Trigger fallback
+            }
         },
-        
-        // STRATEGY 2: Google Docs Viewer (Good for Android)
-        gdocs(url, container) {
-            return new Promise((resolve, reject) => {
-                utils.log('Trying Google Docs strategy');
-                state.currentStrategy = 'gdocs';
+
+        // STRATEGY 2: GOOGLE DOCS VIEWER (RELIABLE ANDROID FALLBACK)
+        async gdocs(url, container) {
+            utils.log('Attempting Google Docs Viewer...');
+            return new Promise((resolve) => {
+                container.style.overflowY = 'hidden'; // Reset to default
+                container.innerHTML = '';
                 
                 const iframe = document.createElement('iframe');
                 iframe.src = `${CONFIG.GDOCS_VIEWER}${encodeURIComponent(url)}`;
-                iframe.title = 'Menu PDF';
-                iframe.setAttribute('loading', 'eager');
-                iframe.setAttribute('importance', 'high');
-                this.applyStyles(iframe);
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+                
+                // Timer to detect "hanging" load (can't really detect gdocs failure due to cross-origin)
+                // But we resolve true immediately and let user click fallback if it fails visually
                 container.appendChild(iframe);
-                
-                let loaded = false;
-                let checkCount = 0;
-                
-                const checkContent = () => {
-                    if (loaded || state.isDestroyed) return;
-                    checkCount++;
-                    
-                    // After several checks, consider it loaded
-                    if (checkCount >= 4) {
-                        loaded = true;
-                        iframe.style.opacity = '1';
-                        ui.hideLoader();
-                        resolve();
-                        return;
-                    }
-                    
-                    utils.addTimer(checkContent, 500);
-                };
-                
-                // Start checking
-                utils.addTimer(checkContent, 500);
-                
-                // Optimistic display
-                utils.addTimer(() => {
-                    if (!loaded && !state.isDestroyed) {
-                        loaded = true;
-                        iframe.style.opacity = '1';
-                        ui.hideLoader();
-                        resolve();
-                    }
-                }, CONFIG.INITIAL_LOAD_TIMEOUT);
-                
-                iframe.onload = () => {
-                    if (loaded || state.isDestroyed) return;
-                    
-                    // Extra delay for Google Docs to render content
-                    utils.addTimer(() => {
-                        if (!loaded && !state.isDestroyed) {
-                            loaded = true;
-                            iframe.style.opacity = '1';
-                            ui.hideLoader();
-                            resolve();
-                        }
-                    }, 300);
-                };
-                
-                iframe.onerror = () => {
-                    if (loaded) return;
-                    reject(new Error('Google Docs iframe error'));
-                };
+                resolve(true);
             });
         },
-        
-        // STRATEGY 3: Direct PDF (Desktop browsers)
-        direct(url, container) {
-            return new Promise((resolve, reject) => {
-                utils.log('Trying direct PDF strategy');
-                state.currentStrategy = 'direct';
+
+        // STRATEGY 3: DIRECT IFRAME (NATIVE IOS SUPPORT)
+        async direct(url, container) {
+            utils.log('Attempting Direct Iframe...');
+            return new Promise((resolve) => {
+                container.style.overflowY = 'hidden';
+                container.innerHTML = '';
                 
                 const iframe = document.createElement('iframe');
                 iframe.src = url;
-                iframe.title = 'Menu PDF';
-                iframe.setAttribute('loading', 'eager');
-                this.applyStyles(iframe);
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+                
                 container.appendChild(iframe);
-                
-                let loaded = false;
-                
-                // Optimistic display
-                utils.addTimer(() => {
-                    if (!loaded && !state.isDestroyed) {
-                        loaded = true;
-                        iframe.style.opacity = '1';
-                        ui.hideLoader();
-                        resolve();
-                    }
-                }, CONFIG.INITIAL_LOAD_TIMEOUT);
-                
-                iframe.onload = () => {
-                    if (loaded || state.isDestroyed) return;
-                    loaded = true;
-                    iframe.style.opacity = '1';
-                    ui.hideLoader();
-                    resolve();
-                };
-                
-                iframe.onerror = () => {
-                    if (loaded) return;
-                    reject(new Error('Direct iframe error'));
-                };
+                resolve(true);
             });
-        },
-        
-        applyStyles(iframe) {
-            iframe.style.cssText = `
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                border: none;
-                opacity: 0;
-                transition: opacity 0.4s ease;
-                background: #fff;
-                z-index: 1;
-                touch-action: pan-x pan-y;
-                -webkit-overflow-scrolling: touch;
-            `;
         }
     };
 
-    // ==================== RENDER ORCHESTRATOR ====================
-    const orchestrator = {
-        async load(url, container) {
-            const strategyOrder = this.getStrategyOrder();
-            
-            for (let i = 0; i < strategyOrder.length; i++) {
-                const strategyName = strategyOrder[i];
-                
-                if (state.isDestroyed) return;
-                
-                // Clear previous attempt
-                const existingIframe = container.querySelector('iframe');
-                if (existingIframe) existingIframe.remove();
-                
-                // Reset visibility check counter
-                state.visibilityCheckCount = 0;
-                
-                if (i > 0) {
-                    ui.updateLoadingText('Changement de méthode...');
-                    ui.showRetryInfo(i + 1, strategyOrder.length);
-                }
-                
-                try {
-                    await strategies[strategyName](url, container);
-                    utils.log(`Success with ${strategyName}`);
-                    return; // Success!
-                } catch (error) {
-                    utils.warn(`${strategyName} failed:`, error.message);
-                    
-                    if (i < strategyOrder.length - 1) {
-                        // Wait before trying next strategy
-                        await new Promise(r => utils.addTimer(r, 500));
-                    }
-                }
-            }
-            
-            // All strategies failed
-            utils.warn('All strategies failed, showing fallback');
-            ui.showError(container, url, 'La carte n\'a pas pu être chargée');
-        },
-        
-        getStrategyOrder() {
-            const primary = device.bestStrategy;
-            
-            // Build fallback chain based on device
-            if (device.isIOS) {
-                return ['pdfjs', 'direct', 'gdocs'];
-            } else if (device.isAndroid) {
-                return ['gdocs', 'pdfjs', 'direct'];
-            } else {
-                // Desktop
-                return ['direct', 'pdfjs', 'gdocs'];
-            }
+    const run = async (url, container) => {
+        // Show Loader
+        container.innerHTML = `
+            <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;">
+                <div class="menu-spinner"></div>
+                <div class="loading-text">Chargement Optimisé...</div>
+            </div>`;
+
+        // 1. Try Custom PDF.js first (Best UX)
+        // Note: This requires CORS headers on the PDF host. If missing, it fails fast.
+        const successCustom = await strategies.pdfjsLib(url, container);
+        if (successCustom) {
+            // Hide Loader Logic is implicit as content is replaced
+            return;
         }
+
+        // 2. Fallback Logic based on Device
+        utils.log('Falling back...');
+        
+        // For Android, GDocs is usually safer than direct download
+        // For iOS, Direct is usually native and good
+
+        if (utils.isAndroid()) {
+            await strategies.gdocs(url, container);
+        } else {
+            // iOS or Desktop -> Try Direct Native
+            await strategies.direct(url, container);
+        }
+
+        // 3. Always show a "Safety Link" button at the bottom after a timeout
+        // in case the viewer is blank (common issue with iframes)
+        setTimeout(() => {
+            if (state.isOpen && !state.isDestroyed) {
+                const btn = document.createElement('a');
+                btn.href = url;
+                btn.target = '_blank';
+                btn.innerHTML = '📄 Ouvrir le PDF (Lien direct)';
+                btn.style.cssText = 'position:absolute; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:white; padding:10px 20px; border-radius:30px; text-decoration:none; font-weight:700; font-size:0.8rem; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:100; border:1px solid rgba(255,255,255,0.2); animation: fadeSlideUp 0.5s ease;';
+                container.appendChild(btn);
+            }
+        }, 2000);
     };
 
-    // ==================== PUBLIC API ====================
     return {
-        open(url) {
-            if (!url) {
-                utils.warn('No URL provided');
-                return;
+        init: () => {
+            utils.log('Initialized');
+            // Preload PDF.js lib on idle to save time later
+            if(window.requestIdleCallback) {
+                window.requestIdleCallback(() => utils.loadScript(CONFIG.PDFJS_LIB_URL));
+            } else {
+                setTimeout(() => utils.loadScript(CONFIG.PDFJS_LIB_URL), 3000);
             }
-            
-            // Set External Link
-            const extLink = document.getElementById('menu-external-link');
-            if(extLink) extLink.href = url;
-            
-            if (state.isOpen) {
-                utils.log('Already open, ignoring');
-                return;
-            }
-            
-            state.isOpen = true;
-            state.isDestroyed = false;
-            state.currentUrl = url;
-            state.retryCount = 0;
-            state.visibilityCheckCount = 0;
-            
-            const modal = document.getElementById('menuModal');
-            const container = document.getElementById('iframeContainer');
-            
-            if (!modal || !container) {
-                utils.warn('Modal elements not found');
-                state.isOpen = false;
-                return;
-            }
-            
-            utils.log('Opening menu', { url, device: device.bestStrategy });
-            
-            // 1. SAVE SCROLL POSITION & LOCK BODY
-            state.savedScrollY = window.scrollY || window.pageYOffset || 0;
-            
-            // Use a more robust scroll lock
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${state.savedScrollY}px`;
-            document.body.style.left = '0';
-            document.body.style.right = '0';
-            document.body.style.width = '100%';
-            
-            // Prevent iOS bounce
-            if (device.isIOS) {
-                document.body.style.height = '100%';
-                document.documentElement.style.overflow = 'hidden';
-            }
-            
-            // 2. SHOW MODAL
-            modal.style.display = 'flex';
-            modal.style.visibility = 'visible';
-            
-            // Force reflow before adding active class
-            modal.offsetHeight;
-            
-            requestAnimationFrame(() => {
-                modal.classList.add('active');
-            });
-            
-            // 3. SHOW LOADER & START LOADING
-            ui.showLoader(container, url);
-            
-            // 4. Start loading with strategy orchestrator
-            orchestrator.load(url, container);
-            
-            // 5. Show safety link after timeout
-            utils.addTimer(() => {
-                if (state.isOpen) {
-                    ui.showSafetyLink();
-                }
-            }, CONFIG.SAFETY_TIMEOUT);
-        },
 
-        close() {
-            if (!state.isOpen) return;
-            
-            utils.log('Closing menu');
-            
-            state.isOpen = false;
-            state.isDestroyed = true;
-            state.currentUrl = null;
-            state.currentStrategy = null;
-            
-            // Clear all pending timers
-            utils.clearAllTimers();
-            
-            const modal = document.getElementById('menuModal');
-            const container = document.getElementById('iframeContainer');
-            
-            if (modal) {
-                modal.classList.remove('active');
-            }
-            
-            // Wait for animation to complete
-            setTimeout(() => {
-                if (modal) {
-                    modal.style.display = 'none';
-                    modal.style.visibility = 'hidden';
-                }
-                
-                // Clean up container
-                if (container) {
-                    // Remove all iframes properly
-                    const iframes = container.querySelectorAll('iframe');
-                    iframes.forEach(iframe => {
-                        iframe.src = 'about:blank';
-                        iframe.remove();
-                    });
-                    container.innerHTML = '';
-                }
-                
-                // RESTORE SCROLL POSITION
-                const scrollY = state.savedScrollY || 0;
-                
-                // Disable smooth scroll temporarily
-                const htmlEl = document.documentElement;
-                const originalScrollBehavior = htmlEl.style.scrollBehavior;
-                htmlEl.style.scrollBehavior = 'auto';
-                
-                // Remove body lock
-                document.body.style.overflow = '';
-                document.body.style.position = '';
-                document.body.style.top = '';
-                document.body.style.left = '';
-                document.body.style.right = '';
-                document.body.style.width = '';
-                document.body.style.height = '';
-                
-                if (device.isIOS) {
-                    htmlEl.style.overflow = '';
-                }
-                
-                // Restore scroll position immediately
-                window.scrollTo(0, scrollY);
-                
-                // Restore smooth scroll in next frame
-                requestAnimationFrame(() => {
-                    htmlEl.style.scrollBehavior = originalScrollBehavior || '';
-                });
-                
-                state.savedScrollY = 0;
-                
-            }, 300);
-        },
-
-        init() {
-            utils.log('Initializing MenuEngine V18');
-            
-            preload.initScrollObserver();
-            preload.initHoverPrefetch();
-            
-            // Add click handler for modal background
+            // Global Listeners
             const modal = document.getElementById('menuModal');
             if (modal) {
                 modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        this.close();
-                    }
+                    if (e.target === modal) MenuEngine.close();
                 });
             }
-            
-            // Handle escape key
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && state.isOpen) {
-                    this.close();
-                }
+                if (e.key === 'Escape' && state.isOpen) MenuEngine.close();
             });
+        },
+
+        open: (url) => {
+            if (!url) return;
+            if (state.isOpen) return; // Prevent double-open scroll bug
+
+            state.isOpen = true;
+            state.isDestroyed = false;
+            state.savedScrollY = window.scrollY || window.pageYOffset;
             
-            // Handle visibility change (close if tab hidden)
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden && state.isOpen) {
-                    // Keep open but pause any animations
-                }
-            });
+            const modal = document.getElementById('menuModal');
+            const container = document.getElementById('iframeContainer');
+            const extLink = document.getElementById('menu-external-link');
             
-            utils.log('MenuEngine V18 ready', { device: device.bestStrategy });
+            if(extLink) extLink.href = url;
+            
+            // Lock Body
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.top = `-${state.savedScrollY}px`;
+
+            modal.style.display = 'flex';
+            // Force Reflow
+            void modal.offsetWidth;
+            modal.classList.add('active');
+
+            run(url, container);
+        },
+
+        close: () => {
+            state.isOpen = false;
+            state.isDestroyed = true;
+            
+            const modal = document.getElementById('menuModal');
+            const container = document.getElementById('iframeContainer');
+            
+            modal.classList.remove('active');
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                container.innerHTML = ''; // Cleanup
+                
+                // Unlock Body
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+                document.body.style.top = '';
+                window.scrollTo(0, state.savedScrollY);
+            }, 300);
         }
     };
 })();
