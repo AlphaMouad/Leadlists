@@ -803,15 +803,20 @@
     opacity: 1; z-index: 1; 
 }
 
-.story-media-item img {
+img.story-media-item {
     width: 100%; height: 100%; 
     object-fit: cover; object-position: center center;
     display: block;
+    /* Lift image 5% for better composition with footer */
+    transform: translateY(-5%);
 }
 
-.story-media-item iframe {
+iframe.story-media-item {
     width: 100%; height: 100%; 
     border: none; display: block;
+    object-fit: cover;
+    /* Ensure video is full screen */
+    transform: none;
 }
 
 /* UI LAYER */
