@@ -752,7 +752,7 @@
 /* === V25 ULTIMATE STORY OVERLAY (EXACT SOURCE COPY) === */
 .story-overlay {
     position: fixed; top: 0; left: 0; 
-    width: 100%; height: 100%; height: 100dvh;
+    width: 100%; height: 100dvh;
     background: #000; z-index: 9999; 
     display: none; align-items: center; justify-content: center;
     opacity: 0; 
@@ -767,7 +767,7 @@
 }
 
 .story-container { 
-    width: 100%; height: 100%; height: 100dvh; 
+    width: 100%; height: 100dvh;
     position: relative; overflow: hidden; background: #000; 
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
@@ -816,6 +816,8 @@ iframe.story-media-item {
     min-width: 100%; min-height: 100%;
     border: none; display: block;
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    object-fit: cover; /* Re-enabled for Instagram-like fill */
+    z-index: 1;
     /* Ensure video is full screen and hardware accelerated */
     transform: translateZ(0);
     will-change: transform;
@@ -828,7 +830,7 @@ iframe.story-media-item {
 
 .story-ui-top {
     position: absolute; top: 0; left: 0; width: 100%;
-    padding: 15px 15px 30px 15px; 
+    padding: calc(15px + env(safe-area-inset-top)) 15px 30px 15px;
     background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
     z-index: 300; pointer-events: none; 
 }
