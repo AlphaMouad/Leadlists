@@ -1143,19 +1143,23 @@ iframe.story-media-item {
 }
 .menu-actions { display: flex; align-items: center; gap: 16px; }
 
-/* === NEW RESERVATION BUTTON IN MENU (ULTRA COMPACT ELITE) === */
+/* === NEW RESERVATION BUTTON IN MENU (TRANSPARENT ELITE) === */
 .btn-menu-book {
     display: flex; align-items: center; gap: 5px;
-    background: var(--brand-gradient); color: #fff;
-    padding: 6px 14px; border-radius: 8px; /* Sharper radius */
-    font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
-    text-decoration: none; cursor: pointer; border: none;
-    box-shadow: 0 3px 10px rgba(236, 80, 117, 0.25);
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    padding: 0 14px; /* Horizontal padding only, height handles vertical */
+    border-radius: 50px; /* Pill shape for premium feel */
+    font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    text-decoration: none; cursor: pointer;
+    box-shadow: none;
+    transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
-    height: 32px; /* Smaller height */
+    height: 32px; /* Fixed height for alignment */
 }
-.btn-menu-book:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(236, 80, 117, 0.2); }
+.btn-menu-book:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.4); }
+.btn-menu-book:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.2); }
 
 /* === OPTIMIZED CLOSE BUTTON (TOUCH TARGET 44px+) === */
 .close-menu-container {
