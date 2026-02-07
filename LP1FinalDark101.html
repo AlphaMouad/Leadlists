@@ -792,7 +792,8 @@
 
 .story-media-item { 
     width: 100%; height: 100%; 
-    object-fit: cover; object-position: center center;
+    height: 100dvh; /* Mobile Optimisation */
+    object-fit: cover; object-position: center top; /* Ensure top is visible */
     position: absolute; top: 0; left: 0; 
     opacity: 0; 
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -805,12 +806,14 @@
 
 .story-media-item img {
     width: 100%; height: 100%; 
-    object-fit: cover; object-position: center center;
+    height: 100dvh;
+    object-fit: cover; object-position: center top;
     display: block;
 }
 
 .story-media-item iframe {
     width: 100%; height: 100%; 
+    height: 100dvh;
     border: none; display: block;
 }
 
@@ -866,29 +869,28 @@
 
 .story-footer {
     position: absolute; 
-    bottom: 24px;
-    left: 20px;
-    right: 20px;
-    width: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     max-width: none;
-    padding: 24px 20px;
+    padding: 30px 20px calc(24px + env(safe-area-inset-bottom)) 20px;
     z-index: 50;
-    background: rgba(10, 10, 10, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.95) 100%);
+    backdrop-filter: blur(0px); /* Removed blur for cleaner gradient overlay */
+    -webkit-backdrop-filter: blur(0px);
+    border: none;
+    border-radius: 0;
     display: flex; 
     flex-direction: column; 
     align-items: stretch;
     text-align: left;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    box-shadow: none;
     transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     will-change: transform, opacity;
 }
 
 .story-footer.hidden { 
-    transform: translateY(20px);
+    transform: translateY(100%);
     opacity: 0; 
     pointer-events: none;
 }
@@ -898,19 +900,24 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .story-title-text { 
     color: #fff; 
     font-family: 'Playfair Display'; 
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-bottom: 0;
     font-weight: 800; 
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
     letter-spacing: -0.02em;
     width: auto;
     text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+    flex: 1;
 }
 
 .story-rating-row {
