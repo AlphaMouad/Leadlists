@@ -816,7 +816,7 @@ iframe.story-media-item {
     border: none; display: block;
     object-fit: cover;
     /* Ensure video is full screen */
-    transform: none;
+    transform: translateZ(0);
 }
 
 /* UI LAYER */
@@ -1001,7 +1001,7 @@ iframe.story-media-item {
     position: absolute; inset: 0; width: 100%; height: 100%; 
     background-size: cover; background-position: center center; 
     background-repeat: no-repeat; z-index: 0; 
-    transform: scale(1.0); will-change: transform; 
+    transform: scale(1.0) translateY(-5%); will-change: transform;
     transition: transform 14s cubic-bezier(0.19, 1, 0.22, 1);
 }
 @media (max-width: 768px) {
@@ -1017,7 +1017,7 @@ iframe.story-media-item {
 
 /* PREMIUM: Smooth zoom and pull UP to reveal people at the bottom */
 .story-climax-card.active ~ .climax-phantom-layer, .story-climax-card.active .climax-phantom-layer { 
-    transform: scale(1.12) translateY(-8%); 
+    transform: scale(1.12) translateY(-12%);
     transition: transform 22s cubic-bezier(0.19, 1, 0.22, 1); 
 }
 
