@@ -243,7 +243,7 @@
         }
 
         .form-trust-header { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
-        .form-trust-text { color: rgba(255, 255, 255, 0.5); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .form-trust-text { color: rgba(255, 255, 255, 0.95); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
 
         .form-group { margin-bottom: 1.1rem; text-align: left; position: relative; }
         .form-group label { display: block; font-size: 0.65rem; font-weight: 600; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 0.5rem; margin-left: 4px; }
@@ -866,32 +866,31 @@
 
 .story-footer {
     position: absolute; 
-    bottom: 12px; 
-    left: 50%; 
-    transform: translateX(-50%) translateY(0);
-    width: 96%; 
-    max-width: 420px;
-    padding: 26px 20px 18px; 
+    bottom: 0;
+    left: 0;
+    transform: translateY(0);
+    width: 100%;
+    max-width: none;
+    padding: 60px 20px 30px;
     z-index: 50;
-    /* Gradient: Very transparent at top, darker at bottom */
-    background: linear-gradient(180deg, rgba(15, 15, 15, 0.3) 0%, rgba(10, 10, 10, 0.85) 65%, rgba(0, 0, 0, 0.98) 100%);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    /* Subtle top border, minimal visual noise */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-    border-radius: 26px;
+    /* Gradient: 0% opacity at top, current at bottom. Optimized for CTA visibility. */
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.98) 100%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    /* Removed border and radius for seamless look */
+    border: none;
+    border-radius: 0;
     display: flex; 
     flex-direction: column; 
     align-items: center;
     text-align: center;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.4); 
+    box-shadow: none;
     transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     will-change: transform, opacity;
 }
 
 .story-footer.hidden { 
-    transform: translateX(-50%) translateY(20px); 
+    transform: translateY(20px);
     opacity: 0; 
     pointer-events: none;
 }
@@ -969,7 +968,7 @@
     justify-content: center;
     gap: 6px;
 }
-.story-trust svg { stroke: rgba(255,255,255,0.5); margin-top: -1px;
+.story-trust svg { stroke: rgba(255,255,255,0.5);
     text-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.4); 
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
     transform: translateY(6px);
@@ -1426,7 +1425,7 @@
 
                 <div class="hero-form-container" id="heroFormContainer">
                     <div class="form-trust-header">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3" style="filter: drop-shadow(0 0 5px rgba(16,185,129,0.4)); transform: scale(1.1);"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         <span class="form-trust-text" id="trustText">Réservation Gratuite & Sans Engagement</span>
                     </div>
 
@@ -1944,13 +1943,6 @@ document.addEventListener('click', function(e) {
         selector.classList.remove('active');
     }
 });
-
-// Trigger Elite Animation
-setTimeout(() => {
-    // Target the PARENT container for the full effect
-    const header = document.querySelector('.form-trust-header');
-    if(header) header.classList.add('elite-trust-reveal');
-}, 2500);
 
 // === USER ID GENERATOR: DDMM + 5 Random Chars ===
 function generateUserID() {
