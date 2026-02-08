@@ -118,6 +118,10 @@
         h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-dark); font-weight: 800; }
         .hidden { display: none !important; }
 
+        /* === PROGRESSIVE DISCLOSURE === */
+        .step-hidden { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.8s var(--ease-elite), opacity 0.6s var(--ease-elite); }
+        .step-visible { max-height: 1000px; opacity: 1; }
+
         /* === HEADER === */
         header {
             position: absolute; top: 0; left: 0; width: 100%; z-index: 1000;
@@ -1493,7 +1497,7 @@ iframe.story-media-item {
                     <form id="heroForm" autocomplete="on" novalidate>
                         <input type="hidden" id="userID" name="userID" value="">
                         <div class="form-group">
-                            <label for="fullname">Nom Complet</label>
+                            <label for="fullname">À quel nom réserver ?</label>
                             <div class="input-container" id="container-fullname">
                                 <input type="text" id="fullname" name="name" placeholder="Votre nom et prénom" autocomplete="name" required>
                             </div>
@@ -1523,98 +1527,91 @@ iframe.story-media-item {
                                 <div class="input-container" id="container-time">
                                     <select id="time" name="time" required>
                                         <option value="" disabled selected>Heure...</option>
-                                        <option value="19:00">19:00</option>
-                                        <option value="19:30">19:30</option>
-                                        <option value="20:00">20:00</option>
-                                        <option value="20:30">20:30</option>
-                                        <option value="21:00">21:00</option>
-                                        <option value="21:30">21:30</option>
-                                        <option value="22:00">22:00</option>
-                                        <option value="22:30">22:30</option>
-                                        <option value="23:00">23:00</option>
                                     </select>
                                 </div>
                                 <div class="error-msg" id="error-time">Heure requise</div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="guests">Invités</label>
-                            <div class="input-container" id="container-guests">
-                                <select id="guests" name="guests" required inputmode="numeric">
-                                    <option value="" disabled selected>Combien de personnes ?</option>
-                                    <option value="2">2 personnes</option>
-                                    <option value="3">3 personnes</option>
-                                    <option value="4">4 personnes</option>
-                                    <option value="5">5 personnes</option>
-                                    <option value="6">6 personnes</option>
-                                    <option value="7">7+ personnes</option>
-                                </select>
+                        <div id="form-step-2" class="step-hidden">
+                            <div class="form-group">
+                                <label for="guests">Invités</label>
+                                <div class="input-container" id="container-guests">
+                                    <select id="guests" name="guests" required inputmode="numeric">
+                                        <option value="" disabled selected>Combien de personnes ?</option>
+                                        <option value="2">2 personnes</option>
+                                        <option value="3">3 personnes</option>
+                                        <option value="4">4 personnes</option>
+                                        <option value="5">5 personnes</option>
+                                        <option value="6">6 personnes</option>
+                                        <option value="7">7+ personnes</option>
+                                    </select>
+                                </div>
+                                <div class="error-msg" id="error-guests">Nombre d'invités requis</div>
                             </div>
-                            <div class="error-msg" id="error-guests">Nombre d'invités requis</div>
-                        </div>
 
-                        <div class="kids-toggle-wrapper" id="kidsToggleWrapper">
-                            <div class="kids-toggle-container" id="kidsToggleContainer">
-                                <div class="kids-toggle-header">
-                                    <div class="kids-toggle-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"></circle><path d="M12 6v4"></path><path d="M8 14l4-4 4 4"></path><path d="M8 14v4a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-4"></path></svg>
-                                    </div>
-                                    <div class="kids-toggle-text">
-                                        <span class="toggle-title">Avec enfants ?</span>
-                                        <span class="toggle-subtitle">Optionnel - Cliquez pour ajouter</span>
-                                    </div>
-                                    <span class="kids-count-badge" id="kidsCountBadge">0</span>
-                                </div>
-                                <div class="toggle-indicator">
-                                    <span class="toggle-indicator-text" id="toggleIndicatorText">Ajouter</span>
-                                    <svg class="toggle-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                                </div>
-                            </div>
-                            <div class="kids-selection-panel" id="kidsSelectionPanel">
-                                <div class="kids-counter" id="kidsCounter">
-                                    <button type="button" class="kids-counter-btn" id="kidsDecrease" disabled><span>−</span></button>
-                                    <div class="kids-counter-display">
-                                        <div class="kids-counter-value" id="kidsValue">1</div>
-                                        <div class="kids-counter-label">enfant(s)</div>
-                                    </div>
-                                    <button type="button" class="kids-counter-btn" id="kidsIncrease"><span>+</span></button>
-                                </div>
-                            </div>
-                            <input type="hidden" id="kidsCount" name="enfants" value="0">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone">WhatsApp (Confirmation)</label>
-                            <div class="input-container" id="container-phone">
-                                <div class="elite-phone-group">
-                                    <div class="country-selector" id="countrySelector" onclick="toggleCountryDropdown(event)">
-                                        <span class="selected-flag" id="selectedFlag">🇫🇷</span>
-                                        <!-- Code input now handles its own focus, everything else toggles dropdown -->
-                                        <input type="text" id="countryCode" name="countryCode" value="+33" class="code-input" inputmode="tel" maxlength="5" oninput="handleCodeInput(this)" onclick="event.stopPropagation()">
-                                        <div class="selector-arrow-container">
-                                            <svg class="selector-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            <div class="kids-toggle-wrapper" id="kidsToggleWrapper">
+                                <div class="kids-toggle-container" id="kidsToggleContainer">
+                                    <div class="kids-toggle-header">
+                                        <div class="kids-toggle-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"></circle><path d="M12 6v4"></path><path d="M8 14l4-4 4 4"></path><path d="M8 14v4a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-4"></path></svg>
                                         </div>
+                                        <div class="kids-toggle-text">
+                                            <span class="toggle-title">Avec enfants ?</span>
+                                            <span class="toggle-subtitle">Optionnel - Cliquez pour ajouter</span>
+                                        </div>
+                                        <span class="kids-count-badge" id="kidsCountBadge">0</span>
                                     </div>
-                                    
-                                    <div class="country-dropdown" id="countryDropdown">
-                                        <div class="dropdown-item" onclick="selectCountry('🇫🇷', '+33')"><span class="flag">🇫🇷</span> <span class="c-name">France</span> <span class="c-code">+33</span></div>
-                                        <div class="dropdown-item" onclick="selectCountry('🇲🇦', '+212')"><span class="flag">🇲🇦</span> <span class="c-name">Maroc</span> <span class="c-code">+212</span></div>
-                                        <div class="dropdown-item" onclick="selectCountry('🇬🇧', '+44')"><span class="flag">🇬🇧</span> <span class="c-name">UK</span> <span class="c-code">+44</span></div>
-                                        <div class="dropdown-item" onclick="selectCountry('🇧🇪', '+32')"><span class="flag">🇧🇪</span> <span class="c-name">Belgique</span> <span class="c-code">+32</span></div>
-                                        <div class="dropdown-item" onclick="selectCountry('🇨🇭', '+41')"><span class="flag">🇨🇭</span> <span class="c-name">Suisse</span> <span class="c-code">+41</span></div>
-                                        <div class="dropdown-item" onclick="selectCountry('🇺🇸', '+1')"><span class="flag">🇺🇸</span> <span class="c-name">USA</span> <span class="c-code">+1</span></div>
-                                        <div class="dropdown-item" onclick="selectCountry('🇪🇸', '+34')"><span class="flag">🇪🇸</span> <span class="c-name">Espagne</span> <span class="c-code">+34</span></div>
-                                        <div class="dropdown-item" onclick="selectCountry('🇩🇪', '+49')"><span class="flag">🇩🇪</span> <span class="c-name">Allemagne</span> <span class="c-code">+49</span></div>
-                                        <div class="dropdown-item" onclick="selectCountry('🇮🇹', '+39')"><span class="flag">🇮🇹</span> <span class="c-name">Italie</span> <span class="c-code">+39</span></div>
-                                        <div class="dropdown-item" onclick="selectCountry('🇦🇪', '+971')"><span class="flag">🇦🇪</span> <span class="c-name">UAE</span> <span class="c-code">+971</span></div>
-                                        <div class="dropdown-item custom-option" onclick="selectCountry('🌐', '')"><span class="flag">🌐</span> <span class="c-name">Autre (Saisie)</span></div>
+                                    <div class="toggle-indicator">
+                                        <span class="toggle-indicator-text" id="toggleIndicatorText">Ajouter</span>
+                                        <svg class="toggle-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </div>
-
-                                    <input type="tel" id="phone" name="phone" placeholder="6 12 34 56 78" autocomplete="tel" inputmode="tel" required>
                                 </div>
+                                <div class="kids-selection-panel" id="kidsSelectionPanel">
+                                    <div class="kids-counter" id="kidsCounter">
+                                        <button type="button" class="kids-counter-btn" id="kidsDecrease" disabled><span>−</span></button>
+                                        <div class="kids-counter-display">
+                                            <div class="kids-counter-value" id="kidsValue">1</div>
+                                            <div class="kids-counter-label">enfant(s)</div>
+                                        </div>
+                                        <button type="button" class="kids-counter-btn" id="kidsIncrease"><span>+</span></button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="kidsCount" name="enfants" value="0">
                             </div>
-                            <div class="error-msg" id="error-phone">Numéro invalide</div>
+
+                            <div class="form-group">
+                                <label for="phone">WhatsApp (Confirmation)</label>
+                                <div class="input-container" id="container-phone">
+                                    <div class="elite-phone-group">
+                                        <div class="country-selector" id="countrySelector" onclick="toggleCountryDropdown(event)">
+                                            <span class="selected-flag" id="selectedFlag">🇫🇷</span>
+                                            <!-- Code input now handles its own focus, everything else toggles dropdown -->
+                                            <input type="text" id="countryCode" name="countryCode" value="+33" class="code-input" inputmode="tel" maxlength="5" oninput="handleCodeInput(this)" onclick="event.stopPropagation()">
+                                            <div class="selector-arrow-container">
+                                                <svg class="selector-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            </div>
+                                        </div>
+
+                                        <div class="country-dropdown" id="countryDropdown">
+                                            <div class="dropdown-item" onclick="selectCountry('🇫🇷', '+33')"><span class="flag">🇫🇷</span> <span class="c-name">France</span> <span class="c-code">+33</span></div>
+                                            <div class="dropdown-item" onclick="selectCountry('🇲🇦', '+212')"><span class="flag">🇲🇦</span> <span class="c-name">Maroc</span> <span class="c-code">+212</span></div>
+                                            <div class="dropdown-item" onclick="selectCountry('🇬🇧', '+44')"><span class="flag">🇬🇧</span> <span class="c-name">UK</span> <span class="c-code">+44</span></div>
+                                            <div class="dropdown-item" onclick="selectCountry('🇧🇪', '+32')"><span class="flag">🇧🇪</span> <span class="c-name">Belgique</span> <span class="c-code">+32</span></div>
+                                            <div class="dropdown-item" onclick="selectCountry('🇨🇭', '+41')"><span class="flag">🇨🇭</span> <span class="c-name">Suisse</span> <span class="c-code">+41</span></div>
+                                            <div class="dropdown-item" onclick="selectCountry('🇺🇸', '+1')"><span class="flag">🇺🇸</span> <span class="c-name">USA</span> <span class="c-code">+1</span></div>
+                                            <div class="dropdown-item" onclick="selectCountry('🇪🇸', '+34')"><span class="flag">🇪🇸</span> <span class="c-name">Espagne</span> <span class="c-code">+34</span></div>
+                                            <div class="dropdown-item" onclick="selectCountry('🇩🇪', '+49')"><span class="flag">🇩🇪</span> <span class="c-name">Allemagne</span> <span class="c-code">+49</span></div>
+                                            <div class="dropdown-item" onclick="selectCountry('🇮🇹', '+39')"><span class="flag">🇮🇹</span> <span class="c-name">Italie</span> <span class="c-code">+39</span></div>
+                                            <div class="dropdown-item" onclick="selectCountry('🇦🇪', '+971')"><span class="flag">🇦🇪</span> <span class="c-name">UAE</span> <span class="c-code">+971</span></div>
+                                            <div class="dropdown-item custom-option" onclick="selectCountry('🌐', '')"><span class="flag">🌐</span> <span class="c-name">Autre (Saisie)</span></div>
+                                        </div>
+
+                                        <input type="tel" id="phone" name="phone" placeholder="6 12 34 56 78" autocomplete="tel" inputmode="tel" required>
+                                    </div>
+                                </div>
+                                <div class="error-msg" id="error-phone">Numéro invalide</div>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn-submit" id="submitBtn">Réserver ma table gratuitement</button>
@@ -2143,6 +2140,89 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateInput = document.getElementById('date'); const today = new Date().toISOString().split('T')[0];
     dateInput.setAttribute('min', today); dateInput.value = today;
     const select = document.getElementById('restaurant'); const grid = document.getElementById('spectaclesGrid');
+
+    // === ELITE LOGIC: OPENING HOURS & TIME SLOTS ===
+    function parseOpeningHours(timeStr) {
+        if (!timeStr) return null;
+        const parts = timeStr.split(' - ');
+        if (parts.length !== 2) return null;
+        const parseTime = (t) => {
+            const [h, m] = t.split('h').map(Number);
+            return h * 60 + (m || 0);
+        };
+        let start = parseTime(parts[0]);
+        let end = parseTime(parts[1]);
+        if (end < start) end += 24 * 60;
+        return { start, end };
+    }
+
+    function updateTimeSlots() {
+        const restaurantId = document.getElementById('restaurant').value;
+        const dateVal = document.getElementById('date').value;
+        const timeSelect = document.getElementById('time');
+        const originalVal = timeSelect.value;
+
+        timeSelect.innerHTML = '<option value="" disabled selected>Heure...</option>';
+
+        if (!restaurantId || !dateVal) return;
+
+        const exp = experiencesData.find(e => e.id === restaurantId);
+        if (!exp || !exp.time) return;
+
+        const hours = parseOpeningHours(exp.time);
+        if (!hours) return;
+
+        // Last seating 90 mins before close
+        const lastSeating = hours.end - 90;
+        const now = new Date();
+        const isToday = (dateVal === now.toISOString().split('T')[0]);
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+        for (let t = hours.start; t <= lastSeating; t += 30) {
+            // Filter 15 min buffer if today
+            if (isToday && t < currentMinutes + 15) continue;
+
+            let displayT = t;
+            if (displayT >= 24 * 60) displayT -= 24 * 60;
+            const h = Math.floor(displayT / 60);
+            const m = displayT % 60;
+            const timeString = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+
+            const option = document.createElement('option');
+            option.value = timeString;
+            option.textContent = timeString.replace(':', 'h');
+            timeSelect.appendChild(option);
+        }
+
+        // Restore selection if valid
+        if (originalVal) {
+             const exists = Array.from(timeSelect.options).some(o => o.value === originalVal);
+             if(exists) timeSelect.value = originalVal;
+        }
+    }
+
+    // === PROGRESSIVE DISCLOSURE ===
+    function initProgressiveDisclosure() {
+        const step2 = document.getElementById('form-step-2');
+        const triggers = document.querySelectorAll('#fullname, #restaurant, #date, #time');
+        const reveal = () => {
+            if (step2.classList.contains('step-hidden')) {
+                step2.classList.remove('step-hidden');
+                step2.classList.add('step-visible');
+            }
+        };
+        triggers.forEach(el => {
+            el.addEventListener('focus', reveal);
+            el.addEventListener('change', reveal);
+            el.addEventListener('click', reveal);
+        });
+    }
+
+    document.getElementById('restaurant').addEventListener('change', updateTimeSlots);
+    document.getElementById('date').addEventListener('change', updateTimeSlots);
+    initProgressiveDisclosure();
+    // Initial call in case values pre-filled
+    updateTimeSlots();
 
     AvailabilityEngine.init().then(() => {
         const select = document.getElementById('restaurant');
