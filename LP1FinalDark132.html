@@ -1839,6 +1839,83 @@ const VENUES = {
     'tanjia': { name: 'Le Tanjia', address: 'Place des Ferblantiers, Marrakech 40000', coords: [-7.98909, 31.61997] }
 };
 
+// === ELITE LOGIC: OPENING HOURS & TIME SLOTS ===
+function parseOpeningHours(timeStr) {
+    if (!timeStr) return null;
+    const parts = timeStr.split(' - ');
+    if (parts.length !== 2) return null;
+    const parseTime = (t) => {
+        const [h, m] = t.split('h').map(Number);
+        return h * 60 + (m || 0);
+    };
+    let start = parseTime(parts[0]);
+    let end = parseTime(parts[1]);
+    if (end < start) end += 24 * 60;
+    return { start, end };
+}
+
+function updateTimeSlots() {
+    const restaurantId = document.getElementById('restaurant').value;
+    const dateVal = document.getElementById('date').value;
+    const timeSelect = document.getElementById('time');
+    const originalVal = timeSelect.value;
+
+    timeSelect.innerHTML = '<option value="" disabled selected>Heure...</option>';
+
+    if (!restaurantId || !dateVal) return;
+
+    const exp = experiencesData.find(e => e.id === restaurantId);
+    if (!exp || !exp.time) return;
+
+    const hours = parseOpeningHours(exp.time);
+    if (!hours) return;
+
+    // Last seating 90 mins before close
+    const lastSeating = hours.end - 90;
+    const now = new Date();
+    const isToday = (dateVal === now.toISOString().split('T')[0]);
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    for (let t = hours.start; t <= lastSeating; t += 30) {
+        // Filter 15 min buffer if today
+        if (isToday && t < currentMinutes + 15) continue;
+
+        let displayT = t;
+        if (displayT >= 24 * 60) displayT -= 24 * 60;
+        const h = Math.floor(displayT / 60);
+        const m = displayT % 60;
+        const timeString = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+
+        const option = document.createElement('option');
+        option.value = timeString;
+        option.textContent = timeString.replace(':', 'h');
+        timeSelect.appendChild(option);
+    }
+
+    // Restore selection if valid
+    if (originalVal) {
+            const exists = Array.from(timeSelect.options).some(o => o.value === originalVal);
+            if(exists) timeSelect.value = originalVal;
+    }
+}
+
+// === PROGRESSIVE DISCLOSURE ===
+function initProgressiveDisclosure() {
+    const step2 = document.getElementById('form-step-2');
+    const triggers = document.querySelectorAll('#fullname, #restaurant, #date, #time');
+    const reveal = () => {
+        if (step2.classList.contains('step-hidden')) {
+            step2.classList.remove('step-hidden');
+            step2.classList.add('step-visible');
+        }
+    };
+    triggers.forEach(el => {
+        el.addEventListener('focus', reveal);
+        el.addEventListener('change', reveal);
+        el.addEventListener('click', reveal);
+    });
+}
+
 const experiencesData = window.experiencesData = [
     {
         id: "malak", name: "Malak Emeraude", categories: ["grand-spectacle"], smartLabel: "DÎNER-SPECTACLE & VUE", price: "Hivernage", rating: "4.3", reviews: "1011+", time: "20h00 - 02h30",
@@ -2141,83 +2218,6 @@ document.addEventListener('DOMContentLoaded', function() {
     dateInput.setAttribute('min', today); dateInput.value = today;
     const select = document.getElementById('restaurant'); const grid = document.getElementById('spectaclesGrid');
 
-    // === ELITE LOGIC: OPENING HOURS & TIME SLOTS ===
-    function parseOpeningHours(timeStr) {
-        if (!timeStr) return null;
-        const parts = timeStr.split(' - ');
-        if (parts.length !== 2) return null;
-        const parseTime = (t) => {
-            const [h, m] = t.split('h').map(Number);
-            return h * 60 + (m || 0);
-        };
-        let start = parseTime(parts[0]);
-        let end = parseTime(parts[1]);
-        if (end < start) end += 24 * 60;
-        return { start, end };
-    }
-
-    function updateTimeSlots() {
-        const restaurantId = document.getElementById('restaurant').value;
-        const dateVal = document.getElementById('date').value;
-        const timeSelect = document.getElementById('time');
-        const originalVal = timeSelect.value;
-
-        timeSelect.innerHTML = '<option value="" disabled selected>Heure...</option>';
-
-        if (!restaurantId || !dateVal) return;
-
-        const exp = experiencesData.find(e => e.id === restaurantId);
-        if (!exp || !exp.time) return;
-
-        const hours = parseOpeningHours(exp.time);
-        if (!hours) return;
-
-        // Last seating 90 mins before close
-        const lastSeating = hours.end - 90;
-        const now = new Date();
-        const isToday = (dateVal === now.toISOString().split('T')[0]);
-        const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-        for (let t = hours.start; t <= lastSeating; t += 30) {
-            // Filter 15 min buffer if today
-            if (isToday && t < currentMinutes + 15) continue;
-
-            let displayT = t;
-            if (displayT >= 24 * 60) displayT -= 24 * 60;
-            const h = Math.floor(displayT / 60);
-            const m = displayT % 60;
-            const timeString = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-
-            const option = document.createElement('option');
-            option.value = timeString;
-            option.textContent = timeString.replace(':', 'h');
-            timeSelect.appendChild(option);
-        }
-
-        // Restore selection if valid
-        if (originalVal) {
-             const exists = Array.from(timeSelect.options).some(o => o.value === originalVal);
-             if(exists) timeSelect.value = originalVal;
-        }
-    }
-
-    // === PROGRESSIVE DISCLOSURE ===
-    function initProgressiveDisclosure() {
-        const step2 = document.getElementById('form-step-2');
-        const triggers = document.querySelectorAll('#fullname, #restaurant, #date, #time');
-        const reveal = () => {
-            if (step2.classList.contains('step-hidden')) {
-                step2.classList.remove('step-hidden');
-                step2.classList.add('step-visible');
-            }
-        };
-        triggers.forEach(el => {
-            el.addEventListener('focus', reveal);
-            el.addEventListener('change', reveal);
-            el.addEventListener('click', reveal);
-        });
-    }
-
     document.getElementById('restaurant').addEventListener('change', updateTimeSlots);
     document.getElementById('date').addEventListener('change', updateTimeSlots);
     initProgressiveDisclosure();
@@ -2468,7 +2468,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function scrollToForm(id) {
     const exp = experiencesData.find(e => e.id === id); if((exp && exp.soldOut) || AvailabilityEngine.isFullToday(id)) return;
-    document.getElementById('restaurant').value = id; document.getElementById('heroFormContainer').scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => { const fullnameInput = document.getElementById('fullname'); fullnameInput.focus({ preventScroll: true }); }, 500);
+    document.getElementById('restaurant').value = id;
+    updateTimeSlots();
+    document.getElementById('heroFormContainer').scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => { const fullnameInput = document.getElementById('fullname'); fullnameInput.focus({ preventScroll: true }); }, 500);
 }
 
 function filterExperiences(cat, btn) {
