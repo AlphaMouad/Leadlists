@@ -1873,7 +1873,10 @@ function updateTimeSlots() {
     // Last seating 90 mins before close
     const lastSeating = hours.end - 90;
     const now = new Date();
-    const isToday = (dateVal === now.toISOString().split('T')[0]);
+
+        // Use local date for accurate "Today" check
+        const localDate = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+        const isToday = (dateVal === localDate);
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     for (let t = hours.start; t <= lastSeating; t += 30) {
@@ -2214,7 +2217,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const userId = generateUserID(); 
     document.getElementById('userID').value = userId;
 
-    const dateInput = document.getElementById('date'); const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('date');
+    const now = new Date();
+    const today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
     dateInput.setAttribute('min', today); dateInput.value = today;
     const select = document.getElementById('restaurant'); const grid = document.getElementById('spectaclesGrid');
 
