@@ -1519,19 +1519,39 @@ iframe.story-media-item {
                                 <div class="error-msg" id="error-date">Date requise</div>
                             </div>
                             <div class="form-group">
-                                <label for="guests">Invités</label>
-                                <div class="input-container">
-                                    <select id="guests" name="guests" required inputmode="numeric">
-                                        <option value="" disabled selected>Combien?</option>
-                                        <option value="2">2 personnes</option>
-                                        <option value="3">3 personnes</option>
-                                        <option value="4">4 personnes</option>
-                                        <option value="5">5 personnes</option>
-                                        <option value="6">6 personnes</option>
-                                        <option value="7">7+ personnes</option>
+                                <label for="time">Heure</label>
+                                <div class="input-container" id="container-time">
+                                    <select id="time" name="time" required>
+                                        <option value="" disabled selected>Heure...</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="19:30">19:30</option>
+                                        <option value="20:00">20:00</option>
+                                        <option value="20:30">20:30</option>
+                                        <option value="21:00">21:00</option>
+                                        <option value="21:30">21:30</option>
+                                        <option value="22:00">22:00</option>
+                                        <option value="22:30">22:30</option>
+                                        <option value="23:00">23:00</option>
                                     </select>
                                 </div>
+                                <div class="error-msg" id="error-time">Heure requise</div>
                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="guests">Invités</label>
+                            <div class="input-container" id="container-guests">
+                                <select id="guests" name="guests" required inputmode="numeric">
+                                    <option value="" disabled selected>Combien de personnes ?</option>
+                                    <option value="2">2 personnes</option>
+                                    <option value="3">3 personnes</option>
+                                    <option value="4">4 personnes</option>
+                                    <option value="5">5 personnes</option>
+                                    <option value="6">6 personnes</option>
+                                    <option value="7">7+ personnes</option>
+                                </select>
+                            </div>
+                            <div class="error-msg" id="error-guests">Nombre d'invités requis</div>
                         </div>
 
                         <div class="kids-toggle-wrapper" id="kidsToggleWrapper">
@@ -2188,7 +2208,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('heroForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
-        let valid = true; const requiredFields = ['fullname', 'restaurant', 'date'];
+        let valid = true; const requiredFields = ['fullname', 'restaurant', 'date', 'time', 'guests'];
         
         const phoneInput = document.getElementById('phone'); 
         const countryCode = document.getElementById('countryCode').value;
@@ -2248,7 +2268,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if(!valid) { if(navigator.vibrate) navigator.vibrate([50, 50, 50]); return; }
 
-        const formData = { fullname: document.getElementById('fullname').value.trim(), restaurant: document.getElementById('restaurant').value, date: document.getElementById('date').value, guests: document.getElementById('guests').value, enfants: document.getElementById('kidsCount').value, phone: document.getElementById('countryCode').value + document.getElementById('phone').value.replace(/\s/g, ''), countryCode: document.getElementById('countryCode').value, userID: document.getElementById('userID').value };
+        const formData = { fullname: document.getElementById('fullname').value.trim(), restaurant: document.getElementById('restaurant').value, date: document.getElementById('date').value, time: document.getElementById('time').value, guests: document.getElementById('guests').value, enfants: document.getElementById('kidsCount').value, phone: document.getElementById('countryCode').value + document.getElementById('phone').value.replace(/\s/g, ''), countryCode: document.getElementById('countryCode').value, userID: document.getElementById('userID').value };
         const selectedRestaurant = experiencesData.find(e => e.id === formData.restaurant); const restaurantName = selectedRestaurant ? selectedRestaurant.name : formData.restaurant;
         const videoId = videoIdMap[formData.restaurant] || ''; const confirmationNumber = 'MTS' + Date.now().toString(36).toUpperCase();
         const firstName = formData.fullname.split(' ')[0]; // Calculated early for consistency
@@ -2270,6 +2290,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         etablissement: restaurantName,
                         restaurantId: formData.restaurant,
                         date: formData.date,
+                        time: formData.time,
                         adultes: formData.guests,
                         enfants: formData.enfants,
                         phone: formData.phone,
@@ -2292,7 +2313,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (typeof gtag !== 'undefined') { gtag('event', 'conversion', { 'send_to': 'AW-16808399607/conversion' }); }
             
             // REDIRECT WITH USERID
-            const redirectParams = new URLSearchParams({ fullname: formData.fullname, name: firstName, prenom: firstName, restaurant: restaurantName, etablissement: restaurantName, date: formData.date, adultes: formData.guests, enfants: formData.enfants, confirmation: confirmationNumber, videoId: videoId, userID: formData.userID });
+            const redirectParams = new URLSearchParams({ fullname: formData.fullname, name: firstName, prenom: firstName, restaurant: restaurantName, etablissement: restaurantName, date: formData.date, time: formData.time, adultes: formData.guests, enfants: formData.enfants, confirmation: confirmationNumber, videoId: videoId, userID: formData.userID });
             window.location.href = `https://mtszone.b-cdn.net/ty8.html?${redirectParams.toString()}`;
         }, 3800);
         setTimeout(() => { if(document.body.style.overflow === 'hidden') { window.location.href = `https://mtszone.b-cdn.net/ty8.html?fullname=${encodeURIComponent(formData.fullname)}&restaurant=${encodeURIComponent(restaurantName)}&userID=${formData.userID}`; } }, 6000);
