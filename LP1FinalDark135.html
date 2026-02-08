@@ -1890,7 +1890,8 @@ function updateTimeSlots() {
     const isToday = (dateVal === ctx.dateStr);
     const currentMinutes = ctx.minutes;
 
-    for (let t = hours.start; t <= lastSeating; t += 30) {
+    // === OPTIMIZATION: 15-min increments for granular choice ===
+    for (let t = hours.start; t <= lastSeating; t += 15) {
         // Filter 15 min buffer if today (using Marrakech Time)
         if (isToday && t < currentMinutes + 15) continue;
 
@@ -1989,16 +1990,22 @@ const experiencesData = window.experiencesData = [
     }
 ];
 
-// === ELITE OPTIMIZED TIMEZONE HELPER (V2) ===
+// === ELITE OPTIMIZED TIMEZONE HELPER (V3 - ATOMIC ACCURACY) ===
 function getMarrakechContext() {
     const now = new Date();
-    // Using sv-SE locale for consistent YYYY-MM-DD format
-    const dateStr = now.toLocaleString("sv-SE", {timeZone: "Africa/Casablanca"}).split(" ")[0];
-    const timeStr = now.toLocaleString("en-GB", {timeZone: "Africa/Casablanca", hour: "2-digit", minute: "2-digit", hour12: false});
-    const [h, m] = timeStr.split(':').map(Number);
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Africa/Casablanca',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: false
+    });
+
+    const parts = formatter.formatToParts(now);
+    const getPart = (type) => parts.find(p => p.type === type).value;
+
     return {
-        dateStr: dateStr,
-        minutes: h * 60 + m
+        // Force YYYY-MM-DD format manually to be absolutely safe
+        dateStr: `${getPart('year')}-${getPart('month')}-${getPart('day')}`,
+        minutes: parseInt(getPart('hour')) * 60 + parseInt(getPart('minute'))
     };
 }
 
