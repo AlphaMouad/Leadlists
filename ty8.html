@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+    <!-- === ELITE LOADING STATE (PREVENT FLASH OF UNPOPULATED CONTENT) === -->
+    <script>
+        document.documentElement.classList.add('js-loading');
+    </script>
+    <style>
+        html.js-loading body {
+            opacity: 0;
+            visibility: hidden;
+        }
+        body {
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+    </style>
+
     <!-- === META TAGS === -->
     <title>Félicitations - Votre Soirée VIP est Confirmée | Marrakech Top Spot</title>
     <meta name="description" content="Votre réservation VIP est confirmée. Préparez-vous pour une soirée inoubliable à Marrakech.">
@@ -17,6 +31,8 @@
     <link rel="preconnect" href="https://MTSpull.b-cdn.net">
     <link rel="preconnect" href="https://MTSZone.b-cdn.net" crossorigin>
     <link rel="preconnect" href="https://player.mediadelivery.net">
+    <!-- ELITE: Preload Wistia Script for Performance -->
+    <link rel="preload" href="https://fast.wistia.com/assets/external/E-v1.js" as="script">
     <!-- ELITE: Preconnect for Bunny Video Player -->
     <link rel="preconnect" href="https://iframe.mediadelivery.net">
     <link rel="dns-prefetch" href="https://iframe.mediadelivery.net">
@@ -184,7 +200,7 @@
         .wistia-video-container {
             width: 100%; max-width: 620px; margin: 0 auto 2.5rem;
             border-radius: 28px;
-            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.35), 0 15px 30px -10px rgba(236, 80, 117, 0.15);
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.5), 0 30px 60px -30px rgba(0,0,0,0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
             position: relative; aspect-ratio: 16/9; background-color: #000;
             border: 5px solid #ffffff; cursor: pointer;
             transform: translateZ(0); -webkit-transform: translateZ(0);
@@ -1327,7 +1343,7 @@
             .wistia-video-container {
                 margin-bottom: 2rem !important; width: 100% !important;
                 border-width: 0 !important; border-radius: 20px !important;
-                box-shadow: 0 15px 40px rgba(0,0,0,0.15) !important;
+                box-shadow: 0 25px 60px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
             }
 
             .cta-primary, .form-button {
@@ -1944,6 +1960,12 @@
                     time: urlParams.get('heure') || urlParams.get('time') || '',
                     confirmation: urlParams.get('confirmation') || 'MTS-2025'
                 };
+
+                // ELITE: Reveal content after population
+                // Use a small timeout to ensure the browser has painted the changes
+                setTimeout(() => {
+                    document.documentElement.classList.remove('js-loading');
+                }, 50);
             }
 
             // Initialize URL params
@@ -2071,22 +2093,30 @@
                                     video.play();
                                     updateBadgeUI();
 
-                                    const bookingSection = document.getElementById('bookingDetails');
-                                    if (bookingSection) {
-                                        setTimeout(() => {
-                                            bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                        }, 300);
-                                    }
+                                    // ELITE SCROLL: Custom scroll to avoid header overlap
+                                    setTimeout(() => {
+                                        const bookingSection = document.getElementById('bookingDetails');
+                                        const header = document.querySelector('header');
+                                        if (bookingSection) {
+                                            const headerHeight = header ? header.offsetHeight : 0;
+                                            const targetPosition = bookingSection.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
+                                            window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                                        }
+                                    }, 300);
                                 });
                             } else {
                                 video.time(0);
                                 video.play();
-                                const bookingSection = document.getElementById('bookingDetails');
-                                if (bookingSection) {
-                                    setTimeout(() => {
-                                        bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                    }, 300);
-                                }
+                                // ELITE SCROLL: Custom scroll to avoid header overlap
+                                setTimeout(() => {
+                                    const bookingSection = document.getElementById('bookingDetails');
+                                    const header = document.querySelector('header');
+                                    if (bookingSection) {
+                                        const headerHeight = header ? header.offsetHeight : 0;
+                                        const targetPosition = bookingSection.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
+                                        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                                    }
+                                }, 300);
                             }
                         });
 
