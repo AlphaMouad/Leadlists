@@ -1882,8 +1882,8 @@ function updateTimeSlots() {
     const hours = parseOpeningHours(exp.time);
     if (!hours) return;
 
-    // === OPTIMIZATION: Reduced buffer to 60 mins for better conversion ===
-    const lastSeating = hours.end - 60;
+    // === OPTIMIZATION: Removed buffer completely to match closing time (User Request) ===
+    const lastSeating = hours.end;
 
     // === OPTIMIZATION: Use Marrakech Time ===
     const ctx = getMarrakechContext();
