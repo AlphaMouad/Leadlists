@@ -754,16 +754,17 @@
     position: fixed; top: 0; left: 0; 
     width: 100%; height: 100dvh;
     background: #000; z-index: 9999; 
-    display: none; align-items: center; justify-content: center;
-    opacity: 0; 
-    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    visibility: hidden; opacity: 0; pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
     overflow: hidden;
     will-change: opacity;
     transform: translateZ(0);
 }
 .story-overlay.show { 
-    display: flex; 
+    visibility: visible;
     opacity: 1; 
+    pointer-events: auto;
 }
 
 .story-container { 
@@ -1395,15 +1396,12 @@ iframe.story-media-item {
         /* === VIDEO PRELOAD CONTAINER === */
         #video-preload-container {
             position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            overflow: hidden;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            z-index: -1;
-            visibility: hidden;
+            z-index: 0;
         }
 
     </style>
@@ -1723,7 +1721,9 @@ iframe.story-media-item {
                     </div>
                 </div>
             </div>
-            <div class="story-media-wrapper" id="storyMediaWrapper"></div>
+            <div class="story-media-wrapper" id="storyMediaWrapper">
+                <div id="video-preload-container"></div>
+            </div>
             <div class="story-overlay-icon" id="storyOverlayIcon">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </div>
@@ -2028,6 +2028,41 @@ function generateUserID() {
 function initTeaserEngine() {
     const cardTimers = new Map();
     const preloadContainer = document.getElementById('video-preload-container');
+
+    // Core preload function
+    const preloadVideo = (card) => {
+        if (!preloadContainer) return;
+        const expId = card.dataset.id;
+        const exp = experiencesData.find(e => e.id === expId);
+
+        if(exp && exp.video) {
+            // Check if already preloaded
+            const existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
+
+            if (!existingIframe) {
+                // Create hidden iframe
+                const iframe = document.createElement('iframe');
+                iframe.setAttribute('data-id', expId);
+
+                let src = exp.video;
+                if(!src.includes('?')) src += '?';
+                src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
+
+                iframe.src = src;
+                iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+                iframe.style.width = "100%";
+                iframe.style.height = "100%";
+                iframe.style.border = "none";
+                iframe.style.opacity = '0';
+                iframe.className = 'story-media-item';
+                iframe.setAttribute('loading', 'eager');
+                iframe.setAttribute('fetchpriority', 'high');
+
+                preloadContainer.appendChild(iframe);
+            }
+        }
+    };
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             const card = entry.target;
@@ -2036,47 +2071,9 @@ function initTeaserEngine() {
             if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
                 if (!cardTimers.has(card)) {
                     const timerId = setTimeout(() => { 
-                        // 1. Trigger UI Animation (Smooth)
                         card.classList.add('teaser-active');
-                        
-                        // 2. Delayed Video Preload (200ms delay to prevent main-thread jank during CSS animation)
-                        setTimeout(() => {
-                            // === VIDEO PRELOAD LOGIC ===
-                            const expId = card.dataset.id;
-                            const exp = experiencesData.find(e => e.id === expId);
-                            
-                            if(exp && exp.video) {
-                                // Check if already preloaded
-                                const existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
-                                
-                                if (!existingIframe && preloadContainer) {
-                                    // Create hidden iframe
-                                    const iframe = document.createElement('iframe');
-                                    iframe.setAttribute('data-id', expId);
-                                    
-                                    // Bunny Parameters: 
-                                    // preload=true: Buffers content
-                                    // autoplay=true & muted=true: Starts playback invisibly (instant play when shown)
-                                    // controls=0: Hides controls
-                                    // enablejsapi=1: Allows StoryManager to control playback (unmute, detect end)
-                                    let src = exp.video;
-                                    if(!src.includes('?')) src += '?';
-                                    src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
-                                    
-                                    iframe.src = src;
-                                    iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-                                    iframe.style.width = "100%";
-                                    iframe.style.height = "100%";
-                                    iframe.style.border = "none";
-                                    iframe.style.opacity = '0'; // Ensure invisible initially
-                                    iframe.className = 'story-media-item'; // Add class for seamless integration later
-                                    
-                                    preloadContainer.appendChild(iframe);
-                                }
-                            }
-                            // Note: Image preloading removed to prioritize video start performance
-                        }, 200);
-
+                        // Reduced delay from 200ms to 50ms for faster preloading
+                        setTimeout(() => preloadVideo(card), 50);
                     }, 50);
                     cardTimers.set(card, timerId);
                 }
@@ -2088,7 +2085,16 @@ function initTeaserEngine() {
             }
         });
     }, { threshold: [0.1, 0.55] });
-    setTimeout(() => { document.querySelectorAll('.spectacle-card').forEach(card => observer.observe(card)); }, 100);
+
+    setTimeout(() => {
+        document.querySelectorAll('.spectacle-card').forEach(card => {
+            observer.observe(card);
+            // Touchstart for instant preload on mobile tap
+            card.addEventListener('touchstart', () => preloadVideo(card), { passive: true, once: true });
+            // Mouseover for instant preload on desktop hover
+            card.addEventListener('mouseenter', () => preloadVideo(card), { passive: true, once: true });
+        });
+    }, 100);
 }
 
 function validatePhone(phone, countryCode) {
@@ -2396,53 +2402,37 @@ window.StoryManager = {
         let wasPausedBeforeTouch = false;
 
         const handleStart = (e) => {
-            // Allow manual pause for ALL items (Video & Image)
-            // Allow default for scrolling unless we are in the overlay (overlay handles scroll lock)
             if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault(); 
-            
             touchStartTime = Date.now();
             wasPausedBeforeTouch = this.isPaused;
-            
-            // Pause immediately on touch down
             this.pause(); 
         };
 
         const handleEnd = (e) => {
             if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault();
-            
             const duration = Date.now() - touchStartTime;
-            const isTap = duration < 250; // Anything under 250ms is a tap
-
+            const isTap = duration < 250;
             if (isTap) {
-                // LOGIC: If it was paused before we touched, RESUME.
-                // If it was playing, we paused it in handleStart, so we leave it PAUSED.
-                if (wasPausedBeforeTouch) {
-                    this.resume();
-                }
+                if (wasPausedBeforeTouch) { this.resume(); }
             } else {
-                // HOLD LOGIC: Always resume when finger leaves screen
                 this.resume();
             }
         };
 
-        // Bind events with passive: false to control behavior accurately
         holdZone.addEventListener('mousedown', handleStart);
         holdZone.addEventListener('mouseup', handleEnd);
         holdZone.addEventListener('touchstart', handleStart, {passive: false});
         holdZone.addEventListener('touchend', handleEnd, {passive: false});
 
         // Global Mute Toggle
-        document.getElementById('soundToggle').addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.toggleMute();
-        });
+        document.getElementById('soundToggle').addEventListener('click', (e) => { e.stopPropagation(); this.toggleMute(); });
 
         document.getElementById('storyCloseBtn').addEventListener('click', () => this.close());
         const bookAction = () => { this.close(); scrollToForm(this.currentExp.id); };
         document.getElementById('storyBookBtn').addEventListener('click', bookAction);
         document.getElementById('climaxBtn').addEventListener('click', bookAction);
 
-        // Silent Audio Unlocker (Primes the browser audio engine on first interaction)
+        // Silent Audio Unlocker
         const unlockAudio = () => {
             if (this.hasUnlockedAudio) return;
             const p = this.audioObj.play();
@@ -2463,47 +2453,34 @@ window.StoryManager = {
         this.currentExp = (window.experiencesData || []).find(e => e.id === id);
         if(!this.currentExp) return;
 
-        // Force Unlock if not done
         if(!this.hasUnlockedAudio) {
             this.audioObj.play().catch(()=>{}); 
             this.audioObj.pause();
             this.hasUnlockedAudio = true;
         }
 
-        // UI Setup
         this.updateUI(this.currentExp);
 
-        // Smart Duration Calculation based on Audio
         if(this.currentExp.audio) {
             this.audioObj.src = this.currentExp.audio;
             this.audioObj.onloadedmetadata = () => {
                 const total = this.audioObj.duration;
                 if(total > 10) {
                     const count = this.currentExp.gallery.length;
-
-                    // 1. Reserve 15% (or min 5s) for the Climax Card at the end
                     const reservedForClimax = Math.max(5, total * 0.15);
-                    
-                    // 2. Subtract 15s buffer (This accounts for the Video Intro/Buildup)
                     const availableTime = total - reservedForClimax - 15; 
-                    
-                    // 3. Calculate exact duration per image to fit the remaining window
                     if(availableTime > 0 && count > 0) {
                         this.imageDuration = (availableTime / count) * 1000;
-                        
-                        // 4. Clamp between 2.5s and 6s
                         this.imageDuration = Math.max(2500, Math.min(6000, this.imageDuration));
                     }
                 }
             };
         }
 
-        // Build Queue
         this.queue = [];
         if(this.currentExp.video) this.queue.push({ type: 'video', src: this.currentExp.video });
         this.currentExp.gallery.forEach(img => this.queue.push({ type: 'image', src: img }));
 
-        // Progress Bar
         const progContainer = document.getElementById('storyProgressBar');
         progContainer.innerHTML = '';
         this.queue.forEach(() => {
@@ -2524,12 +2501,18 @@ window.StoryManager = {
 
     // 3. Render Engine (Optimized)
     renderSlide: function() {
+        // Stop any currently playing video before switching
+        if (this.currentVideoPlayer) {
+            try {
+                this.currentVideoPlayer.pause();
+                this.currentVideoPlayer.mute();
+            } catch(e){}
+        }
+
         const wrapper = document.getElementById('storyMediaWrapper');
-        
         if(this.timer) clearTimeout(this.timer);
         this.timer = null;
 
-        // Reset Progress Bars (Using Transform for GPU performance)
         const allFills = document.querySelectorAll('.progress-segment .progress-fill');
         allFills.forEach((fill, i) => {
             fill.style.transition = 'none';
@@ -2541,36 +2524,34 @@ window.StoryManager = {
             return;
         }
 
-        // --- OPTIMIZATION: PRELOAD NEXT IMAGE & CLIMAX (DAISY CHAIN) ---
         if(this.currentIndex + 1 < this.queue.length) {
             const next = this.queue[this.currentIndex + 1];
             if(next.type === 'image' && !this.preloadedUrls.has(next.src)) {
-                const img = new Image();
-                img.src = next.src;
-                img.fetchPriority = "high";
+                const img = new Image(); img.src = next.src; img.fetchPriority = "high";
                 this.preloadedUrls.add(next.src);
             }
-        } 
-        else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
+        } else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
             if(!this.preloadedUrls.has(this.currentExp.finalImage)) {
-                const img = new Image();
-                img.src = this.currentExp.finalImage;
-                img.fetchPriority = "high";
+                const img = new Image(); img.src = this.currentExp.finalImage; img.fetchPriority = "high";
                 this.preloadedUrls.add(this.currentExp.finalImage);
             }
         }
 
         document.getElementById('climaxCard').classList.remove('active');
-        
         const item = this.queue[this.currentIndex];
-        
-        // Ensure footer is visible for both images and videos
         document.getElementById('storyTextContent').classList.remove('hidden');
-
         const currentFill = allFills[this.currentIndex];
         
-        // CLEANUP PREVIOUS SLIDE (Video stops here if playing)
-        wrapper.innerHTML = ''; 
+        // Hide previous items instead of wiping
+        const allMedia = wrapper.querySelectorAll('.story-media-item');
+        allMedia.forEach(el => {
+            el.classList.remove('active');
+            el.style.opacity = '0';
+            el.style.zIndex = '';
+            if(el.tagName === 'IMG' && el.parentNode === wrapper) el.remove();
+            if(el.tagName === 'IFRAME' && el.parentNode === wrapper && el.parentNode.id !== 'video-preload-container') el.remove();
+        });
+
         this.currentVideoPlayer = null; 
 
         if(item.type === 'video') {
@@ -2585,68 +2566,46 @@ window.StoryManager = {
         if(this.isMuted) {
              this.audioObj.pause();
         } else {
-             // Fade out music to let video audio take over
              this.fadeAudio(0, 300, true);
         }
 
-        // Check for preloaded iframe
         const expId = this.currentExp.id;
+        // Check for preloaded iframe in the moved container
         const preloadedIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
         
         let iframe;
         let isReused = false;
 
         if (preloadedIframe) {
-            // === ELITE OPTIMIZATION: REUSE PRELOADED IFRAME ===
             iframe = preloadedIframe;
-            
-            // Move from preload container to story wrapper (Adoption)
-            container.appendChild(iframe);
-            
-            // Reset visibility
-            iframe.style.opacity = '0';
+            iframe.style.opacity = '1';
+            iframe.style.zIndex = '10';
+            iframe.style.pointerEvents = 'auto';
             iframe.classList.add('active');
             isReused = true;
         } else {
-            // Fallback: Create new iframe
             iframe = document.createElement('iframe');
             const ts = new Date().getTime();
-            
             let src = item.src;
             if(!src.includes('?')) src += '?';
-            // Force muted=0 for immediate sound potential
             src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-            
             iframe.src = src;
             iframe.className = 'story-media-item active';
             iframe.style.opacity = '0';
             iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
             iframe.setAttribute('loading', 'eager');
-            
+            iframe.setAttribute('fetchpriority', 'high');
             container.appendChild(iframe);
+            requestAnimationFrame(() => { iframe.style.opacity = '1'; });
         }
-        
-        // Smooth transition for video appearance
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                iframe.style.opacity = '1';
-            });
-        });
 
         const player = new playerjs.Player(iframe);
         this.currentVideoPlayer = player;
 
-        // Logic to run when player is ready (or re-ready)
         const onPlayerReady = () => {
-            if(!this.isMuted) {
-                player.unmute();
-                player.setVolume(100);
-            }
-            
-            // CRITICAL: Ensure video starts from 0 (fixes "not starting from start")
+            if(!this.isMuted) { player.unmute(); player.setVolume(100); }
             player.setCurrentTime(0);
             player.play();
-
             player.getDuration((d) => {
                 const dur = d ? d : 15;
                 progressBar.style.transition = `transform ${dur}s linear`;
@@ -2655,45 +2614,32 @@ window.StoryManager = {
         };
 
         player.on('ready', onPlayerReady);
-        
-        // If reused, the player might already be 'ready' internally, but re-attaching listener is safe.
-        // We can also optimistically call play/unmute if we suspect it's already loaded.
         if (isReused) {
-             // Attempt immediate control in case event doesn't refire
              setTimeout(() => {
                  if(!this.isMuted) player.unmute();
                  player.setCurrentTime(0);
                  player.play();
-             }, 50);
+             }, 10);
         }
-
-        player.on('ended', () => {
-            this.next();
-        });
+        player.on('ended', () => { this.next(); });
     },
 
     // 5. Image Logic
     playImageSlide: function(item, container, progressBar) {
         this.currentVideoPlayer = null;
-        
         if(!this.isMuted && this.audioObj.paused) {
             this.audioObj.play().catch(()=>{});
             this.fadeAudio(1, 400);
         }
-
         const img = document.createElement('img');
         img.src = item.src;
         img.className = 'story-media-item';
-        
         container.appendChild(img);
-        
         requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add('active')));
-
         setTimeout(() => {
             progressBar.style.transition = `transform ${this.imageDuration}ms linear`;
             progressBar.style.transform = 'scaleX(1)';
         }, 50);
-
         this.timer = setTimeout(() => this.next(), this.imageDuration);
     },
 
@@ -2703,15 +2649,12 @@ window.StoryManager = {
         const steps = 10;
         const interval = duration / steps;
         const stepAmount = (targetVol - startVol) / steps;
-        
         let counter = 0;
         const fadeTimer = setInterval(() => {
             counter++;
             let newVol = this.audioObj.volume + stepAmount;
-            if(newVol < 0) newVol = 0;
-            if(newVol > 1) newVol = 1;
+            if(newVol < 0) newVol = 0; if(newVol > 1) newVol = 1;
             this.audioObj.volume = newVol;
-
             if(counter >= steps) {
                 clearInterval(fadeTimer);
                 this.audioObj.volume = targetVol;
@@ -2723,35 +2666,25 @@ window.StoryManager = {
     // 7. Toggle Mute
     toggleMute: function() {
         this.isMuted = !this.isMuted;
-        
         document.getElementById('iconMute').classList.toggle('hidden', !this.isMuted);
         document.getElementById('iconSound').classList.toggle('hidden', this.isMuted);
-
         if(this.isMuted) {
             this.fadeAudio(0, 200, true);
             if(this.currentVideoPlayer) this.currentVideoPlayer.mute();
         } else {
-            // If watching video, unmute video. If image, play music.
-            if(this.currentVideoPlayer) {
-                this.currentVideoPlayer.unmute();
-                this.currentVideoPlayer.setVolume(100);
-            } else {
-                this.audioObj.play().catch(()=>{});
-                this.fadeAudio(1, 200);
-            }
+            if(this.currentVideoPlayer) { this.currentVideoPlayer.unmute(); this.currentVideoPlayer.setVolume(100); }
+            else { this.audioObj.play().catch(()=>{}); this.fadeAudio(1, 200); }
         }
     },
 
     // 8. Navigation & Controls
     pause: function() {
         this.isPaused = true;
-        
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
         if(fill) {
             const computed = window.getComputedStyle(fill);
-            const matrix = computed.transform; 
             fill.style.transition = 'none';
-            fill.style.transform = matrix;
+            fill.style.transform = computed.transform;
         }
         clearTimeout(this.timer);
         if(this.currentVideoPlayer) this.currentVideoPlayer.pause();
@@ -2761,21 +2694,16 @@ window.StoryManager = {
     resume: function() {
         if(!this.isPaused) return;
         this.isPaused = false;
-        
         const item = this.queue[this.currentIndex];
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
-
         if(item.type === 'video') {
             if(this.currentVideoPlayer) {
                 this.currentVideoPlayer.play();
-                fill.style.transition = 'transform 10s linear'; 
+                fill.style.transition = 'transform 10s linear'; // Approximate resume
                 fill.style.transform = 'scaleX(1)';
             }
         } else {
-            if(!this.isMuted) {
-                this.audioObj.play().catch(()=>{});
-                this.fadeAudio(1, 200);
-            }
+            if(!this.isMuted) { this.audioObj.play().catch(()=>{}); this.fadeAudio(1, 200); }
             fill.style.transition = `transform ${this.imageDuration}ms linear`;
             fill.style.transform = 'scaleX(1)';
             this.timer = setTimeout(() => this.next(), this.imageDuration);
@@ -2783,70 +2711,55 @@ window.StoryManager = {
     },
 
     next: function() {
-        if(this.currentIndex < this.queue.length) {
-            this.currentIndex++;
-            this.renderSlide();
-        }
+        if(this.currentIndex < this.queue.length) { this.currentIndex++; this.renderSlide(); }
     },
 
     prev: function() {
-        if(this.currentIndex > 0) {
-            this.currentIndex--;
-            this.renderSlide();
-        }
+        if(this.currentIndex > 0) { this.currentIndex--; this.renderSlide(); }
     },
 
     showClimax: function() {
-        if(!this.isMuted) {
-            this.audioObj.play().catch(()=>{});
-            this.fadeAudio(1, 300);
-        }
+        if(!this.isMuted) { this.audioObj.play().catch(()=>{}); this.fadeAudio(1, 300); }
         document.getElementById('storyTextContent').classList.add('hidden');
-        document.getElementById('storyMediaWrapper').innerHTML = ''; 
+        // Do not wipe media wrapper here either
+        const wrapper = document.getElementById('storyMediaWrapper');
+        const allMedia = wrapper.querySelectorAll('.story-media-item');
+        allMedia.forEach(el => { el.style.opacity = '0'; el.classList.remove('active'); el.style.zIndex = ''; });
+
         document.getElementById('climaxCard').classList.add('active');
     },
 
     updateUI: function(exp) {
         document.getElementById('storyBrandName').textContent = exp.name;
-        
-        // Populate Footer Header
         const footerTitle = document.getElementById('storyFooterTitle');
         if(footerTitle) footerTitle.textContent = exp.name;
-
         const footerRating = document.getElementById('storyFooterRating');
-        if(footerRating) {
-            footerRating.innerHTML = '<span style="color: #FFD700; letter-spacing: 2px;">★★★★★</span> <span style="color: #FFF; font-weight: 700; margin-left: 6px;">' + exp.rating + '/5</span>';
-        }
-
+        if(footerRating) { footerRating.innerHTML = '<span style="color: #FFD700; letter-spacing: 2px;">★★★★★</span> <span style="color: #FFF; font-weight: 700; margin-left: 6px;">' + exp.rating + '/5</span>'; }
         const footerDesc = document.getElementById('storyFooterDescription');
-        if(footerDesc) {
-            footerDesc.textContent = exp.description + '...';
-        }
-
+        if(footerDesc) { footerDesc.textContent = exp.description + '...'; }
         document.getElementById('climaxTitle').textContent = exp.name;
         document.getElementById('climaxDesc').textContent = exp.description;
-        
         const bgContainer = document.getElementById('climaxBgContainer');
-        if(exp.finalImage) {
-           bgContainer.style.backgroundImage = `url('${exp.finalImage}')`; 
-        }
+        if(exp.finalImage) { bgContainer.style.backgroundImage = `url('${exp.finalImage}')`; }
     },
 
     close: function() {
         this.fadeAudio(0, 200, true);
-        
-        // Immediate video stop
-        if (this.currentVideoPlayer) {
-            try { 
-                this.currentVideoPlayer.pause(); 
-                this.currentVideoPlayer.mute();
-            } catch(e){}
-        }
-
+        if (this.currentVideoPlayer) { try { this.currentVideoPlayer.pause(); this.currentVideoPlayer.mute(); } catch(e){} }
         document.getElementById('storyOverlay').classList.remove('show');
         
         setTimeout(() => {
-            document.getElementById('storyMediaWrapper').innerHTML = '';
+            const wrapper = document.getElementById('storyMediaWrapper');
+            const allMedia = wrapper.querySelectorAll('.story-media-item');
+            allMedia.forEach(el => {
+                el.classList.remove('active');
+                el.style.opacity = '0';
+                el.style.zIndex = '';
+                // Only remove if NOT in the preload container
+                if(el.tagName === 'IMG') el.remove();
+                if(el.tagName === 'IFRAME' && el.parentElement.id !== 'video-preload-container') el.remove();
+            });
+
             document.body.style.overflow = '';
             this.audioObj.pause();
             this.audioObj.currentTime = 0;
@@ -3064,9 +2977,6 @@ function openMapWidget(id, event) {
 function addMarker(coords) { if (mapMarker) mapMarker.remove(); const el = document.createElement('div'); el.className = 'venue-marker'; mapMarker = new mapboxgl.Marker(el).setLngLat(coords).addTo(map); }
 function closeMapWidget() { const modal = document.getElementById('mapbox-modal'); modal.classList.remove('active'); document.body.style.overflow = ''; setTimeout(() => { modal.style.display = 'none'; }, 400); }
 </script>
-
-<!-- === VIDEO PRELOAD CONTAINER === -->
-<div id="video-preload-container"></div>
 
 </body>
 </html>
