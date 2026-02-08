@@ -1864,20 +1864,34 @@ function updateTimeSlots() {
     
     if (!restaurantId || !dateVal) return;
 
+    // === OPTIMIZATION: Check availability first ===
+    if (typeof AvailabilityEngine !== 'undefined' && AvailabilityEngine.isLoaded) {
+        const status = AvailabilityEngine.check(restaurantId, dateVal);
+        if (!status.valid) {
+            const option = document.createElement('option');
+            option.disabled = true;
+            option.textContent = status.msg; // "Fermé..." or "Complet..."
+            timeSelect.appendChild(option);
+            return;
+        }
+    }
+
     const exp = experiencesData.find(e => e.id === restaurantId);
     if (!exp || !exp.time) return;
 
     const hours = parseOpeningHours(exp.time);
     if (!hours) return;
 
-    // Last seating 90 mins before close
-    const lastSeating = hours.end - 90; 
-    const now = new Date();
-    const isToday = (dateVal === now.toISOString().split('T')[0]);
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    // === OPTIMIZATION: Reduced buffer to 60 mins for better conversion ===
+    const lastSeating = hours.end - 60;
+
+    // === OPTIMIZATION: Use Marrakech Time ===
+    const ctx = getMarrakechContext();
+    const isToday = (dateVal === ctx.dateStr);
+    const currentMinutes = ctx.minutes;
 
     for (let t = hours.start; t <= lastSeating; t += 30) {
-        // Filter 15 min buffer if today
+        // Filter 15 min buffer if today (using Marrakech Time)
         if (isToday && t < currentMinutes + 15) continue;
 
         let displayT = t;
@@ -1975,6 +1989,19 @@ const experiencesData = window.experiencesData = [
     }
 ];
 
+// === ELITE OPTIMIZED TIMEZONE HELPER (V2) ===
+function getMarrakechContext() {
+    const now = new Date();
+    // Using sv-SE locale for consistent YYYY-MM-DD format
+    const dateStr = now.toLocaleString("sv-SE", {timeZone: "Africa/Casablanca"}).split(" ")[0];
+    const timeStr = now.toLocaleString("en-GB", {timeZone: "Africa/Casablanca", hour: "2-digit", minute: "2-digit", hour12: false});
+    const [h, m] = timeStr.split(':').map(Number);
+    return {
+        dateStr: dateStr,
+        minutes: h * 60 + m
+    };
+}
+
 const AvailabilityEngine = {
     sheetId: '1flTpiOoNjTdxpPTo0wEYk_q-IW2-eovCVxWUQaw_N-w', rules: {}, isLoaded: false,
     init: async function() {
@@ -2002,7 +2029,7 @@ const AvailabilityEngine = {
         const date = new Date(dateString); const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
         const dayName = days[date.getDay()];
         if(rule.forbiddenDays.includes(dayName)) return { valid: false, reason: "closed", msg: "Fermé ou privatisé ce jour-là." };
-        const today = new Date().toISOString().split('T')[0];
+        const today = getMarrakechContext().dateStr;
         if(dateString === today && rule.fullyBooked) return { valid: false, reason: "full", msg: "Complet pour ce soir." };
         return { valid: true };
     },
@@ -2012,7 +2039,7 @@ const AvailabilityEngine = {
         if (!rule) return false;
         if (rule.fullyBooked) return true;
         const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        const todayName = days[new Date().getDay()];
+        const todayName = days[new Date(getMarrakechContext().dateStr).getDay()];
         return rule.forbiddenDays.includes(todayName);
     }
 };
@@ -2214,8 +2241,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const userId = generateUserID(); 
     document.getElementById('userID').value = userId;
 
-    const dateInput = document.getElementById('date'); const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today); dateInput.value = today;
+    const dateInput = document.getElementById('date');
+    const today = getMarrakechContext().dateStr;
+    dateInput.setAttribute('min', today);
+    dateInput.value = today;
     const select = document.getElementById('restaurant'); const grid = document.getElementById('spectaclesGrid');
 
     document.getElementById('restaurant').addEventListener('change', updateTimeSlots);
