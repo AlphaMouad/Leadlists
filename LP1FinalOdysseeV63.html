@@ -119,6 +119,56 @@
             transform: none !important;
         }
 
+        /* ELITE BADGE */
+        .elite-story-badge {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            box-shadow: 0 8px 24px -4px rgba(0,0,0,0.25), 0 4px 12px -2px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            z-index: 20;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+        .elite-story-badge:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 12px 32px -4px rgba(236, 80, 117, 0.3);
+        }
+        .badge-pulse {
+            position: relative;
+            width: 8px;
+            height: 8px;
+            background: #EC5075;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(236, 80, 117, 0.2);
+        }
+        .badge-pulse::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 1px solid #EC5075;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; }
+        }
+
         /* MOBILE SNAP SCROLL */
         .mobile-snap-scroll {
             display: flex;
@@ -1466,8 +1516,8 @@
                             <svg class="w-8 h-8 text-primary ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
-                    <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-2">
-                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span></span>
+                    <div class="elite-story-badge">
+                        <div class="badge-pulse"></div>
                         Voir la Story
                     </div>
                 </div>
@@ -1492,7 +1542,10 @@
                                 <svg class="w-7 h-7 text-primary ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             </div>
                         </div>
-                        <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">Voir Story</div>
+                    <div class="elite-story-badge">
+                        <div class="badge-pulse"></div>
+                        Voir la Story
+                    </div>
                     </div>
                     <div class="mobile-snap-item" onclick="StoryManager.open('agafay')">
                         <img src="https://MTSZone.b-cdn.net/Agafay/Vertical/3.jpg" alt="Quad" loading="lazy">
@@ -2141,6 +2194,42 @@
             <!-- CAROUSEL (Mobile) / GRID (Desktop) -->
             <div class="pal-scroll" id="palCarousel">
 
+                <!-- CARD 3: MONTGOLFIÈRE (MOVED TO FIRST) -->
+                <article class="pal-card">
+                    <div class="pal-card-image">
+                        <img src="https://MTSZone.b-cdn.net/Agafay/Agafay10.jpg" alt="Montgolfière Ciel d'Agafay" loading="lazy">
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">Premium</span>
+                        </div>
+                        <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm hover:bg-white transition-colors" aria-label="Favoris">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        </button>
+                        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <div class="absolute bottom-3 left-3 flex items-center gap-1.5 text-white">
+                            <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            <span class="text-sm font-bold">5.0</span>
+                            <span class="text-xs opacity-80">(127)</span>
+                        </div>
+                    </div>
+                    <div class="pal-card-content">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">MATINÉE</span>
+                            <span class="text-[10px] text-gray-400">Agafay</span>
+                        </div>
+                        <h3 class="font-bold text-gray-900 mb-1 leading-tight">Montgolfière au Lever du Soleil</h3>
+                        <p class="text-xs text-gray-500 mb-3 line-clamp-2">Survolez le désert et l'Atlas au petit matin - Expérience unique</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-xs text-gray-400 line-through">2500 DH</span>
+                                <span class="font-bold text-lg text-gray-900">2050 DH</span>
+                            </div>
+                            <button class="text-xs font-bold text-white bg-primary hover:bg-primary-dark px-4 py-2 rounded-full transition-colors">
+                                Voir
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
                 <!-- CARD 1: JET SKI -->
                 <article class="pal-card">
                     <div class="pal-card-image">
@@ -2211,42 +2300,6 @@
                             <div class="flex items-baseline gap-1.5">
                                 <span class="text-xs text-gray-400 line-through">1100 DH</span>
                                 <span class="font-bold text-lg text-gray-900">900 DH</span>
-                            </div>
-                            <button class="text-xs font-bold text-white bg-primary hover:bg-primary-dark px-4 py-2 rounded-full transition-colors">
-                                Voir
-                            </button>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- CARD 3: MONTGOLFIÈRE -->
-                <article class="pal-card">
-                    <div class="pal-card-image">
-                        <img src="https://MTSZone.b-cdn.net/Agafay/Agafay10.jpg" alt="Montgolfière Ciel d'Agafay" loading="lazy">
-                        <div class="absolute top-3 left-3">
-                            <span class="bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">Premium</span>
-                        </div>
-                        <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm hover:bg-white transition-colors" aria-label="Favoris">
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                        </button>
-                        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/70 to-transparent"></div>
-                        <div class="absolute bottom-3 left-3 flex items-center gap-1.5 text-white">
-                            <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                            <span class="text-sm font-bold">5.0</span>
-                            <span class="text-xs opacity-80">(127)</span>
-                        </div>
-                    </div>
-                    <div class="pal-card-content">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">MATINÉE</span>
-                            <span class="text-[10px] text-gray-400">Agafay</span>
-                        </div>
-                        <h3 class="font-bold text-gray-900 mb-1 leading-tight">Montgolfière au Lever du Soleil</h3>
-                        <p class="text-xs text-gray-500 mb-3 line-clamp-2">Survolez le désert et l'Atlas au petit matin - Expérience unique</p>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-baseline gap-1.5">
-                                <span class="text-xs text-gray-400 line-through">2500 DH</span>
-                                <span class="font-bold text-lg text-gray-900">2050 DH</span>
                             </div>
                             <button class="text-xs font-bold text-white bg-primary hover:bg-primary-dark px-4 py-2 rounded-full transition-colors">
                                 Voir
