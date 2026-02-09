@@ -3138,6 +3138,7 @@
                 const form = document.getElementById('mobileBookingForm');
                 const participantsSelect = document.getElementById('mobileParticipants');
                 const dateInput = document.getElementById('mobileDate');
+                const stickyBar = document.getElementById('mobileStickyBar');
 
                 if (!sheet) return;
 
@@ -3146,6 +3147,16 @@
                 tomorrow.setDate(tomorrow.getDate() + 1);
                 dateInput.value = tomorrow.toISOString().split('T')[0];
                 dateInput.min = tomorrow.toISOString().split('T')[0];
+
+                // Open event (Entire Sticky Bar)
+                if (stickyBar) {
+                    stickyBar.addEventListener('click', (e) => {
+                        // Prevent double firing if clicking button inside
+                        if (!e.target.closest('#mobile-book-btn')) {
+                            this.open();
+                        }
+                    });
+                }
 
                 // Close events
                 closeBtn.addEventListener('click', () => this.close());
@@ -3206,12 +3217,12 @@
                 if (!this.isOpen) return;
                 this.currentY = e.touches[0].clientY;
                 const deltaY = this.currentY - this.startY;
+                const sheet = document.getElementById('mobileBookingSheet');
 
-                // Only allow dragging down
-                if (deltaY > 0) {
-                    const sheet = document.getElementById('mobileBookingSheet');
+                // Only allow dragging down IF at the top of scroll
+                if (deltaY > 0 && sheet.scrollTop <= 0) {
                     sheet.style.transform = `translateY(${deltaY}px)`;
-                    e.preventDefault();
+                    e.preventDefault(); // Prevent page refresh but allow sheet drag
                 }
             },
 
@@ -3238,7 +3249,28 @@
                 const originalTotal = this.originalPrice * participants;
                 const savings = originalTotal - subtotal;
 
+                // Dynamic text update for "X adultes"
+                const plural = participants > 1 ? 's' : '';
+                document.getElementById('mobileParticipantCount').textContent = `${participants} adulte${plural}`; // Updated to show full text if needed, or just number
+
+                // Since the HTML is "850 DH x <span id="...">2</span> adultes", we should keep just the number
+                // BUT the user asked to "dynamically put the number of people next to the pricing".
+                // Let's make it clearer.
                 document.getElementById('mobileParticipantCount').textContent = participants;
+
+                // Update Sticky Bar Pricing Text if visible to reinforce context
+                const stickyPrice = document.querySelector('#mobileStickyBar .text-xl');
+                const stickySub = document.querySelector('#mobileStickyBar .text-\\[10px\\]');
+                if(stickyPrice && stickySub) {
+                    if(participants > 1) {
+                        stickyPrice.textContent = subtotal.toLocaleString('fr-FR') + ' DH';
+                        stickySub.textContent = `Total pour ${participants} personnes`;
+                    } else {
+                        stickyPrice.textContent = '850 DH';
+                        stickySub.textContent = 'par personne';
+                    }
+                }
+
                 document.getElementById('mobileSubtotal').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
                 document.getElementById('mobileSavings').textContent = '-' + savings.toLocaleString('fr-FR') + ' DH';
                 document.getElementById('mobileTotal').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
