@@ -2657,28 +2657,6 @@ window.StoryManager = {
         this.currentIndex = 0;
         this.isPaused = false;
         
-        // === INSTANT OPEN OPTIMIZATION ===
-        const wrapper = document.getElementById('storyMediaWrapper');
-        // Clean debris but keep preloader
-        const debris = wrapper.querySelectorAll('.story-media-item');
-        debris.forEach(el => {
-            if(el.parentNode.id !== 'video-preload-container') el.remove();
-        });
-
-        // Inject Thumbnail Placeholder (No Black Screen)
-        const placeholder = document.createElement('img');
-        placeholder.src = this.currentExp.image;
-        placeholder.className = 'story-media-item active';
-        placeholder.style.opacity = '1';
-        placeholder.style.zIndex = '1';
-
-        // Smart Alignment: If video, reset transform to avoid jump
-        if(this.queue.length > 0 && this.queue[0].type === 'video') {
-            placeholder.style.transform = 'translate3d(0,0,0)';
-        }
-
-        wrapper.appendChild(placeholder);
-
         document.getElementById('storyOverlay').classList.add('show');
         document.body.style.overflow = 'hidden';
         
@@ -2795,8 +2773,9 @@ window.StoryManager = {
 
         if (preloadedIframe) {
             iframe = preloadedIframe;
-            iframe.style.opacity = '0'; // Start hidden for cross-fade
-            iframe.style.zIndex = '2'; // Top layer
+            // ELITE INSTANT PLAY: Preloaded video is already "warm"
+            iframe.style.opacity = '1';
+            iframe.style.zIndex = '2';
             iframe.style.pointerEvents = 'auto';
             isReused = true;
         } else {
@@ -2830,10 +2809,31 @@ window.StoryManager = {
             });
         };
 
+        // If reused, we treat it as already "playing" (it was autoplaying in background)
+        // We force it visible immediately.
+        if (isReused) {
+            hasFadedIn = true;
+            this.transitionAndClean(iframe, oldEl);
+            // Seek to start to ensure "first frame" experience
+            try {
+                if(!this.isMuted) player.unmute();
+                player.setCurrentTime(0);
+                player.play();
+            } catch(e) {}
+
+            player.getDuration((d) => {
+                const dur = d ? d : 15;
+                progressBar.style.transition = `transform ${dur}s linear`;
+                progressBar.style.transform = 'scaleX(1)';
+            });
+        }
+
         const onPlayerReady = () => {
             if(!this.isMuted) { player.unmute(); player.setVolume(100); }
-            player.setCurrentTime(0);
-            player.play();
+            if(!isReused) {
+                player.setCurrentTime(0);
+                player.play();
+            }
         };
 
         player.on('play', triggerFadeIn);
@@ -2842,13 +2842,6 @@ window.StoryManager = {
         });
 
         player.on('ready', onPlayerReady);
-        if (isReused) {
-             setTimeout(() => {
-                 if(!this.isMuted) player.unmute();
-                 player.setCurrentTime(0);
-                 player.play();
-             }, 10);
-        }
         player.on('ended', () => { this.next(); });
     },
 
