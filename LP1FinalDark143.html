@@ -2641,9 +2641,24 @@ window.StoryManager = {
             };
         }
 
+        // Initialize Queue with Enhanced Objects
         this.queue = [];
-        if(this.currentExp.video) this.queue.push({ type: 'video', src: this.currentExp.video });
-        this.currentExp.gallery.forEach(img => this.queue.push({ type: 'image', src: img }));
+        if(this.currentExp.video) {
+            this.queue.push({
+                type: 'video',
+                src: this.currentExp.video,
+                id: this.currentExp.id,
+                element: null,
+                player: null
+            });
+        }
+        this.currentExp.gallery.forEach(img => {
+            this.queue.push({
+                type: 'image',
+                src: img,
+                element: null
+            });
+        });
 
         const progContainer = document.getElementById('storyProgressBar');
         progContainer.innerHTML = '';
@@ -2663,215 +2678,177 @@ window.StoryManager = {
         this.renderSlide();
     },
 
-    // 3. Render Engine (Optimized)
+    // 3. Render Engine (Optimized Window)
     renderSlide: function() {
-        // Stop any currently playing video before switching
-        if (this.currentVideoPlayer) {
-            try { 
-                this.currentVideoPlayer.pause(); 
-                this.currentVideoPlayer.mute();
-            } catch(e){}
+        // Stop current if moving away (will be handled by updateState but we ensure safety here)
+        if (this.currentVideoPlayer && this.queue[this.currentIndex] && this.queue[this.currentIndex].type !== 'video') {
+             // If we are moving from video to image, currentVideoPlayer is stale
+             this.currentVideoPlayer = null;
         }
-
-        const wrapper = document.getElementById('storyMediaWrapper');
-        
-        // === SAFETY CLEANUP (Rapid Navigation Fix) ===
-        // Remove any pending slides that haven't become active yet
-        const allItems = wrapper.querySelectorAll('.story-media-item');
-        allItems.forEach(el => {
-            if (!el.classList.contains('active') && el.parentNode.id !== 'video-preload-container') {
-                el.remove();
-            }
-        });
 
         if(this.timer) clearTimeout(this.timer);
         this.timer = null;
 
+        // Progress Bars
         const allFills = document.querySelectorAll('.progress-segment .progress-fill');
         allFills.forEach((fill, i) => {
             fill.style.transition = 'none';
             fill.style.transform = i < this.currentIndex ? 'scaleX(1)' : 'scaleX(0)';
         });
 
+        // End of Story
         if(this.currentIndex >= this.queue.length) {
             this.showClimax();
             return;
         }
 
-        if(this.currentIndex + 1 < this.queue.length) {
-            const next = this.queue[this.currentIndex + 1];
-            if(next.type === 'image' && !this.preloadedUrls.has(next.src)) {
-                const img = new Image(); img.src = next.src; img.fetchPriority = "high";
-                this.preloadedUrls.add(next.src);
-            }
-        } else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
-            if(!this.preloadedUrls.has(this.currentExp.finalImage)) {
-                const img = new Image(); img.src = this.currentExp.finalImage; img.fetchPriority = "high";
-                this.preloadedUrls.add(this.currentExp.finalImage);
-            }
-        }
-
         document.getElementById('climaxCard').classList.remove('active');
-        const item = this.queue[this.currentIndex];
         document.getElementById('storyTextContent').classList.remove('hidden');
-        const currentFill = allFills[this.currentIndex];
-        
-        // ELITE OPTIMIZATION: FIND CURRENT ACTIVE ELEMENT FOR CROSS-FADE
-        let currentActive = wrapper.querySelector('.story-media-item.active');
-        if(currentActive) currentActive.style.zIndex = '1';
 
-        this.currentVideoPlayer = null; 
+        // === SLIDING WINDOW LOGIC ===
+        // We want to keep: currentIndex, currentIndex - 1, currentIndex + 1
+        const keepIndices = [this.currentIndex, this.currentIndex - 1, this.currentIndex + 1];
 
-        if(item.type === 'video') {
-            this.playVideoSlide(item, wrapper, currentFill, currentActive);
-        } else {
-            this.playImageSlide(item, wrapper, currentFill, currentActive);
-        }
-    },
-
-    // NEW: World-Class Seamless Transition Helper
-    transitionAndClean: function(newEl, oldEl) {
-        requestAnimationFrame(() => {
-            newEl.style.opacity = '1';
-            newEl.classList.add('active');
-        });
-        
-        // Remove old element after transition
-        setTimeout(() => {
-            if(oldEl && oldEl !== newEl) {
-                oldEl.classList.remove('active');
-                oldEl.style.opacity = '0';
-                oldEl.style.zIndex = '';
+        // 1. Cleanup distant slides
+        this.queue.forEach((item, idx) => {
+            if (!keepIndices.includes(idx) && item.element) {
+                // If it is the special Teaser in the preload container, we NEVER destroy it from DOM, just hide
+                const isPreloadContainer = item.element.parentNode && item.element.parentNode.id === 'video-preload-container';
                 
-                if(oldEl.tagName === 'IFRAME') {
-                    if(oldEl.parentNode.id === 'video-preload-container') {
-                        // Keep preloaded iframe, just hide it
-                        oldEl.style.opacity = '0';
-                    } else {
-                        oldEl.remove();
+                if (isPreloadContainer) {
+                    item.element.style.opacity = '0';
+                    item.element.classList.remove('active');
+                    item.element.style.zIndex = '';
+                    if(item.player) {
+                        try { item.player.pause(); item.player.mute(); } catch(e){}
                     }
+                    // Keep reference!
                 } else {
-                    oldEl.remove();
+                    // Destroy completely
+                    if(item.player) {
+                        try { item.player.pause(); } catch(e){}
+                        item.player = null;
+                    }
+                    item.element.remove();
+                    item.element = null;
                 }
             }
-        }, 600); // 0.6s to match CSS transition
-    },
-
-    // 4. Video Logic (ELITE INSTANT PLAYBACK)
-    playVideoSlide: function(item, container, progressBar, oldEl) {
-        if(this.isMuted) {
-             this.audioObj.pause();
-        } else {
-             this.fadeAudio(0, 300, true);
-        }
-
-        const expId = this.currentExp.id;
-        const preloadedIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
-        
-        let iframe;
-        let isReused = false;
-
-        if (preloadedIframe) {
-            iframe = preloadedIframe;
-            // ELITE INSTANT PLAY: Preloaded video is already "warm"
-            iframe.style.opacity = '1'; 
-            iframe.style.zIndex = '2';
-            iframe.style.pointerEvents = 'auto';
-            isReused = true;
-        } else {
-            iframe = document.createElement('iframe');
-            const ts = new Date().getTime();
-            let src = item.src;
-            if(!src.includes('?')) src += '?';
-            src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-            iframe.src = src;
-            iframe.className = 'story-media-item';
-            iframe.style.opacity = '0';
-            iframe.style.zIndex = '2';
-            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-            iframe.setAttribute('loading', 'eager');
-            iframe.setAttribute('fetchpriority', 'high');
-            container.appendChild(iframe);
-        }
-
-        const player = new playerjs.Player(iframe);
-        this.currentVideoPlayer = player;
-
-        let hasFadedIn = false;
-        const triggerFadeIn = () => {
-             if(hasFadedIn) return;
-             hasFadedIn = true;
-             this.transitionAndClean(iframe, oldEl);
-             player.getDuration((d) => {
-                const dur = d ? d : 15;
-                progressBar.style.transition = `transform ${dur}s linear`;
-                progressBar.style.transform = 'scaleX(1)';
-            });
-        };
-
-        // If reused, we treat it as already "playing" (it was autoplaying in background)
-        // We force it visible immediately.
-        if (isReused) {
-            hasFadedIn = true;
-            this.transitionAndClean(iframe, oldEl);
-            // Seek to start to ensure "first frame" experience
-            try {
-                if(!this.isMuted) player.unmute();
-                player.setCurrentTime(0);
-                player.play();
-            } catch(e) {}
-            
-            player.getDuration((d) => {
-                const dur = d ? d : 15;
-                progressBar.style.transition = `transform ${dur}s linear`;
-                progressBar.style.transform = 'scaleX(1)';
-            });
-        }
-
-        const onPlayerReady = () => {
-            if(!this.isMuted) { player.unmute(); player.setVolume(100); }
-            if(!isReused) {
-                player.setCurrentTime(0);
-                player.play();
-            }
-        };
-
-        player.on('play', triggerFadeIn);
-        player.on('timeupdate', (t) => {
-            if(t.seconds > 0 && !hasFadedIn) triggerFadeIn();
         });
 
-        player.on('ready', onPlayerReady);
-        player.on('ended', () => { this.next(); });
+        // 2. Prepare Neighbors (Background, Paused/Hidden)
+        [this.currentIndex - 1, this.currentIndex + 1].forEach(idx => {
+            if(idx >= 0 && idx < this.queue.length) {
+                this.ensureSlideReady(idx, false);
+            }
+        });
+
+        // 3. Activate Current
+        this.ensureSlideReady(this.currentIndex, true);
     },
 
-    // 5. Image Logic (ELITE LOAD DETECTION)
-    playImageSlide: function(item, container, progressBar, oldEl) {
-        this.currentVideoPlayer = null;
-        if(!this.isMuted && this.audioObj.paused) {
-            this.audioObj.play().catch(()=>{});
-            this.fadeAudio(1, 400);
-        }
-        const img = document.createElement('img');
-        img.src = item.src;
-        img.className = 'story-media-item';
-        img.style.opacity = '0';
-        img.style.zIndex = '2';
-        container.appendChild(img);
-        
-        const onImageReady = () => {
-            this.transitionAndClean(img, oldEl);
-            setTimeout(() => {
-                progressBar.style.transition = `transform ${this.imageDuration}ms linear`;
-                progressBar.style.transform = 'scaleX(1)';
-            }, 50);
-            this.timer = setTimeout(() => this.next(), this.imageDuration);
-        };
+    // Core function to create/update slide state
+    ensureSlideReady: function(index, isActive) {
+        const item = this.queue[index];
+        const wrapper = document.getElementById('storyMediaWrapper');
 
-        if(img.complete) {
-            onImageReady();
+        // Create if missing
+        if (!item.element) {
+            if (item.type === 'video') {
+                // Check preload container match
+                const preloaded = document.querySelector(`#video-preload-container iframe[data-id="${item.id}"]`);
+                if (preloaded) {
+                    item.element = preloaded;
+                    item.player = new playerjs.Player(preloaded); // Re-attach control
+                } else {
+                    const iframe = document.createElement('iframe');
+                    const ts = new Date().getTime();
+                    let src = item.src;
+                    if(!src.includes('?')) src += '?';
+                    src += `&enablejsapi=1&autoplay=1&muted=1&playsinline=1&controls=0&modestbranding=1&ts=${ts}`; // Muted initially
+                    iframe.src = src;
+                    iframe.className = 'story-media-item';
+                    iframe.style.opacity = '0';
+                    iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+                    iframe.setAttribute('loading', 'eager');
+                    iframe.setAttribute('fetchpriority', 'high');
+                    wrapper.appendChild(iframe);
+
+                    item.element = iframe;
+                    item.player = new playerjs.Player(iframe);
+                }
+
+                // Bind End Event
+                item.player.on('ended', () => {
+                    if(this.currentIndex === index) this.next();
+                });
+            } else {
+                // Image
+                const img = document.createElement('img');
+                img.src = item.src;
+                img.className = 'story-media-item';
+                img.style.opacity = '0';
+                wrapper.appendChild(img);
+                item.element = img;
+            }
+        }
+
+        // Apply State
+        const el = item.element;
+        const currentFill = document.querySelectorAll('.progress-segment')[index].querySelector('.progress-fill');
+
+        if (isActive) {
+            el.classList.add('active');
+            el.style.zIndex = '2'; // Top
+            // Fade In
+            requestAnimationFrame(() => { el.style.opacity = '1'; });
+
+            if (item.type === 'video') {
+                if(!this.isMuted) {
+                    this.fadeAudio(0, 300, true); // Fade BG audio out
+                    try { item.player.unmute(); item.player.setVolume(100); } catch(e){}
+                } else {
+                    this.audioObj.pause();
+                    try { item.player.mute(); } catch(e){}
+                }
+
+                try { item.player.play(); } catch(e){}
+                this.currentVideoPlayer = item.player;
+
+                // Animate Progress Bar
+                // We rely on 'timeupdate' or just start it.
+                // For robustness, we get duration.
+                item.player.getDuration((d) => {
+                    const dur = d ? d : 15;
+                    currentFill.style.transition = `transform ${dur}s linear`;
+                    currentFill.style.transform = 'scaleX(1)';
+                });
+
+            } else {
+                // Image
+                if(!this.isMuted && this.audioObj.paused) {
+                    this.audioObj.play().catch(()=>{});
+                    this.fadeAudio(1, 400);
+                }
+                this.currentVideoPlayer = null;
+
+                // Timer
+                setTimeout(() => {
+                    currentFill.style.transition = `transform ${this.imageDuration}ms linear`;
+                    currentFill.style.transform = 'scaleX(1)';
+                }, 50);
+                this.timer = setTimeout(() => this.next(), this.imageDuration);
+            }
+
         } else {
-            img.onload = onImageReady;
+            // Background State
+            el.classList.remove('active');
+            el.style.zIndex = '0';
+            el.style.opacity = '0';
+
+            if (item.type === 'video') {
+                // Pause video in background to save resources/bandwith but keep ready
+                try { item.player.pause(); } catch(e){}
+            }
         }
     },
 
@@ -2900,12 +2877,21 @@ window.StoryManager = {
         this.isMuted = !this.isMuted;
         document.getElementById('iconMute').classList.toggle('hidden', !this.isMuted);
         document.getElementById('iconSound').classList.toggle('hidden', this.isMuted);
+
+        const item = this.queue[this.currentIndex];
+
         if(this.isMuted) {
-            this.fadeAudio(0, 200, true);
-            if(this.currentVideoPlayer) this.currentVideoPlayer.mute();
+            this.fadeAudio(0, 200, true); // Mute BG Audio
+            if(item && item.type === 'video' && item.player) {
+                try { item.player.mute(); } catch(e){}
+            }
         } else {
-            if(this.currentVideoPlayer) { this.currentVideoPlayer.unmute(); this.currentVideoPlayer.setVolume(100); } 
-            else { this.audioObj.play().catch(()=>{}); this.fadeAudio(1, 200); }
+            if(item && item.type === 'video' && item.player) {
+                try { item.player.unmute(); item.player.setVolume(100); } catch(e){}
+            } else {
+                this.audioObj.play().catch(()=>{});
+                this.fadeAudio(1, 200);
+            }
         }
     },
 
@@ -2919,7 +2905,11 @@ window.StoryManager = {
             fill.style.transform = computed.transform;
         }
         clearTimeout(this.timer);
-        if(this.currentVideoPlayer) this.currentVideoPlayer.pause();
+
+        const item = this.queue[this.currentIndex];
+        if(item && item.type === 'video' && item.player) {
+            try { item.player.pause(); } catch(e){}
+        }
         if(!this.audioObj.paused) this.audioObj.pause();
     },
 
@@ -2928,9 +2918,10 @@ window.StoryManager = {
         this.isPaused = false;
         const item = this.queue[this.currentIndex];
         const fill = document.querySelectorAll('.progress-segment')[this.currentIndex].querySelector('.progress-fill');
+
         if(item.type === 'video') {
-            if(this.currentVideoPlayer) {
-                this.currentVideoPlayer.play();
+            if(item.player) {
+                try { item.player.play(); } catch(e){}
                 fill.style.transition = 'transform 10s linear'; // Approximate resume
                 fill.style.transform = 'scaleX(1)';
             }
@@ -2953,10 +2944,15 @@ window.StoryManager = {
     showClimax: function() {
         if(!this.isMuted) { this.audioObj.play().catch(()=>{}); this.fadeAudio(1, 300); }
         document.getElementById('storyTextContent').classList.add('hidden');
-        // Do not wipe media wrapper here either
-        const wrapper = document.getElementById('storyMediaWrapper');
-        const allMedia = wrapper.querySelectorAll('.story-media-item');
-        allMedia.forEach(el => { el.style.opacity = '0'; el.classList.remove('active'); el.style.zIndex = ''; });
+
+        // Hide all media
+        this.queue.forEach(item => {
+            if(item.element) {
+                item.element.style.opacity = '0';
+                item.element.classList.remove('active');
+                if(item.type === 'video' && item.player) try { item.player.pause(); } catch(e){}
+            }
+        });
         
         document.getElementById('climaxCard').classList.add('active');
     },
@@ -2977,19 +2973,23 @@ window.StoryManager = {
 
     close: function() {
         this.fadeAudio(0, 200, true);
-        if (this.currentVideoPlayer) { try { this.currentVideoPlayer.pause(); this.currentVideoPlayer.mute(); } catch(e){} }
+        const item = this.queue[this.currentIndex];
+        if (item && item.type === 'video' && item.player) { try { item.player.pause(); item.player.mute(); } catch(e){} }
+
         document.getElementById('storyOverlay').classList.remove('show');
         
         setTimeout(() => {
-            const wrapper = document.getElementById('storyMediaWrapper');
-            const allMedia = wrapper.querySelectorAll('.story-media-item');
-            allMedia.forEach(el => {
-                el.classList.remove('active');
-                el.style.opacity = '0';
-                el.style.zIndex = '';
-                // Only remove if NOT in the preload container
-                if(el.tagName === 'IMG') el.remove();
-                if(el.tagName === 'IFRAME' && el.parentElement.id !== 'video-preload-container') el.remove();
+            // Full Cleanup but preserve Preload Container
+            this.queue.forEach(qItem => {
+                if(qItem.element) {
+                    const isPreload = qItem.element.parentNode && qItem.element.parentNode.id === 'video-preload-container';
+                    if (isPreload) {
+                        qItem.element.style.opacity = '0';
+                        qItem.element.classList.remove('active');
+                    } else {
+                        qItem.element.remove();
+                    }
+                }
             });
             
             document.body.style.overflow = '';
