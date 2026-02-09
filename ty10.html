@@ -2033,8 +2033,21 @@
                     restaurant: urlParams.get('restaurant') || urlParams.get('etablissement') || '',
                     date: urlParams.get('date') || '',
                     time: urlParams.get('heure') || urlParams.get('time') || '',
-                    confirmation: urlParams.get('confirmation') || 'MTS-2025'
+                    confirmation: urlParams.get('confirmation') || 'MTS-2025',
+                    userID: urlParams.get('userID') || urlParams.get('userId') || urlParams.get('id') || ''
                 };
+
+                // UPDATE DISCOVER LINKS WITH USERID
+                if (window.bookingParams.userID) {
+                    const discoverLinks = document.querySelectorAll('a.btn-voir-offre');
+                    discoverLinks.forEach(link => {
+                        const originalHref = link.getAttribute('href');
+                        if (originalHref && !originalHref.includes('userID=')) {
+                            const separator = originalHref.includes('?') ? '&' : '?';
+                            link.setAttribute('href', `${originalHref}${separator}userID=${window.bookingParams.userID}`);
+                        }
+                    });
+                }
 
                 // ELITE: Reveal content after population
                 // Use a small timeout to ensure the browser has painted the changes
@@ -3150,6 +3163,30 @@ Merci de me confirmer la disponibilité et les détails ! 🙏`
         function addToReservation(experience) {
             const params = window.bookingParams || {};
             const name = params.name || 'Cher invité';
+
+            // WEBHOOK TRIGGER
+            const webhookUrl = 'https://hook.eu1.make.com/dh4lkq3f6nhgsr84gmo46x1xflrgly9b';
+
+            let offerID = '';
+            if (experience === 'chauffeur') offerID = 'Pickup';
+            else if (experience === 'balloon') offerID = 'HotAirBalloon';
+            else if (experience === 'agafay') offerID = 'Odyssee';
+
+            if (offerID) {
+                const payload = {
+                    userID: params.userID || '',
+                    OfferID: offerID,
+                    Date: "",
+                    NumberOfPeople: ""
+                };
+
+                // Send webhook (fire and forget pattern to not delay UI)
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).catch(err => console.error('Webhook Error:', err));
+            }
 
             const experienceDetails = {
                 'agafay': {
