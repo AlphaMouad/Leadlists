@@ -527,6 +527,7 @@
             background: var(--bg-card); border-radius: var(--radius-lg); overflow: hidden;
             border: 1px solid rgba(0,0,0,0.04); transition: transform 0.5s var(--ease-elite), box-shadow 0.5s var(--ease-elite);
             display: flex; flex-direction: column; position: relative; box-shadow: var(--shadow-card); min-height: 480px; transform: translateZ(0);
+            will-change: transform;
         }
         .spectacle-card:hover { transform: translateY(-8px) translateZ(0); box-shadow: 0 25px 50px -15px rgba(0,0,0,0.1); }
 
@@ -1397,7 +1398,7 @@ iframe.story-media-item {
         .venue-marker { width: 30px; height: 30px; background: #EC5075; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 20px rgba(236, 80, 117, 0.4); }
         @keyframes pulseLive { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
 
-        /* === VIDEO PRELOAD CONTAINER === */
+        /* === VIDEO PRELOAD CONTAINER (ELITE OPTIMIZATION) === */
         #video-preload-container {
             position: absolute;
             top: 0;
@@ -1406,6 +1407,11 @@ iframe.story-media-item {
             height: 100%;
             pointer-events: none;
             z-index: 0;
+            opacity: 0; /* Keep active but invisible */
+        }
+        #video-preload-container iframe {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
+            will-change: opacity;
         }
 
     </style>
@@ -2152,78 +2158,143 @@ function generateUserID() {
     return `${day}${month}${random}`;
 }
 
-// === ELITE UPGRADE 1: TEASER PRE-WARMING ENGINE ===
-function initTeaserEngine() {
-    const cardTimers = new Map();
-    const preloadContainer = document.getElementById('video-preload-container');
+/* === ELITE VIDEO PRELOAD MANAGER (WORLD CLASS) === */
+const VideoPreloadManager = {
+    pool: new Map(), // card -> iframe
+    maxSize: 2, // Limit concurrent connections
+    observer: null,
     
-    // Core preload function
-    const preloadVideo = (card) => {
-        if (!preloadContainer) return;
-        const expId = card.dataset.id;
-        const exp = experiencesData.find(e => e.id === expId);
+    init: function() {
+        // Scheduler polyfill
+        this.schedule = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
         
-        if(exp && exp.video) {
-            // Check if already preloaded
-            const existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
-            
-            if (!existingIframe) {
-                // Create hidden iframe
-                const iframe = document.createElement('iframe');
-                iframe.setAttribute('data-id', expId);
-                
-                let src = exp.video;
-                if(!src.includes('?')) src += '?';
-                src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
-                
-                iframe.src = src;
-                iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-                iframe.style.width = "100%";
-                iframe.style.height = "100%";
-                iframe.style.border = "none";
-                iframe.style.opacity = '0';
-                iframe.className = 'story-media-item';
-                iframe.setAttribute('loading', 'eager');
-                iframe.setAttribute('fetchpriority', 'high');
-                
-                preloadContainer.appendChild(iframe);
-            }
-        }
-    };
+        // Advanced Intersection Observer for Proximity
+        this.observer = new IntersectionObserver(this.handleIntersect.bind(this), {
+            threshold: [0.1, 0.3, 0.5, 0.6, 0.7, 0.8]
+        });
 
-    const observer = new IntersectionObserver((entries) => {
+        setTimeout(() => {
+            document.querySelectorAll('.spectacle-card').forEach(card => {
+                this.observer.observe(card);
+                // Instant hover/touch trigger
+                const trigger = () => this.preload(card, true);
+                card.addEventListener('mouseenter', trigger, { passive: true, once: true });
+                card.addEventListener('touchstart', trigger, { passive: true, once: true });
+            });
+        }, 100);
+    },
+
+    handleIntersect: function(entries) {
+        // Find the "Winning" card (Closest to center / most visible)
+        let bestCard = null;
+        let maxRatio = 0;
+
         entries.forEach(entry => {
             const card = entry.target;
-            if (card.classList.contains('sold-out')) return;
-            
+            if(card.classList.contains('sold-out')) return;
+
+            // Visual feedback (Teaser Animation) logic preserved
             if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
-                if (!cardTimers.has(card)) {
-                    const timerId = setTimeout(() => { 
-                        card.classList.add('teaser-active');
-                        // Reduced delay from 200ms to 50ms for faster preloading
-                        setTimeout(() => preloadVideo(card), 50);
-                    }, 50);
-                    cardTimers.set(card, timerId);
-                }
-            } else {
-                if (entry.intersectionRatio < 0.1) {
-                    if (cardTimers.has(card)) { clearTimeout(cardTimers.get(card)); cardTimers.delete(card); }
-                    card.classList.remove('teaser-active');
-                }
+                card.classList.add('teaser-active');
+            } else if (entry.intersectionRatio < 0.2) {
+                card.classList.remove('teaser-active');
+            }
+
+            // Scoring for preload
+            if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+                maxRatio = entry.intersectionRatio;
+                bestCard = card;
             }
         });
-    }, { threshold: [0.1, 0.55] });
+
+        // Preload if winning card is significant enough
+        if (bestCard && maxRatio > 0.45) {
+            this.preload(bestCard);
+        }
+    },
+
+    preload: function(card, priority = false) {
+        if (this.pool.has(card)) return; // Already warm
+
+        const expId = card.dataset.id;
+        const exp = experiencesData.find(e => e.id === expId);
+        if (!exp || !exp.video) return;
+
+        // Check if orphaned iframe already exists in DOM
+        if (document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`)) return;
+
+        const action = () => {
+            // Manage Pool Size (LRU-ish: Remove first key)
+            if (this.pool.size >= this.maxSize) {
+                const firstKey = this.pool.keys().next().value;
+                // Only remove if it's not the current one we are adding (edge case)
+                if(firstKey !== card) this.remove(firstKey);
+            }
+
+            const container = document.getElementById('video-preload-container');
+            if(!container) return;
+
+            const iframe = document.createElement('iframe');
+            iframe.setAttribute('data-id', expId);
+
+            // ELITE PARAMS: allowkb=0, autoplay=1, muted=1 (Force Background Warmup)
+            let src = exp.video;
+            if(!src.includes('?')) src += '?';
+            // Loop enabled to keep it playing in background
+            src += `&preload=true&autoplay=true&muted=true&loop=true&controls=0&playsinline=1&enablejsapi=1&modestbranding=1&allowkb=0`;
+
+            iframe.src = src;
+            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+            iframe.style.opacity = '0';
+            iframe.className = 'story-media-item';
+            iframe.setAttribute('loading', 'eager');
+            iframe.setAttribute('fetchpriority', 'high');
+
+            container.appendChild(iframe);
+            this.pool.set(card, iframe);
+        };
+
+        if (priority) {
+            action();
+        } else {
+            this.schedule(action);
+        }
+    },
+
+    remove: function(card) {
+        const iframe = this.pool.get(card);
+        if (iframe) {
+            iframe.remove();
+            this.pool.delete(card);
+        }
+    },
     
-    setTimeout(() => { 
-        document.querySelectorAll('.spectacle-card').forEach(card => {
-            observer.observe(card);
-            // Touchstart for instant preload on mobile tap
-            card.addEventListener('touchstart', () => preloadVideo(card), { passive: true, once: true });
-            // Mouseover for instant preload on desktop hover
-            card.addEventListener('mouseenter', () => preloadVideo(card), { passive: true, once: true });
-        }); 
-    }, 100);
-}
+    // API to get iframe for StoryManager
+    getFrame: function(id) {
+        // Try finding by ID in pool keys
+        let frame = null;
+        let cardKey = null;
+
+        for (const [card, iframe] of this.pool.entries()) {
+            if(card.dataset.id === id) {
+                frame = iframe;
+                cardKey = card;
+                break;
+            }
+        }
+
+        if(frame) {
+            this.pool.delete(cardKey); // Handover ownership
+            return frame;
+        }
+
+        // Fallback: Check DOM directly
+        const orphan = document.querySelector(`#video-preload-container iframe[data-id="${id}"]`);
+        if(orphan) return orphan;
+
+        return null;
+    }
+};
 
 function validatePhone(phone, countryCode) {
     const cleanPhone = phone.replace(/\D/g, '');
@@ -2499,7 +2570,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } }); }, { threshold: 0, rootMargin: "0px 0px 250px 0px" });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    initTeaserEngine(); initEliteWhatsApp(); initFomoEngine(); initReviewBadgeTimer();
+    VideoPreloadManager.init(); initEliteWhatsApp(); initFomoEngine(); initReviewBadgeTimer();
 });
 
 function scrollToForm(id) {
@@ -2766,24 +2837,35 @@ window.StoryManager = {
         }
 
         const expId = this.currentExp.id;
-        const preloadedIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
+        // UPGRADE: Use Manager or Fallback
+        let iframe = (typeof VideoPreloadManager !== 'undefined') ? VideoPreloadManager.getFrame(expId) : null;
+        if(!iframe) iframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
         
-        let iframe;
         let isReused = false;
+        let posterEl = null;
 
-        if (preloadedIframe) {
-            iframe = preloadedIframe;
-            // ELITE INSTANT PLAY: Preloaded video is already "warm"
+        if (iframe) {
+            isReused = true;
             iframe.style.opacity = '1'; 
             iframe.style.zIndex = '2';
             iframe.style.pointerEvents = 'auto';
-            isReused = true;
+            // Move to active container if needed
+            if(iframe.parentElement !== container) container.appendChild(iframe);
         } else {
+            // CREATE POSTER FOR SMOOTH LOAD (NO BLACK SCREEN)
+            posterEl = document.createElement('img');
+            posterEl.src = this.currentExp.image;
+            posterEl.className = 'story-media-item';
+            posterEl.style.objectFit = 'cover';
+            posterEl.style.opacity = '1';
+            posterEl.style.zIndex = '1';
+            container.appendChild(posterEl);
+
             iframe = document.createElement('iframe');
             const ts = new Date().getTime();
             let src = item.src;
             if(!src.includes('?')) src += '?';
-            src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
+            src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&loop=0&allowkb=0&ts=${ts}`;
             iframe.src = src;
             iframe.className = 'story-media-item';
             iframe.style.opacity = '0';
@@ -2801,7 +2883,11 @@ window.StoryManager = {
         const triggerFadeIn = () => {
              if(hasFadedIn) return;
              hasFadedIn = true;
-             this.transitionAndClean(iframe, oldEl);
+
+             // Transition from Old Slide OR Poster
+             const elementToFadeOut = posterEl || oldEl;
+             this.transitionAndClean(iframe, elementToFadeOut);
+
              player.getDuration((d) => {
                 const dur = d ? d : 15;
                 progressBar.style.transition = `transform ${dur}s linear`;
@@ -2809,12 +2895,10 @@ window.StoryManager = {
             });
         };
 
-        // If reused, we treat it as already "playing" (it was autoplaying in background)
-        // We force it visible immediately.
+        // If reused, it's already "playing" (muted background), so we switch instantly
         if (isReused) {
             hasFadedIn = true;
             this.transitionAndClean(iframe, oldEl);
-            // Seek to start to ensure "first frame" experience
             try {
                 if(!this.isMuted) player.unmute();
                 player.setCurrentTime(0);
@@ -2831,7 +2915,6 @@ window.StoryManager = {
         const onPlayerReady = () => {
             if(!this.isMuted) { player.unmute(); player.setVolume(100); }
             if(!isReused) {
-                player.setCurrentTime(0);
                 player.play();
             }
         };
