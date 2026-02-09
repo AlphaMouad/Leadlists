@@ -1185,7 +1185,7 @@
         /* URGENCY STYLES */
         .urgency-pulse {
             display: inline-flex; align-items: center; gap: 6px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: linear-gradient(135deg, #EC5075, #d63d62);
             color: white; font-size: 11px; font-weight: 700;
             padding: 6px 12px; border-radius: 6px;
             text-transform: uppercase; letter-spacing: 0.5px;
@@ -1633,7 +1633,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div class="flex items-center gap-3 bg-green-50 rounded-lg p-3 border border-green-100">
                             <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm font-medium text-gray-700">Transport aller-retour climatisé</span>
+                            <span class="text-sm font-medium text-gray-700">Transport aller-retour (Départ 15h - Retour 20h)</span>
                         </div>
                         <div class="flex items-center gap-3 bg-green-50 rounded-lg p-3 border border-green-100">
                             <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -1641,7 +1641,7 @@
                         </div>
                         <div class="flex items-center gap-3 bg-green-50 rounded-lg p-3 border border-green-100">
                             <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm font-medium text-gray-700">40min Balade Dromadaire</span>
+                            <span class="text-sm font-medium text-gray-700">1H Balade Dromadaire</span>
                         </div>
                         <div class="flex items-center gap-3 bg-green-50 rounded-lg p-3 border border-green-100">
                             <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -2100,10 +2100,6 @@
                 <div class="sticky-widget bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
                     <!-- Price Header -->
                     <div class="bg-gradient-to-r from-primary to-primary-dark p-5 text-white">
-                        <div class="flex items-center gap-2 mb-1">
-                            <p class="text-sm text-white/70 line-through">1100 DH</p>
-                            <span class="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">-23%</span>
-                        </div>
                         <div class="flex items-baseline gap-2">
                             <span class="text-4xl font-heading font-bold">850 DH</span>
                             <span class="text-white/80 text-sm">/ personne</span>
@@ -2111,9 +2107,9 @@
                     </div>
 
                     <!-- Urgency -->
-                    <div class="bg-red-50 border-b border-red-100 p-3 flex items-center gap-3">
-                        <div class="w-2 h-2 bg-red-500 rounded-full pulse-dot"></div>
-                        <p class="text-sm text-red-700"><strong>3 places</strong> restantes pour demain</p>
+                    <div class="bg-pink-50 border-b border-pink-100 p-3 flex items-center gap-3">
+                        <div class="w-2 h-2 bg-primary rounded-full pulse-dot"></div>
+                        <p class="text-sm text-primary-dark"><strong>3 places</strong> restantes pour demain</p>
                     </div>
 
                     <!-- ELITE BOOKING FORM -->
@@ -2148,10 +2144,6 @@
                             <div class="flex justify-between items-center text-sm mb-2">
                                 <span class="text-gray-600">850 DH × <span id="participantCount">2</span> adultes</span>
                                 <span class="font-semibold text-gray-900" id="subtotalPrice">1 700 DH</span>
-                            </div>
-                            <div class="flex justify-between items-center text-sm text-green-600">
-                                <span>Économie (-23%)</span>
-                                <span id="savingsAmount">-500 DH</span>
                             </div>
                             <div class="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center">
                                 <span class="font-bold text-gray-900">Total</span>
@@ -2331,7 +2323,6 @@
             <div>
                 <div class="flex items-baseline gap-1.5">
                     <span class="text-xl font-bold text-gray-900">850 DH</span>
-                    <span class="text-gray-400 line-through text-xs">1.100</span>
                 </div>
                 <p class="text-[10px] text-gray-500">par personne</p>
             </div>
@@ -2351,8 +2342,7 @@
             <div class="sheet-price-block">
                 <span class="sheet-price-main">850 DH</span>
                 <div class="sheet-price-sub">
-                    <span class="sheet-price-old">1 100 DH</span>
-                    <span class="sheet-discount-badge">-23%</span>
+                    <span class="text-sm text-gray-500">/ personne</span>
                 </div>
             </div>
             <button class="sheet-close-btn" id="closeBookingSheet">
@@ -2361,9 +2351,9 @@
         </div>
 
         <!-- Urgency Banner -->
-        <div class="mx-5 mt-4 bg-red-50 border border-red-100 rounded-xl p-3 flex items-center gap-3">
-            <div class="w-2 h-2 bg-red-500 rounded-full pulse-dot"></div>
-            <p class="text-sm text-red-700"><strong>3 places</strong> restantes pour demain</p>
+        <div class="mx-5 mt-4 bg-pink-50 border border-pink-100 rounded-xl p-3 flex items-center gap-3">
+            <div class="w-2 h-2 bg-primary rounded-full pulse-dot"></div>
+            <p class="text-sm text-primary-dark"><strong>3 places</strong> restantes pour demain</p>
         </div>
 
         <form class="sheet-form" id="mobileBookingForm">
@@ -2397,10 +2387,6 @@
                 <div class="sheet-summary-row">
                     <span class="sheet-summary-label">850 DH × <span id="mobileParticipantCount">2</span> adultes</span>
                     <span class="sheet-summary-value" id="mobileSubtotal">1 700 DH</span>
-                </div>
-                <div class="sheet-summary-row">
-                    <span class="sheet-summary-label sheet-savings">Économie (-23%)</span>
-                    <span class="sheet-savings" id="mobileSavings">-500 DH</span>
                 </div>
                 <div class="sheet-summary-row">
                     <span class="sheet-summary-label" style="font-weight: 700; color: #1a1a1a;">Total</span>
@@ -3053,10 +3039,16 @@
             }
         };
 
+        // === UTILS ===
+        function getUserID() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('userID') || 'unknown_user';
+        }
+
         // === ELITE BOOKING FORM HANDLER ===
         const BookingManager = {
             pricePerPerson: 850,
-            originalPrice: 1100,
+            originalPrice: 850,
 
             init: function() {
                 const form = document.getElementById('eliteBookingForm');
@@ -3095,12 +3087,9 @@
             updatePricing: function() {
                 const participants = parseInt(document.getElementById('participants').value) || 2;
                 const subtotal = this.pricePerPerson * participants;
-                const originalTotal = this.originalPrice * participants;
-                const savings = originalTotal - subtotal;
 
                 document.getElementById('participantCount').textContent = participants;
                 document.getElementById('subtotalPrice').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
-                document.getElementById('savingsAmount').textContent = '-' + savings.toLocaleString('fr-FR') + ' DH';
                 document.getElementById('totalPrice').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
             },
 
@@ -3111,36 +3100,33 @@
                 const btnText = document.getElementById('btnText');
                 const participants = document.getElementById('participants').value;
                 const date = document.getElementById('bookingDate').value;
-                const requests = document.getElementById('specialRequests').value;
 
                 // Show loading state
                 btn.disabled = true;
                 btnText.innerHTML = '<span class="btn-spinner"></span>Traitement en cours...';
 
-                // Prepare data
-                const formData = {
-                    experience: "L'Odyssée Nomade : Sunset & Aventure",
-                    participants: participants,
-                    date: date,
-                    requests: requests,
-                    price: this.pricePerPerson * parseInt(participants),
-                    timestamp: new Date().toISOString()
+                // Prepare Payload
+                const payload = {
+                    userID: getUserID(),
+                    Date: date,
+                    "Number of people": participants,
+                    offerID: "Odyssee"
                 };
 
                 try {
-                    // Ping Google.com (webhook placeholder)
-                    await fetch('https://www.google.com', {
-                        method: 'GET',
-                        mode: 'no-cors'
+                    // Send to Webhook
+                    await fetch('https://hook.eu1.make.com/opztxf4d2o3f34uay2g2z1u2ccr8ndgi', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
                     });
-
-                    // Simulate network delay for better UX
-                    await new Promise(resolve => setTimeout(resolve, 800));
 
                     // Show success modal
                     this.showSuccessModal(participants, date);
 
                 } catch (error) {
+                    console.error('Webhook error:', error);
+                    // Still show success to user to avoid friction, potentially log error elsewhere
                     this.showSuccessModal(participants, date);
                 } finally {
                     // Reset button
@@ -3179,7 +3165,7 @@
         // === ELITE MOBILE BOOKING SHEET MANAGER ===
         const MobileBookingSheet = {
             pricePerPerson: 850,
-            originalPrice: 1100,
+            originalPrice: 850,
             isOpen: false,
             startY: 0,
             currentY: 0,
@@ -3299,16 +3285,9 @@
             updatePricing: function() {
                 const participants = parseInt(document.getElementById('mobileParticipants').value) || 2;
                 const subtotal = this.pricePerPerson * participants;
-                const originalTotal = this.originalPrice * participants;
-                const savings = originalTotal - subtotal;
 
                 // Dynamic text update for "X adultes"
                 const plural = participants > 1 ? 's' : '';
-                document.getElementById('mobileParticipantCount').textContent = `${participants} adulte${plural}`; // Updated to show full text if needed, or just number
-
-                // Since the HTML is "850 DH x <span id="...">2</span> adultes", we should keep just the number
-                // BUT the user asked to "dynamically put the number of people next to the pricing".
-                // Let's make it clearer.
                 document.getElementById('mobileParticipantCount').textContent = participants;
 
                 // Update Sticky Bar Pricing Text if visible to reinforce context
@@ -3325,7 +3304,6 @@
                 }
 
                 document.getElementById('mobileSubtotal').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
-                document.getElementById('mobileSavings').textContent = '-' + savings.toLocaleString('fr-FR') + ' DH';
                 document.getElementById('mobileTotal').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
             },
 
@@ -3336,29 +3314,26 @@
                 const btnText = document.getElementById('mobileSubmitText');
                 const participants = document.getElementById('mobileParticipants').value;
                 const date = document.getElementById('mobileDate').value;
-                const requests = document.getElementById('mobileRequests').value;
 
                 // Show loading state
                 btn.disabled = true;
                 btnText.innerHTML = '<span class="btn-spinner"></span>Traitement...';
 
-                // Prepare data
-                const formData = {
-                    experience: "L'Odyssée Nomade : Sunset & Aventure",
-                    participants: participants,
-                    date: date,
-                    requests: requests,
-                    price: this.pricePerPerson * parseInt(participants),
-                    timestamp: new Date().toISOString()
+                // Prepare Payload
+                const payload = {
+                    userID: getUserID(),
+                    Date: date,
+                    "Number of people": participants,
+                    offerID: "Odyssee"
                 };
 
                 try {
-                    await fetch('https://www.google.com', {
-                        method: 'GET',
-                        mode: 'no-cors'
+                    // Send to Webhook
+                    await fetch('https://hook.eu1.make.com/opztxf4d2o3f34uay2g2z1u2ccr8ndgi', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
                     });
-
-                    await new Promise(resolve => setTimeout(resolve, 800));
 
                     // Close the sheet
                     this.close();
@@ -3367,6 +3342,7 @@
                     BookingManager.showSuccessModal(participants, date);
 
                 } catch (error) {
+                    console.error('Webhook error:', error);
                     this.close();
                     BookingManager.showSuccessModal(participants, date);
                 } finally {
