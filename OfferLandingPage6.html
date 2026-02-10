@@ -2356,13 +2356,12 @@ document.addEventListener('DOMContentLoaded', function() {
         let fomoHTML = ''; let soldOutClass = exp.soldOut ? 'sold-out' : '';
         let soldOutOverlay = exp.soldOut ? '<div class="sold-out-overlay"><span class="sold-out-badge">COMPLET CE SOIR</span></div>' : '';
         let isHighDemand = (!exp.soldOut && (exp.id === 'nouba' || exp.id === 'malak'));
-        let initialViewers;
-        if(isHighDemand) {
-             initialViewers = Math.floor(Math.random() * (48 - 32 + 1)) + 32;
-        } else {
-             initialViewers = Math.floor(Math.random() * (14 - 6 + 1)) + 6;
-             if(exp.popular) initialViewers += 5;
-        }
+
+        // ELITE CONVERSION LOGIC: Cap at 20, but keep high density (12-19 range)
+        let initialViewers = Math.floor(Math.random() * (16 - 9 + 1)) + 9; // Base 9-16
+        if(exp.popular || isHighDemand) initialViewers += Math.floor(Math.random() * 4) + 1; // Add 1-4 for popular
+        if(initialViewers > 20) initialViewers = 20; // Strict Cap
+
         let viewerText = `${initialViewers} personnes consultent`;
         let highDemandHTML = isHighDemand ? `<span class="high-demand-indicator">🔥 Très demandé</span>` : '';
         if(!exp.soldOut) { fomoHTML = `<div class="live-viewer-indicator" id="fomo-${exp.id}" data-viewers="${initialViewers}"><span class="live-pulse-dot"></span><span class="viewer-text">${viewerText}</span>${highDemandHTML}</div>`; }
@@ -2605,9 +2604,29 @@ function initEliteWhatsApp() {
 function initFomoEngine() {
     setInterval(() => {
         const indicators = document.querySelectorAll('.live-viewer-indicator'); if(indicators.length === 0) return;
-        const target = indicators[Math.floor(Math.random() * indicators.length)]; let current = parseInt(target.getAttribute('data-viewers') || 8);
-        const change = Math.floor(Math.random() * 5) - 2; if(change === 0) return; let newVal = current + change; if(newVal < 6) newVal = 6; if(newVal > 60) newVal = 60;
-        target.setAttribute('data-viewers', newVal); const textSpan = target.querySelector('.viewer-text'); target.classList.remove('bump'); void target.offsetWidth; textSpan.textContent = `${newVal} personnes consultent`; target.classList.add('bump'); setTimeout(() => target.classList.remove('bump'), 400);
+        const target = indicators[Math.floor(Math.random() * indicators.length)];
+        let current = parseInt(target.getAttribute('data-viewers') || 12);
+
+        // Smart Fluctuation: Trend towards 15-18 range
+        let change;
+        const r = Math.random();
+        if (current > 18) change = -1; // Force down if too high
+        else if (current < 10) change = (r > 0.3) ? 1 : 2; // Force up if too low
+        else change = Math.floor(Math.random() * 3) - 1; // -1, 0, +1
+
+        if(change === 0) return;
+
+        let newVal = current + change;
+        if(newVal < 8) newVal = 8;
+        if(newVal > 20) newVal = 20;
+
+        target.setAttribute('data-viewers', newVal);
+        const textSpan = target.querySelector('.viewer-text');
+        target.classList.remove('bump');
+        void target.offsetWidth;
+        textSpan.textContent = `${newVal} personnes consultent`;
+        target.classList.add('bump');
+        setTimeout(() => target.classList.remove('bump'), 400);
     }, 3500);
 }
 function initReviewBadgeTimer() {
