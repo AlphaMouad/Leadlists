@@ -119,6 +119,56 @@
             transform: none !important;
         }
 
+        /* ELITE BADGE */
+        .elite-story-badge {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            box-shadow: 0 8px 24px -4px rgba(0,0,0,0.25), 0 4px 12px -2px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            z-index: 20;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+        .elite-story-badge:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 12px 32px -4px rgba(236, 80, 117, 0.3);
+        }
+        .badge-pulse {
+            position: relative;
+            width: 8px;
+            height: 8px;
+            background: #EC5075;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(236, 80, 117, 0.2);
+        }
+        .badge-pulse::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 1px solid #EC5075;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; }
+        }
+
         /* MOBILE SNAP SCROLL */
         .mobile-snap-scroll {
             display: flex;
@@ -199,7 +249,7 @@
 /* === REBUILT OPTIMIZED LIGHTBOX CSS === */
 #reviewLightbox {
     position: fixed;
-    inset: 0; 
+    inset: 0;
     top: 0; left: 0; right: 0; bottom: 0;
     width: 100%; height: 100%;
     z-index: 2147483647; /* Max Int */
@@ -320,9 +370,9 @@
 
 /* Mobile Specific */
 @media (max-width: 768px) {
-    #lightboxImage { 
+    #lightboxImage {
         max-width: 100vw;
-        max-height: 80dvh; 
+        max-height: 80dvh;
     }
     .lightbox-nav-btn {
         width: 44px;
@@ -519,57 +569,129 @@
         .nav-center { left: 30%; width: 40%; }
 
         .story-footer {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 90px 20px 36px; z-index: 50;
-            background: linear-gradient(to top, rgba(0,0,0,0.92) 12%, rgba(0,0,0,0.55) 48%, transparent 100%);
-            text-align: center; display: flex; flex-direction: column; align-items: center;
-            transition: transform 0.4s var(--ease-luxury), opacity 0.4s var(--ease-luxury);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            transform: translateY(0);
+            width: 100%;
+            max-width: none;
+            padding: 20px 20px calc(20px + var(--safe-area-bottom));
+            z-index: 50;
+            /* Premium world-class optimized: black bottom gradient (70% opacity height) */
+            background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 70%, transparent 100%);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border: none;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: none;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             will-change: transform, opacity;
         }
-        .story-footer.hidden { transform: translateY(50px); opacity: 0; }
 
-        .story-title-text {
-            color: #fff; font-family: 'Playfair Display'; font-size: 1.4rem;
-            margin-bottom: 10px; font-weight: 700;
-            text-shadow: 0 2px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.5);
-            letter-spacing: -0.02em; opacity: 0; transform: translateY(8px);
-            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+        .story-footer.hidden {
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
         }
-        .story-footer:not(.hidden) .story-title-text { opacity: 1; transform: translateY(0); }
 
-        .story-desc-text {
-            color: rgba(255,255,255,0.96); font-size: 0.8rem;
-            margin-bottom: 24px; font-weight: 500;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.75), 0 1px 2px rgba(0,0,0,0.4);
-            max-width: 90%; line-height: 1.5; opacity: 0; transform: translateY(8px);
-            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+        /* === NEW STORY FOOTER HEADER === */
+        .story-footer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 0 4px;
         }
-        .story-footer:not(.hidden) .story-desc-text { opacity: 1; transform: translateY(0); }
+
+        .story-footer-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .story-footer-description {
+            width: 100%;
+            text-align: left;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            margin-top: 2px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.45;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.6);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding-left: 4px; /* Align with title padding */
+        }
+
+        .story-footer-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            text-align: Left;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
 
         .story-cta-btn {
-            background: #fff; color: #000; border: none; font-weight: 800;
-            padding: 13px 32px; border-radius: 50px; width: 100%; max-width: 300px;
-            font-size: 0.85rem; cursor: pointer;
-            box-shadow: 0 6px 28px rgba(255,255,255,0.18), 0 2px 8px rgba(0,0,0,0.1);
-            text-transform: uppercase; letter-spacing: 1.5px;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
-            opacity: 0; transform: translateY(8px) scale(0.98);
+            background: #FFFFFF;
+            color: #000000;
+            border: none;
+            font-weight: 800;
+            padding: 16px 24px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 0.85rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .story-footer:not(.hidden) .story-cta-btn { opacity: 1; transform: translateY(0) scale(1); }
         .story-cta-btn:hover {
-            transform: translateY(-1px) scale(1.01);
-            box-shadow: 0 8px 32px rgba(255,255,255,0.22), 0 4px 12px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25);
         }
-        .story-cta-btn:active { transform: translateY(0) scale(0.99); }
+        .story-cta-btn::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+            transform: skewX(-20deg); animation: btnShimmer 4s ease-in-out infinite;
+        }
 
         .story-trust {
-            color: #fff; font-size: 0.75rem; margin-top: 18px;
-            opacity: 0; display: flex; align-items: center; justify-content: center;
-            gap: 6px; font-weight: 600;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.4);
+            color: #9CA3AF;
+            font-size: 0.65rem;
+            margin-top: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .story-trust svg {
+            color: #10B981;
+            fill: rgba(16, 185, 129, 0.1);
+            stroke: currentColor;
+            stroke-width: 2.5px;
+            text-shadow: none;
             transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
-            transform: translateY(6px);
+            transform: none;
         }
         .story-footer:not(.hidden) .story-trust { opacity: 0.92; transform: translateY(0); }
 
@@ -1063,7 +1185,7 @@
         /* URGENCY STYLES */
         .urgency-pulse {
             display: inline-flex; align-items: center; gap: 6px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: linear-gradient(135deg, #EC5075, #d63d62);
             color: white; font-size: 11px; font-weight: 700;
             padding: 6px 12px; border-radius: 6px;
             text-transform: uppercase; letter-spacing: 0.5px;
@@ -1394,8 +1516,8 @@
                             <svg class="w-8 h-8 text-primary ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
-                    <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-2">
-                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span></span>
+                    <div class="elite-story-badge">
+                        <div class="badge-pulse"></div>
                         Voir la Story
                     </div>
                 </div>
@@ -1420,7 +1542,10 @@
                                 <svg class="w-7 h-7 text-primary ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             </div>
                         </div>
-                        <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">Voir Story</div>
+                    <div class="elite-story-badge">
+                        <div class="badge-pulse"></div>
+                        Voir la Story
+                    </div>
                     </div>
                     <div class="mobile-snap-item" onclick="StoryManager.open('agafay')">
                         <img src="https://MTSZone.b-cdn.net/Agafay/Vertical/3.jpg" alt="Quad" loading="lazy">
@@ -1508,7 +1633,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div class="flex items-center gap-3 bg-green-50 rounded-lg p-3 border border-green-100">
                             <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm font-medium text-gray-700">Transport aller-retour climatisé</span>
+                            <span class="text-sm font-medium text-gray-700">Transport aller-retour (Départ 15h - Retour 20h)</span>
                         </div>
                         <div class="flex items-center gap-3 bg-green-50 rounded-lg p-3 border border-green-100">
                             <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -1516,7 +1641,7 @@
                         </div>
                         <div class="flex items-center gap-3 bg-green-50 rounded-lg p-3 border border-green-100">
                             <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm font-medium text-gray-700">40min Balade Dromadaire</span>
+                            <span class="text-sm font-medium text-gray-700">1H Balade Dromadaire</span>
                         </div>
                         <div class="flex items-center gap-3 bg-green-50 rounded-lg p-3 border border-green-100">
                             <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -1600,7 +1725,7 @@
                                         <span class="text-[10px] text-gray-400">Aujourd'hui</span>
                                     </div>
                                     <div class="flex text-yellow-400 mb-2 text-xs">★★★★★</div>
-                                    
+
                                     <div class="review-content-wrapper">
                                         <div class="review-translated">
                                             <span class="translation-badge">Traduit automatiquement</span>
@@ -1653,7 +1778,7 @@
                                         <span class="text-[10px] text-gray-400">Hier</span>
                                     </div>
                                     <div class="flex text-yellow-400 mb-2 text-xs">★★★★★</div>
-                                    
+
                                     <div class="review-content-wrapper">
                                         <div class="review-translated">
                                             <span class="translation-badge">Traduit automatiquement</span>
@@ -1687,7 +1812,7 @@
                                         <span class="text-[10px] text-gray-400">Hier</span>
                                     </div>
                                     <div class="flex text-yellow-400 mb-2 text-xs">★★★★★</div>
-                                    
+
                                     <div class="review-content-wrapper">
                                         <div class="review-translated">
                                             <span class="translation-badge">Traduit automatiquement</span>
@@ -1728,7 +1853,7 @@
                                         <span class="text-[10px] text-gray-400">Hier</span>
                                     </div>
                                     <div class="flex text-yellow-400 mb-2 text-xs">★★★★★</div>
-                                    
+
                                     <div class="review-content-wrapper">
                                         <div class="review-translated">
                                             <span class="translation-badge">Traduit automatiquement</span>
@@ -1778,7 +1903,7 @@
                                         <span class="text-[10px] text-gray-400">Hier</span>
                                     </div>
                                     <div class="flex text-yellow-400 mb-2 text-xs">★★★★★</div>
-                                    
+
                                     <div class="review-content-wrapper">
                                         <div class="review-translated">
                                             <span class="translation-badge">Traduit automatiquement</span>
@@ -1831,7 +1956,7 @@
                                         <span class="text-[10px] text-gray-400">Hier</span>
                                     </div>
                                     <div class="flex text-yellow-400 mb-2 text-xs">★★★★★</div>
-                                    
+
                                     <div class="review-content-wrapper">
                                         <div class="review-translated">
                                             <span class="translation-badge">Traduit automatiquement</span>
@@ -1940,7 +2065,7 @@
                         </article>
 
                     </div>
-                    
+
                     <!-- Load More Button -->
                     <button id="loadMoreReviews" class="mt-6 w-full text-center text-primary font-semibold text-sm py-4 border-2 border-primary/20 rounded-xl hover:bg-primary/5 hover:border-primary/40 transition-all flex items-center justify-center gap-2">
                         <svg class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -1975,10 +2100,6 @@
                 <div class="sticky-widget bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
                     <!-- Price Header -->
                     <div class="bg-gradient-to-r from-primary to-primary-dark p-5 text-white">
-                        <div class="flex items-center gap-2 mb-1">
-                            <p class="text-sm text-white/70 line-through">1100 DH</p>
-                            <span class="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">-23%</span>
-                        </div>
                         <div class="flex items-baseline gap-2">
                             <span class="text-4xl font-heading font-bold">850 DH</span>
                             <span class="text-white/80 text-sm">/ personne</span>
@@ -1986,9 +2107,9 @@
                     </div>
 
                     <!-- Urgency -->
-                    <div class="bg-red-50 border-b border-red-100 p-3 flex items-center gap-3">
-                        <div class="w-2 h-2 bg-red-500 rounded-full pulse-dot"></div>
-                        <p class="text-sm text-red-700"><strong>3 places</strong> restantes pour demain</p>
+                    <div class="bg-pink-50 border-b border-pink-100 p-3 flex items-center gap-3">
+                        <div class="w-2 h-2 bg-primary rounded-full pulse-dot"></div>
+                        <p class="text-sm text-primary-dark"><strong>3 places</strong> restantes pour demain</p>
                     </div>
 
                     <!-- ELITE BOOKING FORM -->
@@ -2023,10 +2144,6 @@
                             <div class="flex justify-between items-center text-sm mb-2">
                                 <span class="text-gray-600">850 DH × <span id="participantCount">2</span> adultes</span>
                                 <span class="font-semibold text-gray-900" id="subtotalPrice">1 700 DH</span>
-                            </div>
-                            <div class="flex justify-between items-center text-sm text-green-600">
-                                <span>Économie (-23%)</span>
-                                <span id="savingsAmount">-500 DH</span>
                             </div>
                             <div class="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center">
                                 <span class="font-bold text-gray-900">Total</span>
@@ -2068,6 +2185,42 @@
 
             <!-- CAROUSEL (Mobile) / GRID (Desktop) -->
             <div class="pal-scroll" id="palCarousel">
+
+                <!-- CARD 3: MONTGOLFIÈRE (MOVED TO FIRST) -->
+                <article class="pal-card">
+                    <div class="pal-card-image">
+                        <img src="https://MTSZone.b-cdn.net/Agafay/Agafay10.jpg" alt="Montgolfière Ciel d'Agafay" loading="lazy">
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">Premium</span>
+                        </div>
+                        <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm hover:bg-white transition-colors" aria-label="Favoris">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        </button>
+                        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <div class="absolute bottom-3 left-3 flex items-center gap-1.5 text-white">
+                            <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            <span class="text-sm font-bold">5.0</span>
+                            <span class="text-xs opacity-80">(127)</span>
+                        </div>
+                    </div>
+                    <div class="pal-card-content">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">MATINÉE</span>
+                            <span class="text-[10px] text-gray-400">Agafay</span>
+                        </div>
+                        <h3 class="font-bold text-gray-900 mb-1 leading-tight">Montgolfière au Lever du Soleil</h3>
+                        <p class="text-xs text-gray-500 mb-3 line-clamp-2">Survolez le désert et l'Atlas au petit matin - Expérience unique</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-xs text-gray-400 line-through">2500 DH</span>
+                                <span class="font-bold text-lg text-gray-900">2050 DH</span>
+                            </div>
+                            <button class="text-xs font-bold text-white bg-primary hover:bg-primary-dark px-4 py-2 rounded-full transition-colors">
+                                Voir
+                            </button>
+                        </div>
+                    </div>
+                </article>
 
                 <!-- CARD 1: JET SKI -->
                 <article class="pal-card">
@@ -2146,42 +2299,6 @@
                         </div>
                     </div>
                 </article>
-
-                <!-- CARD 3: MONTGOLFIÈRE -->
-                <article class="pal-card">
-                    <div class="pal-card-image">
-                        <img src="https://MTSZone.b-cdn.net/Agafay/Agafay10.jpg" alt="Montgolfière Ciel d'Agafay" loading="lazy">
-                        <div class="absolute top-3 left-3">
-                            <span class="bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">Premium</span>
-                        </div>
-                        <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm hover:bg-white transition-colors" aria-label="Favoris">
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                        </button>
-                        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/70 to-transparent"></div>
-                        <div class="absolute bottom-3 left-3 flex items-center gap-1.5 text-white">
-                            <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                            <span class="text-sm font-bold">5.0</span>
-                            <span class="text-xs opacity-80">(127)</span>
-                        </div>
-                    </div>
-                    <div class="pal-card-content">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">MATINÉE</span>
-                            <span class="text-[10px] text-gray-400">Agafay</span>
-                        </div>
-                        <h3 class="font-bold text-gray-900 mb-1 leading-tight">Montgolfière au Lever du Soleil</h3>
-                        <p class="text-xs text-gray-500 mb-3 line-clamp-2">Survolez le désert et l'Atlas au petit matin - Expérience unique</p>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-baseline gap-1.5">
-                                <span class="text-xs text-gray-400 line-through">2500 DH</span>
-                                <span class="font-bold text-lg text-gray-900">2050 DH</span>
-                            </div>
-                            <button class="text-xs font-bold text-white bg-primary hover:bg-primary-dark px-4 py-2 rounded-full transition-colors">
-                                Voir
-                            </button>
-                        </div>
-                    </div>
-                </article>
             </div>
 
             <!-- Mobile Scroll Indicators -->
@@ -2206,7 +2323,6 @@
             <div>
                 <div class="flex items-baseline gap-1.5">
                     <span class="text-xl font-bold text-gray-900">850 DH</span>
-                    <span class="text-gray-400 line-through text-xs">1.100</span>
                 </div>
                 <p class="text-[10px] text-gray-500">par personne</p>
             </div>
@@ -2226,8 +2342,7 @@
             <div class="sheet-price-block">
                 <span class="sheet-price-main">850 DH</span>
                 <div class="sheet-price-sub">
-                    <span class="sheet-price-old">1 100 DH</span>
-                    <span class="sheet-discount-badge">-23%</span>
+                    <span class="text-sm text-gray-500">/ personne</span>
                 </div>
             </div>
             <button class="sheet-close-btn" id="closeBookingSheet">
@@ -2236,9 +2351,9 @@
         </div>
 
         <!-- Urgency Banner -->
-        <div class="mx-5 mt-4 bg-red-50 border border-red-100 rounded-xl p-3 flex items-center gap-3">
-            <div class="w-2 h-2 bg-red-500 rounded-full pulse-dot"></div>
-            <p class="text-sm text-red-700"><strong>3 places</strong> restantes pour demain</p>
+        <div class="mx-5 mt-4 bg-pink-50 border border-pink-100 rounded-xl p-3 flex items-center gap-3">
+            <div class="w-2 h-2 bg-primary rounded-full pulse-dot"></div>
+            <p class="text-sm text-primary-dark"><strong>3 places</strong> restantes pour demain</p>
         </div>
 
         <form class="sheet-form" id="mobileBookingForm">
@@ -2272,10 +2387,6 @@
                 <div class="sheet-summary-row">
                     <span class="sheet-summary-label">850 DH × <span id="mobileParticipantCount">2</span> adultes</span>
                     <span class="sheet-summary-value" id="mobileSubtotal">1 700 DH</span>
-                </div>
-                <div class="sheet-summary-row">
-                    <span class="sheet-summary-label sheet-savings">Économie (-23%)</span>
-                    <span class="sheet-savings" id="mobileSavings">-500 DH</span>
                 </div>
                 <div class="sheet-summary-row">
                     <span class="sheet-summary-label" style="font-weight: 700; color: #1a1a1a;">Total</span>
@@ -2326,12 +2437,15 @@
             <div class="story-nav-zone nav-center" id="storyNavHold"></div>
             <div class="story-nav-zone nav-right" id="storyNavRight"></div>
             <div class="story-footer" id="storyTextContent">
-                <h3 class="story-title-text" id="storyTitle">L'Odyssée Nomade</h3>
-                <p class="story-desc-text" id="storyDesc">Quad, Dromadaire & Dîner Spectacle sous les étoiles.</p>
-                <button class="story-cta-btn" id="storyBookBtn">RÉSERVER CETTE EXPÉRIENCE</button>
+                <div class="story-footer-header">
+                    <div class="story-footer-title" id="storyFooterTitle">L'Odyssée Nomade</div>
+                    <div class="story-footer-rating" id="storyFooterRating"></div>
+                </div>
+                <div class="story-footer-description" id="storyFooterDescription">Quad, Dromadaire & Dîner Spectacle sous les étoiles.</div>
+                <button class="story-cta-btn" id="storyBookBtn">RÉSERVER CETTE EXPÉRIENCE (0€)</button>
                 <div class="story-trust">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Réservation 100% gratuite
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
+                    Paiement sur place &bull; Zéro Frais
                 </div>
             </div>
             <!-- CLIMAX CARD -->
@@ -2398,24 +2512,24 @@
             </button>
         </div>
     </div>
-    
+
     <!-- FINAL OPTIMIZED REVIEW LIGHTBOX (Relocated to root for correct centering) -->
     <div id="reviewLightbox">
         <div class="lightbox-counter" id="lightboxCounter"></div>
         <div class="lightbox-loader"></div>
-    
+
         <button class="lightbox-close-btn" onclick="closeReviewLightbox()">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
-    
+
         <div id="lightboxImageContainer">
             <img id="lightboxImage" src="" alt="Gallery Image" draggable="false">
         </div>
-    
+
         <button class="lightbox-nav-btn lightbox-prev" onclick="navigateLightbox(event, -1)">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
-    
+
         <button class="lightbox-nav-btn lightbox-next" onclick="navigateLightbox(event, 1)">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
@@ -2428,6 +2542,7 @@
             id: "agafay",
             name: "L'Odyssée Nomade : Sunset & Aventure",
             shortName: "L'Odyssée Nomade",
+            rating: "4.8",
             description: "Quad, Dromadaire & Dîner Spectacle sous les étoiles.",
             gallery: [
                 "https://MTSZone.b-cdn.net/Agafay/Agafay3.jpg",
@@ -2556,7 +2671,7 @@
 
                 // Check for Mobile
                 const isMobile = window.innerWidth < 768;
-                
+
                 // Select Gallery based on device
                 const sourceGallery = (isMobile && this.currentExp.galleryMobile) ? this.currentExp.galleryMobile : this.currentExp.gallery;
                 const sourceFinal = (isMobile && this.currentExp.finalImageMobile) ? this.currentExp.finalImageMobile : this.currentExp.finalImage;
@@ -2885,8 +3000,18 @@
                 const shortName = exp.shortName || exp.name.split(':')[0].trim();
 
                 document.getElementById('storyBrandName').textContent = exp.name;
-                document.getElementById('storyTitle').textContent = shortName;
-                document.getElementById('storyDesc').textContent = exp.description;
+
+                const footerTitle = document.getElementById('storyFooterTitle');
+                if(footerTitle) footerTitle.textContent = shortName;
+
+                const footerRating = document.getElementById('storyFooterRating');
+                if(footerRating) {
+                    footerRating.innerHTML = '<span style="color: #FFD700; letter-spacing: 2px;">★★★★★</span> <span style="color: #FFF; font-weight: 700; margin-left: 6px;">' + (exp.rating || '4.8') + '/5</span>';
+                }
+
+                const footerDesc = document.getElementById('storyFooterDescription');
+                if(footerDesc) { footerDesc.textContent = exp.description; }
+
                 document.getElementById('climaxTitle').textContent = shortName;
                 document.getElementById('climaxDesc').textContent = exp.description;
 
@@ -2914,10 +3039,16 @@
             }
         };
 
+        // === UTILS ===
+        function getUserID() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('userID') || 'unknown_user';
+        }
+
         // === ELITE BOOKING FORM HANDLER ===
         const BookingManager = {
             pricePerPerson: 850,
-            originalPrice: 1100,
+            originalPrice: 850,
 
             init: function() {
                 const form = document.getElementById('eliteBookingForm');
@@ -2956,12 +3087,9 @@
             updatePricing: function() {
                 const participants = parseInt(document.getElementById('participants').value) || 2;
                 const subtotal = this.pricePerPerson * participants;
-                const originalTotal = this.originalPrice * participants;
-                const savings = originalTotal - subtotal;
 
                 document.getElementById('participantCount').textContent = participants;
                 document.getElementById('subtotalPrice').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
-                document.getElementById('savingsAmount').textContent = '-' + savings.toLocaleString('fr-FR') + ' DH';
                 document.getElementById('totalPrice').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
             },
 
@@ -2972,36 +3100,33 @@
                 const btnText = document.getElementById('btnText');
                 const participants = document.getElementById('participants').value;
                 const date = document.getElementById('bookingDate').value;
-                const requests = document.getElementById('specialRequests').value;
 
                 // Show loading state
                 btn.disabled = true;
                 btnText.innerHTML = '<span class="btn-spinner"></span>Traitement en cours...';
 
-                // Prepare data
-                const formData = {
-                    experience: "L'Odyssée Nomade : Sunset & Aventure",
-                    participants: participants,
-                    date: date,
-                    requests: requests,
-                    price: this.pricePerPerson * parseInt(participants),
-                    timestamp: new Date().toISOString()
+                // Prepare Payload
+                const payload = {
+                    userID: getUserID(),
+                    Date: date,
+                    "Number of people": participants,
+                    offerID: "Odyssee"
                 };
 
                 try {
-                    // Ping Google.com (webhook placeholder)
-                    await fetch('https://www.google.com', {
-                        method: 'GET',
-                        mode: 'no-cors'
+                    // Send to Webhook
+                    await fetch('https://hook.eu1.make.com/opztxf4d2o3f34uay2g2z1u2ccr8ndgi', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
                     });
-
-                    // Simulate network delay for better UX
-                    await new Promise(resolve => setTimeout(resolve, 800));
 
                     // Show success modal
                     this.showSuccessModal(participants, date);
 
                 } catch (error) {
+                    console.error('Webhook error:', error);
+                    // Still show success to user to avoid friction, potentially log error elsewhere
                     this.showSuccessModal(participants, date);
                 } finally {
                     // Reset button
@@ -3040,7 +3165,7 @@
         // === ELITE MOBILE BOOKING SHEET MANAGER ===
         const MobileBookingSheet = {
             pricePerPerson: 850,
-            originalPrice: 1100,
+            originalPrice: 850,
             isOpen: false,
             startY: 0,
             currentY: 0,
@@ -3052,6 +3177,7 @@
                 const form = document.getElementById('mobileBookingForm');
                 const participantsSelect = document.getElementById('mobileParticipants');
                 const dateInput = document.getElementById('mobileDate');
+                const stickyBar = document.getElementById('mobileStickyBar');
 
                 if (!sheet) return;
 
@@ -3060,6 +3186,16 @@
                 tomorrow.setDate(tomorrow.getDate() + 1);
                 dateInput.value = tomorrow.toISOString().split('T')[0];
                 dateInput.min = tomorrow.toISOString().split('T')[0];
+
+                // Open event (Entire Sticky Bar)
+                if (stickyBar) {
+                    stickyBar.addEventListener('click', (e) => {
+                        // Prevent double firing if clicking button inside
+                        if (!e.target.closest('#mobile-book-btn')) {
+                            this.open();
+                        }
+                    });
+                }
 
                 // Close events
                 closeBtn.addEventListener('click', () => this.close());
@@ -3120,12 +3256,12 @@
                 if (!this.isOpen) return;
                 this.currentY = e.touches[0].clientY;
                 const deltaY = this.currentY - this.startY;
+                const sheet = document.getElementById('mobileBookingSheet');
 
-                // Only allow dragging down
-                if (deltaY > 0) {
-                    const sheet = document.getElementById('mobileBookingSheet');
+                // Only allow dragging down IF at the top of scroll
+                if (deltaY > 0 && sheet.scrollTop <= 0) {
                     sheet.style.transform = `translateY(${deltaY}px)`;
-                    e.preventDefault();
+                    e.preventDefault(); // Prevent page refresh but allow sheet drag
                 }
             },
 
@@ -3149,12 +3285,25 @@
             updatePricing: function() {
                 const participants = parseInt(document.getElementById('mobileParticipants').value) || 2;
                 const subtotal = this.pricePerPerson * participants;
-                const originalTotal = this.originalPrice * participants;
-                const savings = originalTotal - subtotal;
 
+                // Dynamic text update for "X adultes"
+                const plural = participants > 1 ? 's' : '';
                 document.getElementById('mobileParticipantCount').textContent = participants;
+
+                // Update Sticky Bar Pricing Text if visible to reinforce context
+                const stickyPrice = document.querySelector('#mobileStickyBar .text-xl');
+                const stickySub = document.querySelector('#mobileStickyBar .text-\\[10px\\]');
+                if(stickyPrice && stickySub) {
+                    if(participants > 1) {
+                        stickyPrice.textContent = subtotal.toLocaleString('fr-FR') + ' DH';
+                        stickySub.textContent = `Total pour ${participants} personnes`;
+                    } else {
+                        stickyPrice.textContent = '850 DH';
+                        stickySub.textContent = 'par personne';
+                    }
+                }
+
                 document.getElementById('mobileSubtotal').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
-                document.getElementById('mobileSavings').textContent = '-' + savings.toLocaleString('fr-FR') + ' DH';
                 document.getElementById('mobileTotal').textContent = subtotal.toLocaleString('fr-FR') + ' DH';
             },
 
@@ -3165,29 +3314,26 @@
                 const btnText = document.getElementById('mobileSubmitText');
                 const participants = document.getElementById('mobileParticipants').value;
                 const date = document.getElementById('mobileDate').value;
-                const requests = document.getElementById('mobileRequests').value;
 
                 // Show loading state
                 btn.disabled = true;
                 btnText.innerHTML = '<span class="btn-spinner"></span>Traitement...';
 
-                // Prepare data
-                const formData = {
-                    experience: "L'Odyssée Nomade : Sunset & Aventure",
-                    participants: participants,
-                    date: date,
-                    requests: requests,
-                    price: this.pricePerPerson * parseInt(participants),
-                    timestamp: new Date().toISOString()
+                // Prepare Payload
+                const payload = {
+                    userID: getUserID(),
+                    Date: date,
+                    "Number of people": participants,
+                    offerID: "Odyssee"
                 };
 
                 try {
-                    await fetch('https://www.google.com', {
-                        method: 'GET',
-                        mode: 'no-cors'
+                    // Send to Webhook
+                    await fetch('https://hook.eu1.make.com/opztxf4d2o3f34uay2g2z1u2ccr8ndgi', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
                     });
-
-                    await new Promise(resolve => setTimeout(resolve, 800));
 
                     // Close the sheet
                     this.close();
@@ -3196,6 +3342,7 @@
                     BookingManager.showSuccessModal(participants, date);
 
                 } catch (error) {
+                    console.error('Webhook error:', error);
                     this.close();
                     BookingManager.showSuccessModal(participants, date);
                 } finally {
@@ -3282,19 +3429,19 @@
                         hiddenReviews.classList.add('showing');
                         const fullHeight = hiddenReviews.scrollHeight + 'px';
                         hiddenReviews.style.maxHeight = fullHeight;
-                        
+
                         btnIcon.classList.add('rotate-180');
                         btnText.textContent = "Voir moins";
                         btnLabel.textContent = "(11 sur 582 affichés)";
                         reviewsExpanded = true;
-                        
+
                         window.addEventListener('resize', adjustReviewHeight);
-                        
+
                     } else {
                         // Collapse
                         hiddenReviews.style.maxHeight = '0px';
                         hiddenReviews.classList.remove('showing');
-                        
+
                         setTimeout(() => {
                             if (!reviewsExpanded) hiddenReviews.classList.add('hidden');
                         }, 500);
@@ -3303,12 +3450,12 @@
                         btnText.textContent = "Voir plus d'avis";
                         btnLabel.textContent = "(6 sur 582 affichés)";
                         reviewsExpanded = false;
-                        
+
                         document.getElementById('reviews').scrollIntoView({ behavior: 'smooth', block: 'start' });
                         window.removeEventListener('resize', adjustReviewHeight);
                     }
                 });
-                
+
                 function adjustReviewHeight() {
                     if (reviewsExpanded) {
                         hiddenReviews.style.maxHeight = 'none';
@@ -3324,7 +3471,7 @@
             const container = btn.closest('.review-content-wrapper');
             const translated = container.querySelector('.review-translated');
             const original = container.querySelector('.review-original');
-            
+
             if (original.classList.contains('visible')) {
                 // Switch back to translated
                 original.classList.remove('visible');
@@ -3349,39 +3496,39 @@ function openReviewLightbox(element, index) {
     let gallery = element.closest('.elite-review-gallery') ||
                   element.closest('.featured-review-gallery') ||
                   element.closest('.review-images-gallery');
-    
+
     if (!gallery) return;
 
     // 2. Grab images (filtered for valid sources)
     const images = Array.from(gallery.querySelectorAll('img'))
         .filter(img => img.src && !img.src.includes('data:image'));
-        
+
     currentLightboxImages = images.map(img => img.src);
-    
+
     if (currentLightboxImages.length === 0) return;
 
     // 3. Set Index
     currentLightboxIndex = index;
     if (currentLightboxIndex < 0) currentLightboxIndex = 0;
-    
+
     // 4. Show Lightbox
     const lightbox = document.getElementById('reviewLightbox');
     lightbox.classList.remove('hidden');
-    
+
     // Force reflow for transition
     void lightbox.offsetWidth;
-    
+
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden'; // Stop background scrolling
 
     // 5. Load Initial Image
     updateLightboxImage();
-    
+
     // 6. Close on background click
     lightbox.onclick = function(e) {
         if(e.target === lightbox || e.target.id === 'lightboxImageContainer') closeReviewLightbox();
     }
-    
+
     // 7. Add Swipe Listeners
     const imgContainer = document.getElementById('lightboxImageContainer');
     imgContainer.addEventListener('touchstart', handleTouchStart, {passive: true});
@@ -3391,7 +3538,7 @@ function openReviewLightbox(element, index) {
 function closeReviewLightbox() {
     const lightbox = document.getElementById('reviewLightbox');
     lightbox.classList.remove('active');
-    
+
     setTimeout(() => {
         lightbox.classList.add('hidden');
         document.getElementById('lightboxImage').src = '';
@@ -3423,7 +3570,7 @@ function updateLightboxImage() {
         loader.style.display = 'none';
     };
     tempImg.src = src;
-    
+
     // Preload neighbors
     preloadNeighborImages();
 }
@@ -3439,11 +3586,11 @@ function preloadNeighborImages() {
 function navigateLightbox(e, direction) {
     if(e) e.stopPropagation();
     currentLightboxIndex += direction;
-    
+
     // Loop navigation
     if (currentLightboxIndex < 0) currentLightboxIndex = currentLightboxImages.length - 1;
     if (currentLightboxIndex >= currentLightboxImages.length) currentLightboxIndex = 0;
-    
+
     updateLightboxImage();
 }
 
@@ -3471,7 +3618,7 @@ function handleSwipe() {
 document.addEventListener('keydown', (e) => {
     const lightbox = document.getElementById('reviewLightbox');
     if(!lightbox.classList.contains('active')) return;
-    
+
     if (e.key === 'Escape') closeReviewLightbox();
     if (e.key === 'ArrowLeft') navigateLightbox(null, -1);
     if (e.key === 'ArrowRight') navigateLightbox(null, 1);
