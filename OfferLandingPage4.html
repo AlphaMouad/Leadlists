@@ -527,6 +527,7 @@
             background: var(--bg-card); border-radius: var(--radius-lg); overflow: hidden;
             border: 1px solid rgba(0,0,0,0.04); transition: transform 0.5s var(--ease-elite), box-shadow 0.5s var(--ease-elite);
             display: flex; flex-direction: column; position: relative; box-shadow: var(--shadow-card); min-height: 480px; transform: translateZ(0);
+            will-change: transform; contain: content; touch-action: pan-y;
         }
         .spectacle-card:hover { transform: translateY(-8px) translateZ(0); box-shadow: 0 25px 50px -15px rgba(0,0,0,0.1); }
 
@@ -1232,6 +1233,22 @@ iframe.story-media-item {
     0%, 100% { opacity: 0.6; } 
     50% { opacity: 1; } 
 }
+
+        /* === MENU FALLBACK === */
+        .menu-fallback-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; z-index: 50; width: 85%; pointer-events: none; opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .menu-fallback-container.visible { opacity: 1; pointer-events: auto; }
+        .btn-menu-fallback {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 16px 28px; background: #fff; color: #000;
+            border-radius: 50px; font-weight: 800; text-transform: uppercase; text-decoration: none;
+            font-size: 0.85rem; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            transition: transform 0.2s; letter-spacing: 1px;
+        }
+        .btn-menu-fallback:active { transform: scale(0.96); }
 
 /* === MOBILE SPECIFIC OVERRIDES === */
 @media (max-width: 768px) {
@@ -2168,25 +2185,34 @@ function initTeaserEngine() {
             const existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
             
             if (!existingIframe) {
-                // Create hidden iframe
-                const iframe = document.createElement('iframe');
-                iframe.setAttribute('data-id', expId);
-                
-                let src = exp.video;
-                if(!src.includes('?')) src += '?';
-                src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
-                
-                iframe.src = src;
-                iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-                iframe.style.width = "100%";
-                iframe.style.height = "100%";
-                iframe.style.border = "none";
-                iframe.style.opacity = '0';
-                iframe.className = 'story-media-item';
-                iframe.setAttribute('loading', 'eager');
-                iframe.setAttribute('fetchpriority', 'high');
-                
-                preloadContainer.appendChild(iframe);
+                const createIframe = () => {
+                    const iframe = document.createElement('iframe');
+                    iframe.setAttribute('data-id', expId);
+
+                    let src = exp.video;
+                    if(!src.includes('?')) src += '?';
+                    src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
+
+                    iframe.src = src;
+                    iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+                    iframe.style.width = "100%";
+                    iframe.style.height = "100%";
+                    iframe.style.border = "none";
+                    iframe.style.opacity = '0';
+                    iframe.className = 'story-media-item';
+                    iframe.setAttribute('loading', 'eager');
+                    iframe.setAttribute('fetchpriority', 'high');
+                    iframe.setAttribute('scrolling', 'no');
+                    iframe.style.pointerEvents = 'none'; // Prevent scroll hijacking
+
+                    preloadContainer.appendChild(iframe);
+                };
+
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(() => createIframe(), { timeout: 1000 });
+                } else {
+                    setTimeout(createIframe, 50);
+                }
             }
         }
     };
@@ -3068,7 +3094,17 @@ const MenuEngine = (() => {
         loader.style.cssText = "position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:0;";
         container.appendChild(loader);
 
+        // Fallback Container
+        const fallback = document.createElement('div');
+        fallback.className = 'menu-fallback-container';
+        fallback.innerHTML = `<a href="${url}" target="_blank" class="btn-menu-fallback">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            OUVRIR LE MENU PDF
+        </a>`;
+        container.appendChild(fallback);
+
         let iframe;
+        let loaded = false;
 
         // === DEVICE LOGIC ===
         if (utils.isAndroid()) {
@@ -3081,15 +3117,29 @@ const MenuEngine = (() => {
             iframe = viewStrategy.createDirectFrame(url);
         }
 
-        // Fade in when ready (improves perceived performance)
-        iframe.onload = () => {
+        const onSuccess = () => {
+            if(loaded) return;
+            loaded = true;
             iframe.style.opacity = '1';
             // Hide loader after transition
             setTimeout(() => { if(loader.parentNode) loader.remove(); }, 400);
         };
 
-        // Failsafe for instant display if onload lags
-        setTimeout(() => { iframe.style.opacity = '1'; }, 1000);
+        // Fade in when ready (improves perceived performance)
+        iframe.onload = onSuccess;
+
+        // Failsafe for instant display if onload lags (1.5s)
+        setTimeout(() => {
+            if(!loaded) { iframe.style.opacity = '1'; }
+        }, 1500);
+
+        // Fallback Trigger (4s)
+        setTimeout(() => {
+            // If still loading or potentially blocked (Android often doesn't fire onload for GDocs correctly)
+            // We show the button just in case, non-intrusively.
+            fallback.classList.add('visible');
+            if(loader.parentNode) loader.style.opacity = '0'; // Fade out spinner if timeout reached
+        }, 4000);
 
         // Append to container
         iframe.style.position = 'relative';
