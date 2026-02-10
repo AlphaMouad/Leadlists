@@ -2169,87 +2169,133 @@ function generateUserID() {
     return `${day}${month}${random}`;
 }
 
-// === ELITE UPGRADE 1: TEASER PRE-WARMING ENGINE ===
-function initTeaserEngine() {
-    const cardTimers = new Map();
-    const preloadContainer = document.getElementById('video-preload-container');
-    
-    // Core preload function
-    const preloadVideo = (card) => {
-        if (!preloadContainer) return;
-        const expId = card.dataset.id;
-        const exp = experiencesData.find(e => e.id === expId);
-        
-        if(exp && exp.video) {
-            // Check if already preloaded
-            const existingIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
-            
-            if (!existingIframe) {
-                const createIframe = () => {
-                    const iframe = document.createElement('iframe');
-                    iframe.setAttribute('data-id', expId);
-                    
-                    let src = exp.video;
-                    if(!src.includes('?')) src += '?';
-                    src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
-                    
-                    iframe.src = src;
-                    iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-                    iframe.style.width = "100%";
-                    iframe.style.height = "100%";
-                    iframe.style.border = "none";
-                    iframe.style.opacity = '0';
-                    iframe.className = 'story-media-item';
-                    iframe.setAttribute('loading', 'eager');
-                    iframe.setAttribute('fetchpriority', 'high');
-                    iframe.setAttribute('scrolling', 'no');
-                    iframe.style.pointerEvents = 'none'; // Prevent scroll hijacking
-                    
-                    preloadContainer.appendChild(iframe);
-                };
+// === ELITE UPGRADE 1: VIDEO PRELOAD MANAGER (SMART QUEUE) ===
+const VideoPreloadManager = {
+    queue: new Map(), // id -> { id, url, priority, ts }
+    activeCount: 0,
+    MAX_CONCURRENT: 2,
+    loaded: new Set(),
+    container: null,
 
-                if ('requestIdleCallback' in window) {
-                    requestIdleCallback(() => createIframe(), { timeout: 1000 });
-                } else {
-                    setTimeout(createIframe, 50);
-                }
-            }
-        }
-    };
+    init: function() {
+        this.container = document.getElementById('video-preload-container');
+        if (!this.container) return;
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const card = entry.target;
-            if (card.classList.contains('sold-out')) return;
-            
-            if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
-                if (!cardTimers.has(card)) {
-                    const timerId = setTimeout(() => { 
-                        card.classList.add('teaser-active');
-                        // Reduced delay from 200ms to 50ms for faster preloading
-                        setTimeout(() => preloadVideo(card), 50);
-                    }, 50);
-                    cardTimers.set(card, timerId);
-                }
-            } else {
-                if (entry.intersectionRatio < 0.1) {
-                    if (cardTimers.has(card)) { clearTimeout(cardTimers.get(card)); cardTimers.delete(card); }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const card = entry.target;
+                const id = card.dataset.id;
+
+                // Toggle teaser active class for UI
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+                    card.classList.add('teaser-active');
+                } else if (entry.intersectionRatio < 0.1) {
                     card.classList.remove('teaser-active');
                 }
-            }
-        });
-    }, { threshold: [0.1, 0.55] });
-    
-    setTimeout(() => { 
-        document.querySelectorAll('.spectacle-card').forEach(card => {
-            observer.observe(card);
-            // Touchstart for instant preload on mobile tap
-            card.addEventListener('touchstart', () => preloadVideo(card), { passive: true, once: true });
-            // Mouseover for instant preload on desktop hover
-            card.addEventListener('mouseenter', () => preloadVideo(card), { passive: true, once: true });
-        }); 
-    }, 100);
-}
+
+                // Preload Logic
+                if (card.classList.contains('sold-out') || this.loaded.has(id)) return;
+                const exp = experiencesData.find(e => e.id === id);
+                if (!exp || !exp.video) return;
+
+                if (entry.isIntersecting) {
+                    // Priority 2 for >0.55 view, Priority 1 for visible
+                    const priority = (entry.intersectionRatio >= 0.55) ? 2 : 1;
+                    this.enqueue(id, exp.video, priority);
+                }
+            });
+        }, { threshold: [0.1, 0.55] });
+
+        setTimeout(() => {
+            document.querySelectorAll('.spectacle-card').forEach(card => {
+                observer.observe(card);
+
+                // Interaction Boost (Priority 3)
+                const boost = () => {
+                    const id = card.dataset.id;
+                    if (this.loaded.has(id)) return;
+                    const exp = experiencesData.find(e => e.id === id);
+                    if (exp && exp.video) this.enqueue(id, exp.video, 3);
+                };
+                card.addEventListener('touchstart', boost, { passive: true, once: true });
+                card.addEventListener('mouseenter', boost, { passive: true, once: true });
+            });
+        }, 100);
+    },
+
+    enqueue: function(id, url, priority) {
+        if (this.loaded.has(id)) return;
+        // Upsert queue item
+        this.queue.set(id, { id, url, priority, ts: Date.now() });
+        this.process();
+    },
+
+    process: function() {
+        if (this.activeCount >= this.MAX_CONCURRENT) return;
+
+        // Pick Best Candidate: Highest Priority, then Oldest
+        let best = null;
+        for (const item of this.queue.values()) {
+            if (!best) { best = item; continue; }
+            if (item.priority > best.priority) best = item;
+            else if (item.priority === best.priority && item.ts < best.ts) best = item;
+        }
+
+        if (best) {
+            this.queue.delete(best.id);
+            this.load(best);
+        }
+    },
+
+    load: function(item) {
+        this.activeCount++;
+        this.loaded.add(item.id);
+
+        const createFrame = () => {
+            const iframe = document.createElement('iframe');
+            iframe.setAttribute('data-id', item.id);
+            
+            let src = item.url;
+            if(!src.includes('?')) src += '?';
+            // Explicitly force controls=0 and muted=1
+            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
+
+            iframe.src = src;
+            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+            iframe.style.width = "100%";
+            iframe.style.height = "100%";
+            iframe.style.border = "none";
+            iframe.style.opacity = '0';
+            iframe.className = 'story-media-item';
+            iframe.setAttribute('loading', 'eager');
+            iframe.setAttribute('fetchpriority', 'high');
+            iframe.setAttribute('scrolling', 'no');
+            iframe.style.pointerEvents = 'none';
+
+            // Release slot when loaded
+            iframe.onload = () => {
+                this.activeCount--;
+                this.process();
+            };
+
+            // Failsafe release (5s)
+            setTimeout(() => {
+                if(this.activeCount > 0) {
+                    // We don't decrement here strictly to avoid double count if onload fires later,
+                    // but we can assume connection slot is free for browser.
+                }
+            }, 5000);
+
+            this.container.appendChild(iframe);
+        };
+
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(createFrame, { timeout: 1500 });
+        } else {
+            setTimeout(createFrame, 50);
+        }
+    }
+};
 
 function validatePhone(phone, countryCode) {
     const cleanPhone = phone.replace(/\D/g, '');
@@ -2533,7 +2579,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } }); }, { threshold: 0, rootMargin: "0px 0px 250px 0px" });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    initTeaserEngine(); initEliteWhatsApp(); initFomoEngine(); initReviewBadgeTimer();
+    VideoPreloadManager.init(); initEliteWhatsApp(); initFomoEngine(); initReviewBadgeTimer();
 });
 
 function scrollToForm(id) {
@@ -2763,11 +2809,17 @@ window.StoryManager = {
         }
     },
 
-    // NEW: World-Class Seamless Transition Helper
+    // NEW: World-Class Seamless Stacking Transition
     transitionAndClean: function(newEl, oldEl) {
         requestAnimationFrame(() => {
+            newEl.style.zIndex = '2'; // Top
             newEl.style.opacity = '1';
             newEl.classList.add('active');
+
+            if (oldEl) {
+                oldEl.style.zIndex = '1'; // Behind
+                // Keep opacity 1 to avoid black flash
+            }
         });
         
         // Remove old element after transition
@@ -2779,8 +2831,11 @@ window.StoryManager = {
                 
                 if(oldEl.tagName === 'IFRAME') {
                     if(oldEl.parentNode.id === 'video-preload-container') {
-                        // Keep preloaded iframe, just hide it
+                        // Reset preloaded iframe
                         oldEl.style.opacity = '0';
+                        try {
+                            // Mute/Pause handled elsewhere
+                        } catch(e){}
                     } else {
                         oldEl.remove();
                     }
@@ -2791,7 +2846,7 @@ window.StoryManager = {
         }, 600); // 0.6s to match CSS transition
     },
 
-    // 4. Video Logic (ELITE INSTANT PLAYBACK)
+    // 4. Video Logic (ELITE INSTANT PLAYBACK & CONTROLS FIX)
     playVideoSlide: function(item, container, progressBar, oldEl) {
         if(this.isMuted) {
              this.audioObj.pause();
@@ -2807,11 +2862,11 @@ window.StoryManager = {
 
         if (preloadedIframe) {
             iframe = preloadedIframe;
-            // ELITE INSTANT PLAY: Preloaded video is already "warm"
-            iframe.style.opacity = '1'; 
+            isReused = true;
+            // ELITE FIX: Do NOT show immediately to hide play button. Wait for 'play' signal.
+            iframe.style.opacity = '0';
             iframe.style.zIndex = '2';
             iframe.style.pointerEvents = 'auto';
-            isReused = true;
         } else {
             iframe = document.createElement('iframe');
             const ts = new Date().getTime();
@@ -2843,40 +2898,29 @@ window.StoryManager = {
             });
         };
 
-        // If reused, we treat it as already "playing" (it was autoplaying in background)
-        // We force it visible immediately.
-        if (isReused) {
-            hasFadedIn = true;
-            this.transitionAndClean(iframe, oldEl);
-            // Seek to start to ensure "first frame" experience
-            try {
-                if(!this.isMuted) player.unmute();
-                player.setCurrentTime(0);
-                player.play();
-            } catch(e) {}
-            
-            player.getDuration((d) => {
-                const dur = d ? d : 15;
-                progressBar.style.transition = `transform ${dur}s linear`;
-                progressBar.style.transform = 'scaleX(1)';
-            });
-        }
-
         const onPlayerReady = () => {
             if(!this.isMuted) { player.unmute(); player.setVolume(100); }
-            if(!isReused) {
-                player.setCurrentTime(0);
-                player.play();
-            }
+            player.setCurrentTime(0);
+            player.play();
         };
 
         player.on('play', triggerFadeIn);
         player.on('timeupdate', (t) => {
+            // Force fade in if time moves (video is playing)
             if(t.seconds > 0 && !hasFadedIn) triggerFadeIn();
         });
 
         player.on('ready', onPlayerReady);
         player.on('ended', () => { this.next(); });
+
+        if (isReused) {
+            // For reused, we force play immediately and wait for events to fade in
+            try {
+                if(!this.isMuted) { player.unmute(); player.setVolume(100); }
+                player.setCurrentTime(0);
+                player.play();
+            } catch(e) {}
+        }
     },
 
     // 5. Image Logic (ELITE LOAD DETECTION)
@@ -3085,61 +3129,78 @@ const MenuEngine = (() => {
         }
     };
 
-    const run = (url, container) => {
-        container.innerHTML = '';
+    const run = (url, container, attempt = 1) => {
+        if (attempt === 1) container.innerHTML = '';
         
-        // Show lightweight loader
-        const loader = document.createElement('div');
-        loader.innerHTML = '<div class="menu-spinner"></div><div class="loading-text">Chargement...</div>';
-        loader.style.cssText = "position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:0;";
-        container.appendChild(loader);
+        // Ensure Loader
+        let loader = container.querySelector('.menu-loader');
+        if (!loader) {
+            loader = document.createElement('div');
+            loader.className = 'menu-loader';
+            loader.innerHTML = '<div class="menu-spinner"></div><div class="loading-text">Chargement...</div>';
+            loader.style.cssText = "position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:0;";
+            container.appendChild(loader);
+        }
 
-        // Fallback Container
-        const fallback = document.createElement('div');
-        fallback.className = 'menu-fallback-container';
-        fallback.innerHTML = `<a href="${url}" target="_blank" class="btn-menu-fallback">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            OUVRIR LE MENU PDF
-        </a>`;
-        container.appendChild(fallback);
+        // Ensure Fallback
+        let fallback = container.querySelector('.menu-fallback-container');
+        if (!fallback) {
+            fallback = document.createElement('div');
+            fallback.className = 'menu-fallback-container';
+            fallback.innerHTML = `<a href="${url}" target="_blank" class="btn-menu-fallback">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                OUVRIR LE MENU PDF
+            </a>`;
+            container.appendChild(fallback);
+        }
 
         let iframe;
         let loaded = false;
+        let retryTimer = null;
 
         // === DEVICE LOGIC ===
         if (utils.isAndroid()) {
-            // Android: Chrome blocks direct PDF downloads in iframes often. GDocs is safest.
-            utils.log('Mode: Android (Google Docs)');
+            utils.log('Mode: Android (Google Docs) - Attempt ' + attempt);
             iframe = viewStrategy.createGDocsFrame(url);
         } else {
-            // iOS & Desktop: Native PDF viewer is superior (faster, sharper, zoomable)
-            utils.log('Mode: Native (Direct)');
+            utils.log('Mode: Native (Direct) - Attempt ' + attempt);
             iframe = viewStrategy.createDirectFrame(url);
         }
 
         const onSuccess = () => {
             if(loaded) return;
             loaded = true;
+            if(retryTimer) clearTimeout(retryTimer);
             iframe.style.opacity = '1';
-            // Hide loader after transition
-            setTimeout(() => { if(loader.parentNode) loader.remove(); }, 400);
+
+            // Critical: Ensure fallback is hidden if it was pending or shown
+            fallback.classList.remove('visible');
+
+            // Hide loader
+            setTimeout(() => { if(loader) loader.remove(); }, 400);
         };
 
-        // Fade in when ready (improves perceived performance)
         iframe.onload = onSuccess;
 
-        // Failsafe for instant display if onload lags (1.5s)
+        // Failsafe visibility (1.5s) - just in case onload is swallowed but content renders
         setTimeout(() => { 
-            if(!loaded) { iframe.style.opacity = '1'; } 
+            if(!loaded && iframe.parentNode) { iframe.style.opacity = '1'; }
         }, 1500);
 
-        // Fallback Trigger (4s)
-        setTimeout(() => {
-            // If still loading or potentially blocked (Android often doesn't fire onload for GDocs correctly)
-            // We show the button just in case, non-intrusively.
-            fallback.classList.add('visible');
-            if(loader.parentNode) loader.style.opacity = '0'; // Fade out spinner if timeout reached
-        }, 4000);
+        // Retry Logic (2.5s)
+        retryTimer = setTimeout(() => {
+            if (!loaded) {
+                if (attempt < 2) {
+                    utils.log('Retry loading menu...');
+                    if(iframe.parentNode) iframe.remove();
+                    run(url, container, attempt + 1);
+                } else {
+                    // Max retries reached, show fallback
+                    fallback.classList.add('visible');
+                    if(loader) loader.style.opacity = '0';
+                }
+            }
+        }, 2500);
 
         // Append to container
         iframe.style.position = 'relative';
