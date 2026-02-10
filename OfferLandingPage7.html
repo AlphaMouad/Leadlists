@@ -45,17 +45,7 @@
     <!-- FONTS -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700;1,800;1,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- === TRACKING === -->
-    <script src="https://t.contentsquare.net/uxa/aa67b454a79ef.js"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YE8JYR1X97"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-YE8JYR1X97');
-      gtag('config', 'AW-16808399607');
-    </script>
-
+    <!-- === TRACKING REMOVED === -->
     <style>
         :root {
             /* === ELITE DARK PALETTE === */
@@ -2386,11 +2376,15 @@ document.addEventListener('DOMContentLoaded', function() {
         let soldOutOverlay = exp.soldOut ? '<div class="sold-out-overlay"><span class="sold-out-badge">COMPLET CE SOIR</span></div>' : '';
         let isHighDemand = (!exp.soldOut && (exp.id === 'nouba' || exp.id === 'malak'));
         let initialViewers;
+        // World Class Logic: Believable ranges (Max 25, Min 6)
         if(isHighDemand) {
-             initialViewers = Math.floor(Math.random() * (48 - 32 + 1)) + 32;
+             // 18 to 25 for high demand
+             initialViewers = Math.floor(Math.random() * (25 - 18 + 1)) + 18;
         } else {
+             // 6 to 14 for standard
              initialViewers = Math.floor(Math.random() * (14 - 6 + 1)) + 6;
-             if(exp.popular) initialViewers += 5;
+             if(exp.popular) initialViewers += 3;
+             if(initialViewers > 20) initialViewers = 20;
         }
         let viewerText = `${initialViewers} personnes consultent`;
         let highDemandHTML = isHighDemand ? `<span class="high-demand-indicator">🔥 Très demandé</span>` : '';
@@ -2535,8 +2529,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             step3.classList.remove('active'); step3.classList.add('completed'); step3.querySelector('.step-icon').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'; progressFill.style.width = '100%'; headline.textContent = 'Confirmé !'; subtext.textContent = 'Redirection vers votre confirmation...';
             
-            if (typeof gtag !== 'undefined') { gtag('event', 'conversion', { 'send_to': 'AW-16808399607/conversion' }); }
-            
             // REDIRECT WITH USERID
             const redirectParams = new URLSearchParams({ fullname: formData.fullname, name: firstName, prenom: firstName, restaurant: restaurantName, etablissement: restaurantName, date: formData.date, time: formData.time, adultes: formData.guests, enfants: formData.enfants, confirmation: confirmationNumber, videoId: videoId, userID: formData.userID });
             window.location.href = `https://mtszone.b-cdn.net/ThankYouPageV46.html?${redirectParams.toString()}`;
@@ -2633,11 +2625,46 @@ function initEliteWhatsApp() {
 }
 function initFomoEngine() {
     setInterval(() => {
-        const indicators = document.querySelectorAll('.live-viewer-indicator'); if(indicators.length === 0) return;
-        const target = indicators[Math.floor(Math.random() * indicators.length)]; let current = parseInt(target.getAttribute('data-viewers') || 8);
-        const change = Math.floor(Math.random() * 5) - 2; if(change === 0) return; let newVal = current + change; if(newVal < 6) newVal = 6; if(newVal > 60) newVal = 60;
-        target.setAttribute('data-viewers', newVal); const textSpan = target.querySelector('.viewer-text'); target.classList.remove('bump'); void target.offsetWidth; textSpan.textContent = `${newVal} personnes consultent`; target.classList.add('bump'); setTimeout(() => target.classList.remove('bump'), 400);
-    }, 3500);
+        const indicators = document.querySelectorAll('.live-viewer-indicator');
+        if(indicators.length === 0) return;
+
+        // Pick random indicator
+        const target = indicators[Math.floor(Math.random() * indicators.length)];
+        let current = parseInt(target.getAttribute('data-viewers') || 10);
+
+        // World Class Logic: Subtle drift with occasional spike
+        let change = 0;
+        const roll = Math.random();
+
+        if (roll < 0.6) {
+            // 60% chance: Small drift (-1, 0, +1)
+            change = Math.floor(Math.random() * 3) - 1;
+        } else if (roll < 0.9) {
+            // 30% chance: Moderate shift (-2, +2)
+            change = Math.random() > 0.5 ? 2 : -2;
+        } else {
+            // 10% chance: Corrective pull towards center (15)
+            change = current < 15 ? 3 : -3;
+        }
+
+        if(change === 0) return;
+
+        let newVal = current + change;
+        // Strict bounds: Min 6, Max 25
+        if(newVal < 6) newVal = 6;
+        if(newVal > 25) newVal = 25;
+
+        // Only update if changed
+        if (newVal !== current) {
+            target.setAttribute('data-viewers', newVal);
+            const textSpan = target.querySelector('.viewer-text');
+            target.classList.remove('bump');
+            void target.offsetWidth;
+            textSpan.textContent = `${newVal} personnes consultent`;
+            target.classList.add('bump');
+            setTimeout(() => target.classList.remove('bump'), 400);
+        }
+    }, 3500); // 3.5s interval
 }
 function initReviewBadgeTimer() {
     const reviewCards = document.querySelectorAll('.testimonial-card-new'); const badgeTimers = new Map();
