@@ -1354,6 +1354,32 @@ iframe.story-media-item {
         .wa-highlight { color: #4ade80; font-weight: 700; }
         @media (min-width: 769px) { .wa-sticky-container { display: none !important; } }
 
+        /* === SOLD OUT WHATSAPP BUTTON (Elite Style) === */
+        .btn-whatsapp-elite {
+            display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 14px;
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%); /* Elite Dark */
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            text-decoration: none; transition: all 0.3s var(--ease-elite);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative; overflow: hidden;
+            width: 100%; height: 100%; /* Ensure it fills container */
+        }
+        .btn-whatsapp-elite:hover {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            border-color: rgba(37, 211, 102, 0.5); transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.15);
+        }
+        .wa-icon-small { position: relative; display: flex; align-items: center; width: 24px; height: 24px; }
+        .wa-icon-small svg { width: 100%; height: 100%; fill: #fff; }
+        .wa-status-dot-small {
+            position: absolute; bottom: -2px; right: -2px; width: 8px; height: 8px;
+            background: #25D366; border: 1.5px solid #1f2937; border-radius: 50%;
+            animation: waPulse 2s infinite;
+        }
+        .btn-whatsapp-elite .wa-text-col { line-height: 1.2; justify-content: center; }
+        .wa-btn-title { font-size: 0.75rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .wa-btn-sub { font-size: 0.65rem; font-weight: 500; color: #9CA3AF; text-transform: none; }
+
         /* Footer */
         footer {
             border-top: 1px solid rgba(0,0,0,0.05); text-align: center; padding: 4rem 2rem calc(2rem + var(--safe-area-bottom));
@@ -2289,21 +2315,29 @@ document.addEventListener('DOMContentLoaded', function() {
                  // Update Button Logic for Dynamically Sold Out
                  const btn = card.querySelector('.btn-book');
                  if(btn) {
-                     btn.textContent = "CONCIERGE : VÉRIFIER DISPO";
-                     btn.removeAttribute('onclick');
-                     btn.onclick = () => window.open(`https://wa.me/212680802756?text=Bonjour%20Concierge%2C%20je%20vois%20que%20${encodeURIComponent(exp ? exp.name : id)}%20est%20complet.%20Avez-vous%20une%20table%20VIP%20%3F`, '_blank');
+                     const waBtn = document.createElement('a');
+                     waBtn.href = `https://wa.me/212680802756?text=Bonjour%20Concierge%2C%20je%20vois%20que%20${encodeURIComponent(exp ? exp.name : id)}%20est%20complet.%20Avez-vous%20une%20table%20VIP%20%3F`;
+                     waBtn.target = "_blank";
+                     waBtn.className = "card-btn btn-whatsapp-elite";
+                     waBtn.innerHTML = `
+                        <div class="wa-icon-small">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                            <span class="wa-status-dot-small"></span>
+                        </div>
+                        <div class="wa-text-col">
+                            <span class="wa-btn-title">VÉRIFIER DISPO</span>
+                            <span class="wa-btn-sub">Contacter le Concierge</span>
+                        </div>`;
+                     btn.replaceWith(waBtn);
                  }
 
                  // Update Badge Logic
                  const indicator = card.querySelector('.live-viewer-indicator');
                  if(indicator) {
-                     let badge = indicator.querySelector('.high-demand-indicator');
-                     if(!badge) {
-                         badge = document.createElement('span');
-                         badge.className = 'high-demand-indicator';
-                         indicator.appendChild(badge);
-                     }
-                     badge.innerHTML = '🔥 VICTIME DE SON SUCCÈS';
+                     indicator.classList.add('static-sold-out');
+                     indicator.style.background = 'rgba(220, 38, 38, 0.9)';
+                     indicator.style.borderColor = 'rgba(220, 38, 38, 0.3)';
+                     indicator.innerHTML = `<span class="high-demand-indicator">🔥 VICTIME DE SON SUCCÈS</span>`;
                  }
 
              } else { card.classList.remove('sold-out'); const overlay = card.querySelector('.sold-out-overlay'); if(overlay) overlay.remove(); }
@@ -2331,12 +2365,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // FOMO HTML (Show even if sold out, but with updated text/badge)
-        let fomoHTML = `<div class="live-viewer-indicator" id="fomo-${exp.id}" data-viewers="${initialViewers}"><span class="live-pulse-dot"></span><span class="viewer-text">${viewerText}</span>${highDemandHTML}</div>`;
+        let fomoHTML = '';
+        if (exp.soldOut) {
+            // Static Sold Out Badge (No viewers count)
+            fomoHTML = `<div class="live-viewer-indicator static-sold-out" style="background: rgba(220, 38, 38, 0.9); border-color: rgba(220, 38, 38, 0.3);">${highDemandHTML}</div>`;
+        } else {
+            fomoHTML = `<div class="live-viewer-indicator" id="fomo-${exp.id}" data-viewers="${initialViewers}"><span class="live-pulse-dot"></span><span class="viewer-text">${viewerText}</span>${highDemandHTML}</div>`;
+        }
 
         // Button Logic
         let bookBtnHTML = '';
         if (exp.soldOut) {
-            bookBtnHTML = `<button class="card-btn btn-book" onclick="window.open('https://wa.me/212680802756?text=Bonjour%20Concierge%2C%20je%20vois%20que%20${encodeURIComponent(exp.name)}%20est%20complet.%20Avez-vous%20une%20table%20VIP%20%3F', '_blank')">CONCIERGE : VÉRIFIER DISPO</button>`;
+            bookBtnHTML = `
+            <a href="https://wa.me/212680802756?text=Bonjour%20Concierge%2C%20je%20vois%20que%20${encodeURIComponent(exp.name)}%20est%20complet.%20Avez-vous%20une%20table%20VIP%20%3F" target="_blank" class="card-btn btn-whatsapp-elite">
+                <div class="wa-icon-small">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    <span class="wa-status-dot-small"></span>
+                </div>
+                <div class="wa-text-col">
+                    <span class="wa-btn-title">VÉRIFIER DISPO</span>
+                    <span class="wa-btn-sub">Contacter le Concierge</span>
+                </div>
+            </a>`;
         } else {
             bookBtnHTML = `<button class="card-btn btn-book" onclick="scrollToForm('${exp.id}')">BLOQUER MA TABLE (0€)</button>`;
         }
@@ -2368,7 +2418,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="card-description">${exp.description}</p>
                 <div class="card-meta"><span>${exp.time} • Tous les soirs</span> <span class="price-range" onclick="openMapWidget('${exp.id}', event)">${exp.price}</span></div>
                 <div class="card-actions-container">
-                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}', '${exp.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>LA CARTE</button>
+                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}', '${exp.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>CARTE</button>
                     ${bookBtnHTML}
                 </div>
                 <div class="trust-micro-signal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> Aucun acompte • Payez au dîner</div>
