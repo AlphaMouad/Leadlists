@@ -669,10 +669,10 @@
             display: flex; align-items: center; justify-content: center; gap: 6px; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer;
             text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; transition: all 0.3s var(--ease-elite); text-decoration: none; text-align: center; border: none; font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        .btn-menu { background: #fff; color: var(--text-dark); border: 1.5px solid #E5E7EB; font-size: 0.7rem; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-        .btn-menu svg { width: 14px; height: 14px; stroke: var(--text-muted); transition: stroke 0.3s ease; }
-        .btn-menu:hover { border-color: #D1D5DB; background: #F9FAFB; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
-        .btn-menu:hover svg { stroke: var(--brand-raspberry); }
+        .btn-menu { background: #fff; color: var(--text-dark); border: 1px solid rgba(0,0,0,0.12); font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+        .btn-menu svg { width: 14px; height: 14px; stroke: var(--text-dark); transition: all 0.3s ease; }
+        .btn-menu:hover { border-color: var(--text-dark); background: #fff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        .btn-menu:hover svg { stroke: var(--text-dark); transform: scale(1.1); }
         .btn-book { background: var(--brand-gradient); color: white; font-size: 0.85rem; letter-spacing: 1px; box-shadow: 0 6px 20px rgba(236, 80, 117, 0.25); position: relative; overflow: hidden; }
         .btn-book:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(236, 80, 117, 0.35); }
         .btn-book::after {
@@ -2271,6 +2271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                      overlay.innerHTML = '<span class="sold-out-badge">COMPLET CE SOIR</span>';
                      const imgContainer = card.querySelector('.card-image'); if(imgContainer) imgContainer.appendChild(overlay);
                  }
+                 const fomoBar = card.querySelector('.live-viewer-indicator'); if(fomoBar) fomoBar.remove();
                  const option = select.querySelector(`option[value="${id}"]`); if(option) option.remove();
              } else { card.classList.remove('sold-out'); const overlay = card.querySelector('.sold-out-overlay'); if(overlay) overlay.remove(); }
         });
@@ -2282,9 +2283,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (exp.categories.includes('grand-spectacle')) ctaText = "VOIR LE SHOW"; else if (exp.categories.includes('party')) ctaText = "VOIR L'AMBIANCE";
         let fomoHTML = ''; let soldOutClass = exp.soldOut ? 'sold-out' : '';
         let soldOutOverlay = exp.soldOut ? '<div class="sold-out-overlay"><span class="sold-out-badge">COMPLET CE SOIR</span></div>' : '';
-        let initialViewers = Math.floor(Math.random() * (14 - 6 + 1)) + 6; if(exp.popular) initialViewers += 5;
+        let isHighDemand = (!exp.soldOut && (exp.id === 'nouba' || exp.id === 'malak'));
+        let initialViewers;
+        if(isHighDemand) {
+             initialViewers = Math.floor(Math.random() * (48 - 32 + 1)) + 32;
+        } else {
+             initialViewers = Math.floor(Math.random() * (14 - 6 + 1)) + 6;
+             if(exp.popular) initialViewers += 5;
+        }
         let viewerText = `${initialViewers} personnes consultent`;
-        let highDemandHTML = (!exp.soldOut && (exp.id === 'nouba' || exp.id === 'malak')) ? `<span class="high-demand-indicator">🔥 Très demandé</span>` : '';
+        let highDemandHTML = isHighDemand ? `<span class="high-demand-indicator">🔥 Très demandé</span>` : '';
         if(!exp.soldOut) { fomoHTML = `<div class="live-viewer-indicator" id="fomo-${exp.id}" data-viewers="${initialViewers}"><span class="live-pulse-dot"></span><span class="viewer-text">${viewerText}</span>${highDemandHTML}</div>`; }
         const card = document.createElement('div');
         card.className = `spectacle-card reveal reveal-delay-${(index % 3) + 1} ${soldOutClass}`;
@@ -2313,7 +2321,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="card-description">${exp.description}</p>
                 <div class="card-meta"><span>${exp.time} • Tous les soirs</span> <span class="price-range" onclick="openMapWidget('${exp.id}', event)">${exp.price}</span></div>
                 <div class="card-actions-container">
-                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}', '${exp.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>MENU</button>
+                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}', '${exp.id}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>CARTE</button>
                     <button class="card-btn btn-book" onclick="scrollToForm('${exp.id}')">RÉSERVER MA SOIRÉE (0€)</button>
                 </div>
                 <div class="trust-micro-signal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> Aucun acompte &bull; Payez au dîner</div>
@@ -2526,7 +2534,7 @@ function initFomoEngine() {
     setInterval(() => {
         const indicators = document.querySelectorAll('.live-viewer-indicator'); if(indicators.length === 0) return;
         const target = indicators[Math.floor(Math.random() * indicators.length)]; let current = parseInt(target.getAttribute('data-viewers') || 8);
-        const change = Math.floor(Math.random() * 5) - 2; if(change === 0) return; let newVal = current + change; if(newVal < 6) newVal = 6; if(newVal > 30) newVal = 30;
+        const change = Math.floor(Math.random() * 5) - 2; if(change === 0) return; let newVal = current + change; if(newVal < 6) newVal = 6; if(newVal > 60) newVal = 60;
         target.setAttribute('data-viewers', newVal); const textSpan = target.querySelector('.viewer-text'); target.classList.remove('bump'); void target.offsetWidth; textSpan.textContent = `${newVal} personnes consultent`; target.classList.add('bump'); setTimeout(() => target.classList.remove('bump'), 400);
     }, 3500);
 }
