@@ -243,7 +243,7 @@
         }
 
         .form-trust-header { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
-        .form-trust-text { color: rgba(255, 255, 255, 0.5); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .form-trust-text { color: rgba(255, 255, 255, 0.95); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.1); transform: scale(1); }
 
         .form-group { margin-bottom: 1.1rem; text-align: left; position: relative; }
         .form-group label { display: block; font-size: 0.65rem; font-weight: 600; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 0.5rem; margin-left: 4px; }
@@ -328,26 +328,6 @@
         .dropdown-item .flag { font-size: 1.2rem; }
         .dropdown-item .c-code { margin-left: auto; color: rgba(255, 255, 255, 0.4); font-weight: 600; font-size: 0.75rem; }
         .dropdown-item.custom-option { border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 4px; border-radius: 0 0 10px 10px; }
-        
-        /* === ELITE GLOW ANIMATION V2 === */
-        .elite-trust-reveal .form-trust-text {
-            animation: eliteTextShimmer 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .elite-trust-reveal svg {
-            animation: eliteCheckPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-        
-        @keyframes eliteTextShimmer {
-            0% { color: rgba(255, 255, 255, 0.5); text-shadow: none; transform: scale(1); letter-spacing: 1px; }
-            40% { color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(236, 80, 117, 0.4); transform: scale(1.02); letter-spacing: 1.5px; }
-            100% { color: rgba(255, 255, 255, 0.95); text-shadow: 0 0 10px rgba(255, 255, 255, 0.1); transform: scale(1); letter-spacing: 1px; }
-        }
-        
-        @keyframes eliteCheckPop {
-            0% { stroke: rgba(255,255,255,0.5); transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0 rgba(16,185,129,0)); }
-            50% { stroke: #10B981; transform: scale(1.4) rotate(15deg); filter: drop-shadow(0 0 10px rgba(16,185,129,0.8)); }
-            100% { stroke: #10B981; transform: scale(1.1) rotate(0deg); filter: drop-shadow(0 0 5px rgba(16,185,129,0.4)); stroke-width: 3; }
-        }
         
         /* FIX: Allow dropdown to overflow the input container */
         .input-container:has(.elite-phone-group) {
@@ -866,32 +846,31 @@
 
 .story-footer {
     position: absolute; 
-    bottom: 12px; 
-    left: 50%; 
-    transform: translateX(-50%) translateY(0);
-    width: 96%; 
-    max-width: 420px;
-    padding: 26px 20px 18px; 
+    bottom: 0;
+    left: 0;
+    transform: translateY(0);
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
     z-index: 50;
     /* Gradient: Very transparent at top, darker at bottom */
-    background: linear-gradient(180deg, rgba(15, 15, 15, 0.3) 0%, rgba(10, 10, 10, 0.85) 65%, rgba(0, 0, 0, 0.98) 100%);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    /* Subtle top border, minimal visual noise */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-    border-radius: 26px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.95) 100%);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    /* No hard edges */
+    border: none;
+    border-radius: 0;
     display: flex; 
     flex-direction: column; 
     align-items: center;
     text-align: center;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.4); 
+    box-shadow: none;
     transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     will-change: transform, opacity;
 }
 
 .story-footer.hidden { 
-    transform: translateX(-50%) translateY(20px); 
+    transform: translateY(20px);
     opacity: 0; 
     pointer-events: none;
 }
@@ -902,7 +881,7 @@
     font-size: 1.6rem; 
     margin-bottom: 4px; 
     font-weight: 800; 
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
+    text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 1px 5px rgba(0,0,0,0.5);
     letter-spacing: -0.02em;
     width: 100%;
 }
@@ -914,12 +893,13 @@
     margin-bottom: 12px;
     font-size: 0.85rem;
     color: #FFD700;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 .story-rating-val { font-weight: 800; color: #fff; }
-.story-rating-count { color: rgba(255,255,255,0.5); font-weight: 600; font-size: 0.75rem; }
+.story-rating-count { color: rgba(255,255,255,0.8); font-weight: 600; font-size: 0.75rem; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
 
 .story-desc-text { 
-    color: rgba(255,255,255,0.85); 
+    color: rgba(255,255,255,0.95);
     font-size: 0.9rem; 
     margin-bottom: 20px; 
     font-weight: 500; 
@@ -928,6 +908,7 @@
     -webkit-line-clamp: 2; 
     -webkit-box-orient: vertical; 
     overflow: hidden; 
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
 .story-cta-btn { 
@@ -969,10 +950,10 @@
     justify-content: center;
     gap: 6px;
 }
-.story-trust svg { stroke: rgba(255,255,255,0.5); margin-top: -1px;
+.story-trust svg { stroke: rgba(255,255,255,0.5);
     text-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.4); 
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
-    transform: translateY(6px);
+            transform: translateY(0);
 }
 .story-footer:not(.hidden) .story-trust { opacity: 0.92; transform: translateY(0); }
 
@@ -1672,10 +1653,6 @@
                 </div>
                 <p class="story-desc-text" id="storyDesc">Description here...</p>
                 <button class="story-cta-btn" id="storyBookBtn">RÉSERVER CETTE TABLE</button>
-                <div class="story-trust">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Paiement sur place &bull; Zéro commission
-                </div>
             </div>
             <div class="story-climax-card" id="climaxCard">
                 <div class="climax-phantom-layer" id="climaxBgContainer"></div>
@@ -1944,13 +1921,6 @@ document.addEventListener('click', function(e) {
         selector.classList.remove('active');
     }
 });
-
-// Trigger Elite Animation
-setTimeout(() => {
-    // Target the PARENT container for the full effect
-    const header = document.querySelector('.form-trust-header');
-    if(header) header.classList.add('elite-trust-reveal');
-}, 2500);
 
 // === USER ID GENERATOR: DDMM + 5 Random Chars ===
 function generateUserID() {
