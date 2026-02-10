@@ -1413,9 +1413,29 @@ iframe.story-media-item {
             height: 100%;
             pointer-events: none;
             z-index: 0;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         #video-preload-container iframe {
             pointer-events: none !important;
+        }
+
+        /* === ELITE STORY POSTER OVERLAY === */
+        .story-poster-temp {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            z-index: 70 !important; /* Always on top of everything during load */
+            opacity: 1;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            will-change: opacity;
+        }
+        .story-poster-temp.fade-out {
+            opacity: 0;
         }
 
     </style>
@@ -2252,7 +2272,7 @@ const VideoPreloadManager = {
             let src = item.url;
             if(!src.includes('?')) src += '?';
             // Explicitly force controls=0 and muted=1 and autoplay=1
-            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
+            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1&rel=0`;
             
             iframe.src = src;
             iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
@@ -2672,7 +2692,7 @@ function initReviewBadgeTimer() {
     reviewCards.forEach(card => observer.observe(card));
 }
 
-/* === OPTIMIZATION START: ELITE STORY MANAGER (WITH IMAGE PRELOAD) === */
+/* === OPTIMIZATION START: ELITE STORY MANAGER V25 (POSTER-FIRST LOADING) === */
 window.StoryManager = {
     queue: [],
     currentIndex: 0,
@@ -2753,6 +2773,11 @@ window.StoryManager = {
         this.currentExp = (window.experiencesData || []).find(e => e.id === id);
         if(!this.currentExp) return;
 
+        // ELITE PRIORITY: Queue the video immediately
+        if(this.currentExp.video) {
+            VideoPreloadManager.enqueue(id, this.currentExp.video, 10);
+        }
+
         if(!this.hasUnlockedAudio) {
             this.audioObj.play().catch(()=>{}); 
             this.audioObj.pause();
@@ -2796,30 +2821,24 @@ window.StoryManager = {
         document.getElementById('storyOverlay').classList.add('show');
         document.body.style.overflow = 'hidden';
         
+        // Immediate First Frame Render (Avoid Black Screen)
+        // If first is video, we want the Poster to be visible BEFORE renderSlide clears things
+
         this.renderSlide();
     },
 
-    // 3. Render Engine (Optimized)
+    // 3. Render Engine (Optimized V25)
     renderSlide: function() {
-        // Stop any currently playing video before switching
+        const wrapper = document.getElementById('storyMediaWrapper');
+        const preloadContainer = document.getElementById('video-preload-container');
+
+        // Stop any currently playing video
         if (this.currentVideoPlayer) {
             try { 
                 this.currentVideoPlayer.pause(); 
                 this.currentVideoPlayer.mute();
             } catch(e){}
         }
-
-        const wrapper = document.getElementById('storyMediaWrapper');
-        const preloadContainer = document.getElementById('video-preload-container');
-        
-        // === SAFETY CLEANUP (Rapid Navigation Fix) ===
-        // Remove any pending slides that haven't become active yet
-        const allItems = wrapper.querySelectorAll('.story-media-item');
-        allItems.forEach(el => {
-            if (!el.classList.contains('active') && el.parentNode.id !== 'video-preload-container') {
-                el.remove();
-            }
-        });
 
         if(this.timer) clearTimeout(this.timer);
         this.timer = null;
@@ -2835,6 +2854,7 @@ window.StoryManager = {
             return;
         }
 
+        // Preload Next Image Logic
         if(this.currentIndex + 1 < this.queue.length) {
             const next = this.queue[this.currentIndex + 1];
             if(next.type === 'image' && !this.preloadedUrls.has(next.src)) {
@@ -2855,49 +2875,58 @@ window.StoryManager = {
         
         let oldEl = wrapper.querySelector('.story-media-item.active');
         
-        // PAUSE previous video immediately if it was video
-        if (oldEl && oldEl.tagName === 'IFRAME') {
-             // We don't pause immediately to allow cross-fade, BUT we must ensure pointer events are off
-             oldEl.style.pointerEvents = 'none';
-        }
+        // Clean up any old "temp posters" from previous slides immediately
+        const oldPosters = wrapper.querySelectorAll('.story-poster-temp');
+        oldPosters.forEach(p => p.remove());
 
         this.currentVideoPlayer = null; 
 
         if(item.type === 'video') {
-            // New is Video -> Video Container z=40 (Must be > Image z=30)
-            preloadContainer.style.zIndex = '40';
+            // Video Mode: Container Active (60)
+            // Note: We use Z=60 for Active Video, Z=20 for Inactive.
+            // BUT if we switch from Image (50), we want Video (60) to cover it.
+            preloadContainer.style.zIndex = '60';
             this.playVideoSlide(item, wrapper, currentFill, oldEl);
         } else {
-            // New is Image -> Video Container z=20 (Behind Image z=30)
+            // Image Mode: Container Inactive (20)
+            // We only drop the container AFTER the new image is ready if possible,
+            // but playImageSlide handles Z=70 for transition cover.
             preloadContainer.style.zIndex = '20';
             this.playImageSlide(item, wrapper, currentFill, oldEl);
         }
     },
 
     // NEW: World-Class Seamless Stacking Transition
-    transitionAndClean: function(newEl, oldEl) {
+    transitionAndClean: function(newEl, oldEl, finalZIndex = '50') {
         requestAnimationFrame(() => {
-            newEl.style.zIndex = '30'; // Top
+            // If it's a Poster or Temp Image, it starts at 70.
+            // If it's a standard Image, we might want it at 50 eventually.
+            // But during transition, it must be Top.
+            // If newEl is the Poster (Z=70), it's already set in CSS/JS.
+
             newEl.style.opacity = '1';
             newEl.classList.add('active');
             
             if (oldEl) {
-                oldEl.style.zIndex = '20'; // Push back
-                // Keep opacity 1 to avoid black flash
+                 // Push old element back
+                 // If old was Image (50), it stays 50. New (70) covers it.
             }
         });
         
         // Remove old element after transition
         setTimeout(() => {
+            if (newEl && finalZIndex) {
+                 newEl.style.zIndex = finalZIndex;
+            }
+
             if(oldEl && oldEl !== newEl) {
                 oldEl.classList.remove('active');
                 oldEl.style.opacity = '0';
-                oldEl.style.zIndex = '';
                 oldEl.style.pointerEvents = 'none';
                 
                 if(oldEl.tagName === 'IFRAME') {
+                    // Don't remove if it's the preloaded container child
                     if(oldEl.parentElement.id === 'video-preload-container') {
-                        // Reset preloaded iframe
                         oldEl.style.opacity = '0';
                         const id = oldEl.getAttribute('data-id');
                         const p = VideoPreloadManager.getPlayer(id);
@@ -2911,10 +2940,10 @@ window.StoryManager = {
                     oldEl.remove();
                 }
             }
-        }, 600); // 0.6s to match CSS transition
+        }, 600);
     },
 
-    // 4. Video Logic (ELITE INSTANT PLAYBACK & CONTROLS FIX)
+    // 4. Video Logic (ELITE POSTER-FIRST LOADING)
     playVideoSlide: function(item, container, progressBar, oldEl) {
         if(this.isMuted) {
              this.audioObj.pause();
@@ -2922,11 +2951,20 @@ window.StoryManager = {
              this.fadeAudio(0, 300, true);
         }
 
+        // A. INJECT POSTER IMMEDIATELY (Z=70)
+        // This covers the iframe loading process completely.
+        const poster = document.createElement('img');
+        poster.src = this.currentExp.image; // Use high-quality thumbnail
+        poster.className = 'story-poster-temp';
+        // poster CSS has z-index: 70 !important
+        container.appendChild(poster);
+
         const expId = this.currentExp.id;
         const preloadedData = VideoPreloadManager.getPlayer(expId);
         
         let iframe;
         let player;
+        let isPreloaded = false;
         
         if (preloadedData && preloadedData.player) {
             const preloadedIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
@@ -2934,72 +2972,84 @@ window.StoryManager = {
                 iframe = preloadedIframe;
                 player = preloadedData.player;
                 this.currentVideoPlayer = player;
-
-                // INSTANT PLAY
-                try {
-                    player.setCurrentTime(0);
-                    if(!this.isMuted) { player.unmute(); player.setVolume(100); }
-                    player.play();
-                    
-                    // Show immediately
-                    this.transitionAndClean(iframe, oldEl);
-                    player.getDuration((d) => {
-                        const dur = d ? d : 15;
-                        progressBar.style.transition = `transform ${dur}s linear`;
-                        progressBar.style.transform = 'scaleX(1)';
-                    });
-                    
-                    player.off('ended');
-                    player.on('ended', () => { this.next(); });
-                    
-                    return; 
-                } catch(e) { console.error("Instant Play Error", e); }
+                isPreloaded = true;
             }
         }
 
-        // Fallback
-        iframe = document.createElement('iframe');
-        const ts = new Date().getTime();
-        let src = item.src;
-        if(!src.includes('?')) src += '?';
-        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-        iframe.src = src;
-        iframe.className = 'story-media-item';
-        iframe.style.opacity = '0';
-        iframe.style.zIndex = '30';
-        iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-        iframe.setAttribute('loading', 'eager');
-        iframe.setAttribute('fetchpriority', 'high');
-        container.appendChild(iframe);
+        if (!isPreloaded) {
+            // Fallback: Create new iframe
+            iframe = document.createElement('iframe');
+            const ts = new Date().getTime();
+            let src = item.src;
+            if(!src.includes('?')) src += '?';
+            // Elite Params: loop=false, controls=0
+            src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&loop=false&rel=0&ts=${ts}`;
+            iframe.src = src;
+            iframe.className = 'story-media-item';
+            iframe.style.opacity = '0'; // Hidden behind poster
+            iframe.style.zIndex = '30'; // Inside container (container is Z=60)
+            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+            iframe.setAttribute('loading', 'eager');
+            iframe.setAttribute('fetchpriority', 'high');
+            // Strict pointer events to prevent controls interaction
+            iframe.style.pointerEvents = 'none';
 
-        player = new playerjs.Player(iframe);
-        this.currentVideoPlayer = player;
+            // Append to PRELOAD container so it gets the Z=60 context
+            document.getElementById('video-preload-container').appendChild(iframe);
+            player = new playerjs.Player(iframe);
+            this.currentVideoPlayer = player;
+        }
 
-        let hasFadedIn = false;
-        const triggerFadeIn = () => {
-             if(hasFadedIn) return;
-             hasFadedIn = true;
-             this.transitionAndClean(iframe, oldEl);
+        // Logic: Wait for 'timeupdate' > 0 OR 'play' to fade out poster
+        // If we just use 'play', it might still be buffering/black.
+        // 'timeupdate' is safest for "frame ready".
+
+        let hasStarted = false;
+        const revealVideo = () => {
+             if(hasStarted) return;
+             hasStarted = true;
+
+             // 1. Ensure Iframe is visible (Opacity 1) BEHIND poster
+             iframe.style.opacity = '1';
+             iframe.classList.add('active');
+
+             // 2. Fade Out Poster
+             poster.classList.add('fade-out');
+
+             // 3. Clean Old El (Previous Slide)
+             if(oldEl) {
+                 oldEl.style.opacity = '0';
+                 setTimeout(() => { if(oldEl.parentNode && oldEl.tagName !== 'IFRAME') oldEl.remove(); }, 600);
+             }
+
+             // 4. Start Progress
              player.getDuration((d) => {
                 const dur = d ? d : 15;
                 progressBar.style.transition = `transform ${dur}s linear`;
                 progressBar.style.transform = 'scaleX(1)';
             });
+
+            // 5. Remove Poster after fade
+            setTimeout(() => { poster.remove(); }, 600);
         };
 
-        const onPlayerReady = () => {
-            if(!this.isMuted) { player.unmute(); player.setVolume(100); }
+        // Auto-Play Setup
+        try {
             player.setCurrentTime(0);
+            if(!this.isMuted) { player.unmute(); player.setVolume(100); }
             player.play();
-        };
+        } catch(e) {}
 
-        player.on('play', triggerFadeIn);
         player.on('timeupdate', (t) => {
-            // Force fade in if time moves (video is playing)
-            if(t.seconds > 0 && !hasFadedIn) triggerFadeIn();
+            if(t.seconds > 0 && !hasStarted) revealVideo();
         });
 
-        player.on('ready', onPlayerReady);
+        player.on('play', () => {
+            // Backup if timeupdate is slow, but prefer timeupdate
+            // setTimeout(revealVideo, 200);
+        });
+
+        player.off('ended');
         player.on('ended', () => { this.next(); });
     },
 
@@ -3010,15 +3060,19 @@ window.StoryManager = {
             this.audioObj.play().catch(()=>{});
             this.fadeAudio(1, 400);
         }
+
         const img = document.createElement('img');
         img.src = item.src;
         img.className = 'story-media-item';
         img.style.opacity = '0';
-        img.style.zIndex = '30';
+        // Start Z=70 to cover any active video (Z=60)
+        img.style.zIndex = '70';
         container.appendChild(img);
         
         const onImageReady = () => {
-            this.transitionAndClean(img, oldEl);
+            // Transition to Opacity 1, then drop to Z=50
+            this.transitionAndClean(img, oldEl, '50');
+
             setTimeout(() => {
                 progressBar.style.transition = `transform ${this.imageDuration}ms linear`;
                 progressBar.style.transform = 'scaleX(1)';
