@@ -600,17 +600,27 @@
             width: 6px; height: 6px; background-color: #10B981; border-radius: 50%;
             box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); animation: greenPulse 3s infinite cubic-bezier(0.66, 0, 0, 1);
         }
-        .spectacle-card.sold-out { pointer-events: none; }
+        .spectacle-card.sold-out { pointer-events: auto; }
         .spectacle-card.sold-out .card-image img { filter: grayscale(100%) opacity(0.7); }
         .sold-out-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 10;
+            position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 10; pointer-events: none;
         }
         .sold-out-badge {
             background: #fff; color: #000; padding: 8px 16px; border-radius: 4px; font-weight: 800; text-transform: uppercase;
             font-size: 0.8rem; letter-spacing: 1px; transform: rotate(-5deg); box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
-        .spectacle-card.sold-out .btn-book { background: #E5E7EB; color: #9CA3AF; box-shadow: none; cursor: not-allowed; }
-        .spectacle-card.sold-out .btn-book::after { display: none; }
+        /* Override sold-out button styles to allow interaction */
+        .spectacle-card.sold-out .btn-book {
+            background: #FFFFFF;
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .spectacle-card.sold-out .btn-book:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
 
         .card-content { padding: 1.4rem; display: flex; flex-direction: column; background: #fff; gap: 0; }
         .card-title { font-size: 1.4rem; line-height: 1.1; margin-bottom: 0.3rem; color: var(--text-dark); }
@@ -1477,21 +1487,21 @@ iframe.story-media-item {
             <div class="hero-content">
                 <div class="urgency-pill">
                     <span class="pulse-dot"></span>
-                    <span class="urgency-text" id="urgencyText">7 Tables VIP disponibles ce soir</span>
+                    <span class="urgency-text" id="urgencyText">DERNIÈRES TABLES VIP : DISPO CE SOIR</span>
                 </div>
 
                 <h1 class="hero-title-stack">
-                    <span class="title-line-1">Votre Table VIP dans les</span>
+                    <span class="title-line-1">Accès Privilégié aux</span>
                     <span class="title-line-2 shimmer-text" id="heroTitleLine2">Restaurants Festifs</span>
-                    <span class="title-line-3">de Marrakech</span>
+                    <span class="title-line-3">les plus prisés de Marrakech</span>
                 </h1>
 
-                <p class="hero-subtitle">Accédez aux <strong>7 meilleures adresses</strong> sans acompte. Confirmation en 60 secondes.</p>
+                <p class="hero-subtitle">Le Top 7 des soirées incontournables. Zéro acompte requis. Confirmation immédiate.</p>
 
                 <div class="hero-form-container" id="heroFormContainer">
                     <div class="form-trust-header">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3" style="filter: drop-shadow(0 0 5px rgba(16,185,129,0.4)); transform: scale(1.1);"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <span class="form-trust-text" id="trustText">Réservation Gratuite & Sans Engagement</span>
+                        <span class="form-trust-text" id="trustText">SÉCURISEZ VOTRE TABLE (100% GRATUIT)</span>
                     </div>
 
                     <form id="heroForm" autocomplete="on" novalidate>
@@ -1499,7 +1509,7 @@ iframe.story-media-item {
                         <div class="form-group">
                             <label for="fullname">À quel nom réserver ?</label>
                             <div class="input-container" id="container-fullname">
-                                <input type="text" id="fullname" name="name" placeholder="Votre nom et prénom" autocomplete="name" required>
+                                <input type="text" id="fullname" name="name" placeholder="Nom pour la Guestlist..." autocomplete="name" required>
                             </div>
                             <div class="error-msg" id="error-fullname">Veuillez entrer votre nom</div>
                         </div>
@@ -1614,11 +1624,11 @@ iframe.story-media-item {
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-submit" id="submitBtn">Réserver ma table gratuitement</button>
+                        <button type="submit" class="btn-submit" id="submitBtn">BLOQUER MA TABLE MAINTENANT (0€)</button>
 
                         <div class="form-trust-strip">
-                            <div class="trust-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> 0 EUR requis</div>
-                            <div class="trust-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Confirmation 60s</div>
+                            <div class="trust-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> AUCUN PRÉPAIEMENT</div>
+                            <div class="trust-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> CONFIRMATION FLASH</div>
                             <div class="trust-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Support WhatsApp</div>
                         </div>
                     </form>
@@ -1634,15 +1644,15 @@ iframe.story-media-item {
         <div class="sections-wrapper">
             <section class="section reveal" id="experiences">
                 <div class="section-header">
-                    <h2 id="experiences-title">7 Spectacles Uniques.<br>Quelle magie choisirez-vous ce soir ?</h2>
-                    <p>Oubliez les adresses de masse. Voici les 7 scènes confidentielles où Marrakech bat réellement son plein ce soir.</p>
+                    <h2 id="experiences-title">7 Ambiances Explosives.<br>Où ferez-vous la fête ce soir ?</h2>
+                    <p>Évitez les pièges à touristes. Voici le cercle fermé des 7 lieux où le 'Tout-Marrakech' se retrouve ce soir.</p>
                 </div>
                 <div id="explore-anchor"></div>
                 <div class="filters">
-                    <button class="filter-btn active" onclick="filterExperiences('all', this)">Toutes les adresses</button>
-                    <button class="filter-btn" onclick="filterExperiences('grand-spectacle', this)">Grands Spectacles & Cabaret</button>
-                    <button class="filter-btn" onclick="filterExperiences('authentic', this)">Charme & Traditions</button>
-                    <button class="filter-btn" onclick="filterExperiences('party', this)">Festif & Rooftop</button>
+                    <button class="filter-btn active" onclick="filterExperiences('all', this)">DÉCOUVRIR LA SÉLECTION</button>
+                    <button class="filter-btn" onclick="filterExperiences('grand-spectacle', this)">SHOWS GRANDIOSES & VIP</button>
+                    <button class="filter-btn" onclick="filterExperiences('authentic', this)">PALAIS & AUTHENTICITÉ</button>
+                    <button class="filter-btn" onclick="filterExperiences('party', this)">PARTY & ROOFTOPS</button>
                 </div>
                 <div class="spectacles-grid" id="spectaclesGrid"></div>
             </section>
@@ -1933,57 +1943,57 @@ function initProgressiveDisclosure() {
 
 const experiencesData = window.experiencesData = [
     {
-        id: "malak", name: "Malak Emeraude", categories: ["grand-spectacle"], smartLabel: "DÎNER-SPECTACLE & VUE", price: "Hivernage", rating: "4.3", reviews: "1011+", time: "20h00 - 02h30",
-        description: "Le show le plus éblouissant de Marrakech. Dînez face aux montagnes de l'Atlas et laissez-vous emporter par un spectacle live grandiose. Le mélange parfait entre haute gastronomie et ambiance festive chic.",
+        id: "malak", name: "Malak Emeraude", categories: ["grand-spectacle"], smartLabel: "VUE ATLAS & SHOW", price: "Hivernage", rating: "4.3", reviews: "1011+", time: "20h00 - 02h30",
+        description: "L'adresse VIP par excellence. Dînez face aux montagnes de l'Atlas rythmé par un show live époustouflant. L'alliance rare entre haute gastronomie et fête sophistiquée.",
         image: "https://MTSZone.b-cdn.net/MalakV2/ThumbOfficial.jpg",
         gallery: ["https://MTSZone.b-cdn.net/MalakV2/Malak7.jpg", "https://MTSZone.b-cdn.net/MalakV2/Malak11.jpg", "https://MTSZone.b-cdn.net/MalakV2/Malak6.jpg", "https://MTSZone.b-cdn.net/MalakV2/Malak3.jpg", "https://MTSZone.b-cdn.net/Malak/Malak2.jpg", "https://MTSZone.b-cdn.net/Malak/NewMalak10.jpg", "https://MTSZone.b-cdn.net/MalakV2/NewMalak6.jpg", "https://MTSZone.b-cdn.net/MalakV2/NewMalak2.jpg", "https://MTSZone.b-cdn.net/MalakV2/NewMalak4.jpg", "https://MTSZone.b-cdn.net/MalakV2/NewMalak1.jpg", "https://MTSZone.b-cdn.net/MalakV2/NewMalak8.jpg", "https://MTSZone.b-cdn.net/MalakV2/NewMalak9.jpg"],
         finalImage: "https://MTSZone.b-cdn.net/Malak/Malak13.jpg", video: "https://player.mediadelivery.net/embed/555558/125da33f-a663-48d9-b111-cae2bfb4b268", audio: "https://MTSZone.b-cdn.net/Malak5.MP3", menuUrl: "https://MTSZone.b-cdn.net/Malak/Please_upgrade_this_202601051514%20(1)_compressed.pdf", menuPrice: 60, popular: true
     },
     {
-        id: "ibrahim", name: "Ibrahim Pacha", categories: ["grand-spectacle"], smartLabel: "PALAIS & SPECTACLE", price: "Hivernage", rating: "4.7", reviews: "1140+", time: "20h00 - 02h30",
-        description: "Entrez dans la peau d'un Sultan. Un palais somptueux pour un dîner-spectacle unique de 3 heures. Derviches tourneurs, festin royal et chanteurs à voix : une immersion totale digne des Mille et Une Nuits.",
+        id: "ibrahim", name: "Ibrahim Pacha", categories: ["grand-spectacle"], smartLabel: "VIE DE SULTAN", price: "Hivernage", rating: "4.7", reviews: "1140+", time: "20h00 - 02h30",
+        description: "Vivez le faste des Sultans. Un festin royal dans un palais somptueux. 3h d'immersion totale : derviches, chanteurs à voix et décors dignes des Mille et Une Nuits.",
         image: "https://MTSZone.b-cdn.net/Brahim%20Pacha/BrahimThumb3%20(1).jpeg",
         gallery: ["https://MTSZone.b-cdn.net/Pacha%20V2/Brahim10.jpg", "https://MTSZone.b-cdn.net/Pacha%20V2/NewPacha2.jpg", "https://MTSZone.b-cdn.net/Brahim%20Pacha/NewPacha7.jpg", "https://MTSZone.b-cdn.net/Pacha%20V2/NewPacha7.jpg", "https://MTSZone.b-cdn.net/Brahim%20Pacha/NewPacha8.jpg", "https://MTSZone.b-cdn.net/Brahim%20Pacha/NewPacha9.jpg", "https://MTSZone.b-cdn.net/Pacha%20V2/Brahim1.jpg", "https://MTSZone.b-cdn.net/Brahim%20Pacha/NewPacha88.jpg"],
         finalImage: "https://MTSZone.b-cdn.net/Brahim%20Pacha/NewPacha888.jpg", video: "https://player.mediadelivery.net/embed/555558/a267114f-9b0b-4fb8-9d7b-e0e01e5344bc", audio: "https://MTSpull.b-cdn.net/iBrahimPachaAudio.MP3", menuUrl: "https://MTSZone.b-cdn.net/Menus/ibrahim-pacha-menu-avec%20compression.pdf", menuPrice: 60, popular: true
     },
     {
-        id: "nouba", name: "Nouba Restaurant", categories: ["grand-spectacle", "party"], smartLabel: "Aerial Jungle", price: "Agdal", rating: "4.4", reviews: "3647+", time: "19h30 - 23h15",
-        description: "Le restaurant festif incontournable. Dînez dans une jungle chic pendant que des acrobates volent au-dessus de vous. Une cuisine fusion explosive qui se transforme en soirée clubbing inoubliable.",
+        id: "nouba", name: "Nouba Restaurant", categories: ["grand-spectacle", "party"], smartLabel: "JUNGLE AÉRIENNE", price: "Agdal", rating: "4.4", reviews: "3647+", time: "19h30 - 23h15",
+        description: "Le temple de la fête. Dînez dans une jungle chic sous les acrobaties aériennes. Une cuisine fusion audacieuse qui bascule en soirée clubbing légendaire après le dessert.",
         image: "https://MTSpull.b-cdn.net/Nouba/ThumbNoubaMeh1.jpg",
         gallery: ["https://MTSpull.b-cdn.net/Nouba/Nouba7.jpg", "https://MTSpull.b-cdn.net/Nouba/Nouba10.jpg", "https://MTSpull.b-cdn.net/Nouba/Nouba1.jpg", "https://MTSpull.b-cdn.net/Nouba/Nouba11.jpg", "https://MTSpull.b-cdn.net/Nouba/Nouba12.jpg", "https://MTSpull.b-cdn.net/Nouba/Nouba9.jpg", "https://MTSpull.b-cdn.net/Nouba/Nouba8.jpg", "https://MTSpull.b-cdn.net/Nouba/Nouba2.jpg", "https://MTSpull.b-cdn.net/Nouba/Nouba3.jpg", "https://MTSpull.b-cdn.net/Nouba/Nouba5.jpg"],
         finalImage: "https://MTSpull.b-cdn.net/Nouba/Nouba4.jpg", video: "https://player.mediadelivery.net/embed/555558/2613ac43-fc55-4d5d-a837-94705b17e6db", audio: "https://MTSpull.b-cdn.net/NoubaAudio1.MP3", menuUrl: "https://MTSZone.b-cdn.net/Menus/Nouba-menu-avec%20compression.pdf", menuPrice: 75, popular: false
     },
     {
-        id: "stah", name: "Stah Rooftop", categories: ["party", "grand-spectacle"], smartLabel: "Starlit Rooftop", price: "Agdal", rating: "4.5", reviews: "2472+", time: "19h30 - 01h00",
-        description: "Le rooftop pour dominer la ville. Tapas créatives, cocktails signatures et DJ set face au plus beau coucher de soleil. L'ambiance branchée et décontractée idéale pour débuter la soirée sous les étoiles.",
+        id: "stah", name: "Stah Rooftop", categories: ["party", "grand-spectacle"], smartLabel: "ROOFTOP & SUNSET", price: "Agdal", rating: "4.5", reviews: "2472+", time: "19h30 - 01h00",
+        description: "Dominez la Ville Rouge. Le spot incontournable pour le coucher de soleil. Tapas d'auteur, cocktails signatures et DJ set pour une montée en puissance sous les étoiles.",
         image: "https://MTSpull.b-cdn.net/stah/StahThum2.jpg",
         gallery: ["https://MTSpull.b-cdn.net/stah/Stah4V2.jpg", "https://MTSpull.b-cdn.net/stah/Stah6V2.jpg", "https://MTSpull.b-cdn.net/stah/Stah1.jpg", "https://MTSpull.b-cdn.net/stah/Stah9.jpg", "https://MTSpull.b-cdn.net/stah/Untitled-LiveDoc-(37).jpg", "https://MTSpull.b-cdn.net/stah/Stah12.jpg", "https://MTSpull.b-cdn.net/stah/Stah11.jpg", "https://MTSpull.b-cdn.net/stah/Stah5.jpg", "https://MTSpull.b-cdn.net/stah/Stah8.jpg", "https://MTSpull.b-cdn.net/stah/Stah2.jpg"],
         finalImage: "https://MTSpull.b-cdn.net/stah/Stah3.jpg", video: "https://player.mediadelivery.net/embed/555558/c9e02c8e-79a4-4325-95bc-27b4e2de904e", audio: "https://MTSpull.b-cdn.net/StahJBV5.MP3", menuUrl: "https://MTSZone.b-cdn.net/Menus/STA7_Menu-avec%20compression.pdf", menuPrice: 40, popular: false
     },
     {
-        id: "noto", name: "Noto Marrakech", categories: ["party"], smartLabel: "Italian Euphoria", price: "Hivernage", rating: "4.5", reviews: "300+", time: "19h30 - 23h15",
-        description: "La Dolce Vita électrique. C'est l'Italie qui fait la fête à Marrakech ! Live band, pâtes à la truffe et énergie débordante. Le spot élégant et survolté pour chanter et dîner jusqu'au bout de la nuit.",
+        id: "noto", name: "Noto Marrakech", categories: ["party"], smartLabel: "ITALIAN PARTY", price: "Hivernage", rating: "4.5", reviews: "300+", time: "19h30 - 23h15",
+        description: "La Dolce Vita électrique ! Quand l'Italie glamour s'empare de Marrakech : Live band, pasta à la truffe et ambiance explosive. Le spot élégant pour finir debout sur les chaises.",
         image: "https://MTSZone.b-cdn.net/NOTO/Thumbnail5.jpg",
         gallery: ["https://MTSZone.b-cdn.net/NOTO/Noto15.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto9.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto14.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto8.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto11.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto12.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto1.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto10.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto7.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto5.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto16.jpg", "https://MTSZone.b-cdn.net/NOTO/Noto17.jpg"],
         finalImage: "https://MTSZone.b-cdn.net/NOTO/Noto18.jpg", video: "https://player.mediadelivery.net/embed/555558/6c744bc3-630c-4715-9b9d-563263c50a82", audio: "https://MTSZone.b-cdn.net/NOTO/NoubaFestifAudio1.MP3", menuUrl: "https://MTSZone.b-cdn.net/NOTO/CARTE-NOTO-MAROC-compressed.pdf", menuPrice: 70, popular: false
     },
     {
-        id: "ritziF", name: "Ritzi Restaurant", categories: ["party"], smartLabel: "Danse & Glamour", price: "Hivernage", rating: "4.5", reviews: "1324+", time: "12h00 - 23h30",
-        description: "L'élégance à l'état pur. Une cuisine méditerranéenne raffinée qui laisse place à la fête. Chic, vibrant et \"Gatsby-esque\" : la soirée parfaite pour ceux qui veulent dîner et danser avec classe.",
+        id: "ritziF", name: "Ritzi Restaurant", categories: ["party"], smartLabel: "CHIC & GATSBY", price: "Hivernage", rating: "4.5", reviews: "1324+", time: "12h00 - 23h30",
+        description: "L'élégance qui s'encanaille. Une cuisine méditerranéenne divine qui glisse vers la fête chic. L'adresse confidentielle pour dîner et danser avec classe.",
         image: "https://MTSZone.b-cdn.net/Ritzi/Thumbnail2.jpg",
         gallery: ["https://MTSZone.b-cdn.net/Ritzi/Ritzi3-1.jpg", "https://MTSZone.b-cdn.net/Ritzi/Ritzi7.jpg", "https://MTSZone.b-cdn.net/Ritzi/Ritzi2.jpg", "https://MTSZone.b-cdn.net/Ritzi/Ritzi9.jpg", "https://MTSZone.b-cdn.net/Ritzi/Ritzi10.jpg", "https://MTSZone.b-cdn.net/Ritzi/Ritzi14.jpg", "https://MTSZone.b-cdn.net/Ritzi/Ritzi15.jpg", "https://MTSZone.b-cdn.net/Ritzi/Ritzi12.jpg", "https://MTSZone.b-cdn.net/Ritzi/Ritzi11.jpg", "https://MTSZone.b-cdn.net/Ritzi/Ritzi1.jpg", "https://MTSZone.b-cdn.net/Ritzi/RitziColored.jpg"],
         finalImage: "https://MTSZone.b-cdn.net/Ritzi/Ritzi18.jpg", video: "https://player.mediadelivery.net/embed/555558/120c46bd-d7c8-4d0e-88a3-46e51a1b92aa", audio: "https://MTSZone.b-cdn.net/Ritzi/AudioRitziF2.MP3", menuUrl: "https://MTSZone.b-cdn.net/Ritzi/MenuRitzi-1_compressed.pdf", menuPrice: 50, popular: true
     },
     {
-        id: "folk", name: "Folk Restaurant", categories: ["authentic", "party"], smartLabel: "Danse & Gnaoua", price: "Guéliz", rating: "4.4", reviews: "504+", time: "19h30 - 23h15",
-        description: "Vibrez au rythme de Marrakech. Une immersion totale dans la culture Gnaoua au cœur de Guéliz. Cuisine marocaine savoureuse et musique live envoûtante pour une soirée authentique qui touche l'âme.",
+        id: "folk", name: "Folk Restaurant", categories: ["authentic", "party"], smartLabel: "TRANSE GNAOUA", price: "Guéliz", rating: "4.4", reviews: "504+", time: "19h30 - 23h15",
+        description: "L'âme festive de Guéliz. Immersion Gnaoua envoûtante et cuisine marocaine revisitée. Loin des clichés touristiques, vivez une transe musicale authentique qui prend aux tripes.",
         image: "https://MTSZone.b-cdn.net/LeGrandBazar/Thumboff.jpg",
         gallery: ["https://MTSpull.b-cdn.net/Folk/Folk8.jpg", "https://MTSpull.b-cdn.net/Folk/Folk1.jpg", "https://MTSpull.b-cdn.net/Folk/Folk4.jpg", "https://MTSpull.b-cdn.net/Folk/Folk3.jpg", "https://MTSpull.b-cdn.net/Folk/Folk2.jpg", "https://MTSpull.b-cdn.net/Folk/Folk9.jpg", "https://MTSpull.b-cdn.net/Folk/Folk7.jpg"],
         finalImage: "https://MTSpull.b-cdn.net/Folk/Folk6.jpg", video: "https://player.mediadelivery.net/embed/555558/4e641eb3-3629-42db-b2f6-5ca55283e7fc", audio: "https://MTSpull.b-cdn.net/FolkAudio.MP3", menuUrl: "https://MTSZone.b-cdn.net/folk-menu-marrakechtopspot1_compressed.pdf", menuPrice: 45, popular: false
     },
     {
-        id: "tanjia", name: "Le Tanjia", categories: ["authentic"], smartLabel: "Riad Légendaire", price: "Médina", rating: "4.3", reviews: "2180+", time: "12h00 - 23h15",
-        description: "La magie d'un Riad historique. Plongez au cœur de la Médina pour un dîner marocain légendaire. Danseuses orientales et architecture traditionnelle pour une nuit 100% authentique.",
+        id: "tanjia", name: "Le Tanjia", categories: ["authentic"], smartLabel: "RIAD LÉGENDAIRE", price: "Médina", rating: "4.3", reviews: "2180+", time: "12h00 - 23h15",
+        description: "Dînez dans l'Histoire. Le Riad mythique de la Médina. Danseuses orientales et architecture séculaire pour une nuit marocaine 100% immersive dont vous vous souviendrez.",
         image: "https://MTSpull.b-cdn.net/Tanjia/ThumbTanjia1.jpg",
         gallery: ["https://MTSpull.b-cdn.net/Tanjia/Tanjia9.jpg", "https://MTSpull.b-cdn.net/Tanjia/Tanjia4.jpg", "https://MTSpull.b-cdn.net/Tanjia/Tanjia1.jpg", "https://MTSpull.b-cdn.net/Tanjia/Tanjia3.jpg", "https://MTSpull.b-cdn.net/Tanjia/Tanjia8.jpg", "https://MTSpull.b-cdn.net/Tanjia/Tanjia5.jpg"],
         finalImage: "https://MTSpull.b-cdn.net/Tanjia/Tanjia7.jpg", video: "https://player.mediadelivery.net/embed/555558/7ae42fd5-ecf2-4b7f-bfe1-3695c1899bb2", audio: "https://MTSpull.b-cdn.net/TanjiaAudio.MP3", menuUrl: "https://MTSpull.b-cdn.net/TANJIA.pdf.pdf", menuPrice: 35, popular: false
@@ -2263,7 +2273,10 @@ document.addEventListener('DOMContentLoaded', function() {
     AvailabilityEngine.init().then(() => {
         const select = document.getElementById('restaurant');
         document.querySelectorAll('.spectacle-card').forEach(card => {
-             const id = card.dataset.id; const isFull = AvailabilityEngine.isFullToday(id);
+             const id = card.dataset.id;
+             let isFull = AvailabilityEngine.isFullToday(id);
+
+             const exp = experiencesData.find(e => e.id === id);
              if(isFull) {
                  card.classList.add('sold-out');
                  if(!card.querySelector('.sold-out-overlay')) {
@@ -2272,6 +2285,27 @@ document.addEventListener('DOMContentLoaded', function() {
                      const imgContainer = card.querySelector('.card-image'); if(imgContainer) imgContainer.appendChild(overlay);
                  }
                  const option = select.querySelector(`option[value="${id}"]`); if(option) option.remove();
+
+                 // Update Button Logic for Dynamically Sold Out
+                 const btn = card.querySelector('.btn-book');
+                 if(btn) {
+                     btn.textContent = "CONCIERGE : VÉRIFIER DISPO";
+                     btn.removeAttribute('onclick');
+                     btn.onclick = () => window.open(`https://wa.me/212680802756?text=Bonjour%20Concierge%2C%20je%20vois%20que%20${encodeURIComponent(exp ? exp.name : id)}%20est%20complet.%20Avez-vous%20une%20table%20VIP%20%3F`, '_blank');
+                 }
+
+                 // Update Badge Logic
+                 const indicator = card.querySelector('.live-viewer-indicator');
+                 if(indicator) {
+                     let badge = indicator.querySelector('.high-demand-indicator');
+                     if(!badge) {
+                         badge = document.createElement('span');
+                         badge.className = 'high-demand-indicator';
+                         indicator.appendChild(badge);
+                     }
+                     badge.innerHTML = '🔥 VICTIME DE SON SUCCÈS';
+                 }
+
              } else { card.classList.remove('sold-out'); const overlay = card.querySelector('.sold-out-overlay'); if(overlay) overlay.remove(); }
         });
     });
@@ -2280,12 +2314,33 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!exp.soldOut) { const option = document.createElement('option'); option.value = exp.id; option.textContent = exp.name; select.appendChild(option); }
         let ctaText = "DÉCOUVRIR";
         if (exp.categories.includes('grand-spectacle')) ctaText = "VOIR LE SHOW"; else if (exp.categories.includes('party')) ctaText = "VOIR L'AMBIANCE";
-        let fomoHTML = ''; let soldOutClass = exp.soldOut ? 'sold-out' : '';
+
+        let soldOutClass = exp.soldOut ? 'sold-out' : '';
         let soldOutOverlay = exp.soldOut ? '<div class="sold-out-overlay"><span class="sold-out-badge">COMPLET CE SOIR</span></div>' : '';
         let initialViewers = Math.floor(Math.random() * (14 - 6 + 1)) + 6; if(exp.popular) initialViewers += 5;
-        let viewerText = `${initialViewers} personnes consultent`;
-        let highDemandHTML = (!exp.soldOut && (exp.id === 'nouba' || exp.id === 'malak')) ? `<span class="high-demand-indicator">🔥 Très demandé</span>` : '';
-        if(!exp.soldOut) { fomoHTML = `<div class="live-viewer-indicator" id="fomo-${exp.id}" data-viewers="${initialViewers}"><span class="live-pulse-dot"></span><span class="viewer-text">${viewerText}</span>${highDemandHTML}</div>`; }
+
+        // Social Proof Text Update
+        let viewerText = `● ${initialViewers} personnes convoitent cette table`;
+
+        // Flame Badge Logic (Sold Out vs Available)
+        let highDemandHTML = '';
+        if (exp.soldOut) {
+            highDemandHTML = `<span class="high-demand-indicator">🔥 VICTIME DE SON SUCCÈS</span>`;
+        } else if (exp.id === 'nouba' || exp.id === 'malak') {
+            highDemandHTML = `<span class="high-demand-indicator">🔥 Très demandé</span>`;
+        }
+
+        // FOMO HTML (Show even if sold out, but with updated text/badge)
+        let fomoHTML = `<div class="live-viewer-indicator" id="fomo-${exp.id}" data-viewers="${initialViewers}"><span class="live-pulse-dot"></span><span class="viewer-text">${viewerText}</span>${highDemandHTML}</div>`;
+
+        // Button Logic
+        let bookBtnHTML = '';
+        if (exp.soldOut) {
+            bookBtnHTML = `<button class="card-btn btn-book" onclick="window.open('https://wa.me/212680802756?text=Bonjour%20Concierge%2C%20je%20vois%20que%20${encodeURIComponent(exp.name)}%20est%20complet.%20Avez-vous%20une%20table%20VIP%20%3F', '_blank')">CONCIERGE : VÉRIFIER DISPO</button>`;
+        } else {
+            bookBtnHTML = `<button class="card-btn btn-book" onclick="scrollToForm('${exp.id}')">BLOQUER MA TABLE (0€)</button>`;
+        }
+
         const card = document.createElement('div');
         card.className = `spectacle-card reveal reveal-delay-${(index % 3) + 1} ${soldOutClass}`;
         card.dataset.categories = exp.categories.join(" "); card.dataset.id = exp.id; card.id = `card-${exp.id}`;
@@ -2313,10 +2368,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="card-description">${exp.description}</p>
                 <div class="card-meta"><span>${exp.time} • Tous les soirs</span> <span class="price-range" onclick="openMapWidget('${exp.id}', event)">${exp.price}</span></div>
                 <div class="card-actions-container">
-                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}', '${exp.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>MENU</button>
-                    <button class="card-btn btn-book" onclick="scrollToForm('${exp.id}')">RÉSERVER MA SOIRÉE (0€)</button>
+                    <button class="card-btn btn-menu" onclick="openMenu('${exp.menuUrl}', '${exp.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>LA CARTE</button>
+                    ${bookBtnHTML}
                 </div>
-                <div class="trust-micro-signal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> Paiement sur place &bull; Zéro Frais</div>
+                <div class="trust-micro-signal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> Aucun acompte • Payez au dîner</div>
             </div>`;
         grid.appendChild(card);
     });
