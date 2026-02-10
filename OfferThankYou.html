@@ -1,0 +1,3226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- === ELITE LOADING STATE (PREVENT FLASH OF UNPOPULATED CONTENT) === -->
+    <script>
+        document.documentElement.classList.add('js-loading');
+    </script>
+    <style>
+        html.js-loading body {
+            opacity: 0;
+            visibility: hidden;
+        }
+        body {
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+    </style>
+
+    <!-- === META TAGS === -->
+    <title>Félicitations - Votre Soirée VIP est Confirmée | Marrakech Top Spot</title>
+    <meta name="description" content="Votre réservation VIP est confirmée. Préparez-vous pour une soirée inoubliable à Marrakech.">
+
+    <!-- === PERFORMANCE: CRITICAL ASSETS PRIORITY === -->
+    <link rel="preload" as="image" href="https://MTSpull.b-cdn.net/BG.jpg" fetchpriority="high">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fast.wistia.com">
+    <link rel="preconnect" href="https://fast.wistia.net">
+    <link rel="preconnect" href="https://MTSpull.b-cdn.net">
+    <link rel="preconnect" href="https://MTSZone.b-cdn.net" crossorigin>
+    <link rel="preconnect" href="https://player.mediadelivery.net">
+    <!-- ELITE: Preload Wistia Script for Performance -->
+    <link rel="preload" href="https://fast.wistia.com/assets/external/E-v1.js" as="script">
+    <!-- ELITE: Preconnect for Bunny Video Player -->
+    <link rel="preconnect" href="https://iframe.mediadelivery.net">
+    <link rel="dns-prefetch" href="https://iframe.mediadelivery.net">
+    <link rel="dns-prefetch" href="https://player.mediadelivery.net">
+
+    <!-- === PRELOAD AUDIO FILES === -->
+    <link rel="preload" as="audio" href="https://MTSZone.b-cdn.net/agafyAudio1.MP3" crossorigin>
+    <link rel="preload" as="audio" href="https://MTSZone.b-cdn.net/HotAirAudio1.MP3" crossorigin>
+
+    <!-- === PRELOAD STORY IMAGES === -->
+    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/Agafay/Vertical/3.jpg">
+    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/Agafay/Vertical/15.jpg">
+
+    <!-- BUNNY.NET PLAYER API -->
+    <script src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* === BRAND IDENTITY === */
+            --brand-raspberry: #EC5075;
+            --brand-gradient: linear-gradient(135deg, #EC5075 0%, #C2185B 100%);
+            --brand-gradient-hover: linear-gradient(135deg, #FF6B90 0%, #EC5075 100%);
+            --brand-black: #111827;
+
+            /* UI COLORS */
+            --bg-body: #F9FAFB;
+            --bg-card: #FFFFFF;
+            --text-dark: #111827;
+            --text-body: #4B5563;
+            --text-muted: #9CA3AF;
+
+            /* SUCCESS COLORS */
+            --success-green: #10B981;
+            --success-light: #D1FAE5;
+            --success-dark: #064E3B;
+
+            /* GOLD ACCENT */
+            --gold-accent: #F59E0B;
+            --gold-light: #FEF3C7;
+
+            /* ANIMATION */
+            --ease-luxury: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* SHADOWS */
+            --shadow-card: 0 10px 30px -10px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
+            --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+            --shadow-elite: 0 25px 50px -12px rgba(0,0,0,0.15);
+
+            --radius-lg: 20px;
+            --radius-xl: 32px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            background-image: radial-gradient(#E5E7EB 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        body::after {
+            content: ""; position: fixed; top:0; left:0; width:100%; height:100%;
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 100%);
+            z-index: -1; pointer-events: none;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-dark); font-weight: 800; letter-spacing: -0.01em; }
+        .hidden { display: none !important; }
+
+        /* === SCROLL REVEAL - REMOVED FROM HERO CTA === */
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.9s ease-out, transform 0.9s var(--ease-luxury); will-change: opacity, transform; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.15s; }
+        .reveal-delay-2 { transition-delay: 0.25s; }
+        .reveal-delay-3 { transition-delay: 0.35s; }
+
+        /* INSTANT VISIBLE - No scroll trigger needed */
+        .instant-visible { opacity: 1 !important; transform: translateY(0) !important; }
+
+        /* === HEADER === */
+        header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 1rem 2rem; position: -webkit-sticky; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        .header-container { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.3rem; font-weight: 900; color: var(--text-dark); font-family: 'Playfair Display', serif; text-transform: uppercase; letter-spacing: 0.5px; }
+        .logo span { color: var(--brand-raspberry); }
+
+        /* === CONFETTI ANIMATION === */
+        @keyframes confettiFall {
+            0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .confetti-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999; overflow: hidden;
+        }
+        .confetti {
+            position: absolute; width: 10px; height: 10px; opacity: 0;
+            animation: confettiFall 4s ease-out forwards;
+        }
+
+        /* === HERO SECTION === */
+        .hero {
+            position: relative; text-align: center; min-height: 90vh;
+            display: flex; align-items: center; justify-content: center;
+            background-image: url('https://MTSpull.b-cdn.net/BG.jpg');
+            background-size: cover; background-position: center center;
+            overflow: hidden; padding: 4rem 1rem 3rem 1rem;
+        }
+
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.96) 50%, rgba(249,250,251,1) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative; z-index: 2; max-width: 850px; width: 100%;
+            display: flex; flex-direction: column; align-items: center;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.15), 0 30px 60px -15px rgba(236, 80, 117, 0.1), inset 0 1px 0 rgba(255,255,255,1);
+            border-radius: var(--radius-xl); padding: 4rem 3rem;
+            animation: heroPop 1.2s var(--ease-spring);
+        }
+        @keyframes heroPop {
+            0% { opacity: 0; transform: scale(0.95) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* ELITE SUCCESS BADGE - GRAY */
+        .success-badge {
+            display: inline-flex; align-items: center; gap: 12px;
+            background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+            color: #FFFFFF; padding: 14px 28px; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(107, 114, 128, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+        .success-badge svg { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 5.5vw, 4rem); line-height: 1.08; margin-bottom: 1.2rem;
+            color: var(--text-dark); letter-spacing: -0.03em; font-weight: 800;
+        }
+        .hero h1 .highlight-name {
+            background: var(--brand-gradient); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; font-style: italic;
+        }
+
+        .hero p.subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text-body);
+            margin-bottom: 2.5rem; max-width: 550px; font-weight: 500; line-height: 1.7;
+        }
+
+        /* === WISTIA VIDEO CONTAINER === */
+        .wistia-video-container {
+            width: 100%; max-width: 620px; margin: 0 auto 2.5rem;
+            border-radius: 28px;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.5), 0 30px 60px -30px rgba(0,0,0,0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative; aspect-ratio: 16/9; background-color: #000;
+            border: 5px solid #ffffff; cursor: pointer;
+            transform: translateZ(0); -webkit-transform: translateZ(0);
+            overflow: hidden; -webkit-mask-image: -webkit-radial-gradient(white, black);
+            transition: transform 0.5s var(--ease-spring), box-shadow 0.5s ease;
+        }
+        .wistia-video-container:hover {
+            transform: scale(1.03) translateY(-8px);
+            box-shadow: 0 40px 80px -20px rgba(236, 80, 117, 0.35), 0 20px 40px -10px rgba(0,0,0,0.2);
+        }
+
+        .video-click-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 20; background: transparent;
+        }
+
+        .video-sound-badge {
+            position: absolute; bottom: 15px; right: 15px;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            color: white; padding: 8px 16px; border-radius: 50px;
+            font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px;
+            display: flex; align-items: center; gap: 8px;
+            z-index: 15; pointer-events: none; border: 1px solid rgba(255,255,255,0.2);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .video-sound-badge.badge-hidden { opacity: 0; transform: translateY(10px); }
+
+        /* === CTA BUTTONS === */
+        .cta-primary, .form-button {
+            position: relative; background: var(--brand-gradient);
+            color: #fff; border: none; padding: 1.4rem 3.5rem;
+            font-size: 1rem; font-weight: 800; border-radius: 100px;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px;
+            box-shadow: 0 20px 40px rgba(236, 80, 117, 0.4);
+            transition: all 0.4s var(--ease-spring); overflow: hidden;
+            z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+            text-decoration: none; white-space: nowrap;
+        }
+        .form-button { width: 100%; }
+        .cta-primary::after, .form-button::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            transform: skewX(-25deg); animation: btnShimmer 3s infinite; pointer-events: none;
+        }
+        @keyframes btnShimmer { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+        .cta-primary:hover, .form-button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(236, 80, 117, 0.5);
+        }
+
+        /* WhatsApp Button Special */
+        .cta-whatsapp {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            box-shadow: 0 20px 40px rgba(37, 211, 102, 0.35);
+        }
+        .cta-whatsapp:hover { box-shadow: 0 25px 50px rgba(37, 211, 102, 0.5); }
+
+        /* SECONDARY BUTTON (Calendar) */
+        .btn-secondary {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 1.1rem 2.2rem; background: #FFFFFF;
+            color: var(--brand-raspberry); border: 2px solid var(--brand-raspberry);
+            border-radius: 100px; font-size: 0.85rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            text-decoration: none; transition: all 0.3s var(--ease-luxury);
+            box-shadow: 0 4px 15px rgba(236, 80, 117, 0.1);
+        }
+        .btn-secondary:hover {
+            background: var(--brand-raspberry); color: #FFFFFF;
+            transform: translateY(-3px); box-shadow: 0 15px 35px rgba(236, 80, 117, 0.3);
+        }
+
+        /* === SECTIONS === */
+        .section { max-width: 1100px; margin: 0 auto; padding: 6rem 2rem; position: relative; z-index: 2; }
+        .section-header { text-align: center; margin-bottom: 3.5rem; max-width: 750px; margin-left: auto; margin-right: auto; }
+        .section-header h2 {
+            font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 1.12;
+            margin-bottom: 1rem; font-weight: 800; letter-spacing: -0.02em;
+        }
+        .section-header h2 .highlight-pink {
+            background: var(--brand-gradient); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; font-style: italic;
+        }
+        .section-header p { font-size: 1.1rem; color: var(--text-body); max-width: 550px; margin: 0 auto; line-height: 1.7; }
+
+        /* === BOOKING DETAILS CONTAINER === */
+        .booking-section {
+            background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
+            position: relative; overflow: hidden;
+        }
+        .booking-section::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .booking-details-container {
+            max-width: 650px; margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            padding: 3rem; border-radius: 36px;
+            box-shadow: 0 50px 100px -25px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255, 1), inset 0 0 30px rgba(255,255,255,0.8);
+            border: 1px solid rgba(0,0,0,0.03); position: relative;
+        }
+
+        .confirmation-badge {
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            background: var(--brand-gradient); color: #fff;
+            padding: 10px 24px; border-radius: 50px;
+            font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px;
+            text-transform: uppercase; box-shadow: 0 10px 25px rgba(236, 80, 117, 0.35);
+            white-space: nowrap;
+        }
+
+        .booking-detail-item {
+            display: flex; align-items: center; gap: 18px;
+            padding: 1.2rem 0; border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        .booking-detail-item:last-of-type { border-bottom: none; }
+
+        .detail-icon {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, rgba(236, 80, 117, 0.08) 0%, rgba(194, 24, 91, 0.08) 100%);
+            border-radius: 16px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; flex-shrink: 0; box-shadow: 0 4px 15px rgba(236, 80, 117, 0.08);
+        }
+        .detail-icon svg { width: 28px; height: 28px; color: var(--brand-raspberry); }
+
+        .detail-content { flex: 1; }
+        .detail-label {
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.2px; color: var(--text-muted); margin-bottom: 4px;
+        }
+        .detail-value { font-size: 1.15rem; font-weight: 700; color: var(--text-dark); }
+        .detail-value .live-indicator {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #FFFFFF; padding: 4px 12px; border-radius: 50px;
+            font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+            margin-left: 10px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        .live-dot-small {
+            width: 6px; height: 6px; background: #FFFFFF; border-radius: 50%;
+            animation: livePulse 2s infinite;
+        }
+        @keyframes livePulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        .calendar-action {
+            margin-top: 2rem; padding-top: 2rem;
+            border-top: 1px solid rgba(0,0,0,0.04); text-align: center;
+        }
+
+        /* === UPSELLS SECTION === */
+        .upsells-section {
+            background: linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 50%, #F9FAFB 100%);
+            padding: 6rem 2rem; position: relative;
+        }
+        .upsells-section::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at 50% 0%, rgba(236, 80, 117, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* === SPECTACLE CARDS - MATCHING LP1Final2_240.html WIDTH === */
+        .spectacles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem; }
+
+        .spectacle-card {
+            background: var(--bg-card); border-radius: var(--radius-lg);
+            overflow: hidden; border: 1px solid rgba(0,0,0,0.04);
+            transition: transform 0.6s var(--ease-luxury), box-shadow 0.6s var(--ease-luxury);
+            display: flex; flex-direction: column; position: relative;
+            box-shadow: var(--shadow-card); min-height: 480px;
+        }
+        .spectacle-card:hover {
+            transform: translateY(-5px) translateZ(0);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+        }
+
+        /* Featured Card (Full Width) */
+        .spectacle-card.featured {
+            grid-column: 1 / -1;
+            max-width: 700px;
+            margin: 0 auto;
+            min-height: auto;
+        }
+
+        .card-image {
+            width: 100%; height: 240px; overflow: hidden;
+            position: relative; aspect-ratio: 4/3; background-color: #f0f0f0;
+            cursor: pointer; z-index: 1;
+        }
+        .card-image img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.8s ease; will-change: transform;
+        }
+        .spectacle-card:hover .card-image img { transform: scale(1.05); }
+
+        /* === ELITE CARD IMAGE OVERLAY (Consolidated) === */
+        .card-image-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0);
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: all 0.6s var(--ease-luxury);
+            backdrop-filter: blur(0px);
+            z-index: 5;
+            cursor: pointer;
+        }
+        .spectacle-card:hover .card-image-overlay {
+            opacity: 1;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(2px);
+        }
+
+        /* === ELITE TEASER ANIMATION SYSTEM === */
+
+        /* Base state of the play icon */
+        .card-image-overlay svg {
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            color: white;
+        }
+
+        /* Hover state for play icon */
+        .spectacle-card:hover .card-image-overlay svg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* TEASER STATE (Triggered by JS) */
+        .spectacle-card.teaser-active .card-image img {
+            transform: scale(1.08);
+            filter: brightness(0.7) blur(2px);
+            transition: transform 3s ease, filter 0.8s ease;
+        }
+
+        .spectacle-card.teaser-active .card-image-overlay {
+            background: rgba(0,0,0,0.25);
+            opacity: 1;
+        }
+
+        /* The Play Button Pop */
+        .spectacle-card.teaser-active .card-image-overlay svg {
+            opacity: 1;
+            transform: scale(1.2);
+            animation: heartbeat 1.5s infinite;
+            color: #fff;
+            fill: rgba(255,255,255,0.2);
+        }
+
+        /* The "Hypnotic Ripple" Effect */
+        .spectacle-card.teaser-active .card-image-overlay::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            animation: rippleOut 2s infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ELITE CTA TEXT - "VOIR L'EXPERIENCE" */
+        .spectacle-card.teaser-active .card-image-overlay::after {
+            content: 'VOIR L\'EXPÉRIENCE';
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: slideUpFade 0.6s forwards 0.3s;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+
+        /* Hide the media badge when teaser is active */
+        .spectacle-card.teaser-active .media-badge {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        /* === KEYFRAMES === */
+        @keyframes heartbeat {
+            0% { transform: scale(1.1); }
+            15% { transform: scale(1.25); }
+            30% { transform: scale(1.1); }
+            45% { transform: scale(1.25); }
+            100% { transform: scale(1.1); }
+        }
+
+        @keyframes rippleOut {
+            0% { width: 0px; height: 0px; opacity: 0.8; border-width: 4px; }
+            100% { width: 200px; height: 200px; opacity: 0; border-width: 0px; }
+        }
+
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @keyframes badgePulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 rgba(255,255,255,0); }
+            10% { transform: scale(1.05); box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+            20% { transform: scale(1); box-shadow: 0 0 0 rgba(255,255,255,0); }
+            30% { transform: scale(1.05); box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+            40% { transform: scale(1); box-shadow: 0 0 0 rgba(255,255,255,0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 rgba(255,255,255,0); }
+        }
+
+        .media-badge {
+            position: absolute; bottom: 12px; right: 12px;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
+            color: white; padding: 8px 14px; border-radius: 8px;
+            font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.5px; display: flex; align-items: center; gap: 7px;
+            border: 1px solid rgba(255,255,255,0.15); pointer-events: none;
+            animation: badgePulse 3s infinite ease-in-out;
+        }
+        .media-badge svg { width: 10px; height: 10px; fill: white; }
+
+        .spectacle-type-badge {
+            position: absolute; top: 12px; left: 12px;
+            background: #fff; color: var(--text-dark);
+            padding: 8px 14px; border-radius: 50px;
+            font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.5px; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Smart Label Badge (Top Right) */
+        .smart-label-badge {
+            position: absolute; top: 12px; right: 12px;
+            background: var(--brand-gradient); color: #fff;
+            padding: 8px 14px; border-radius: 50px;
+            font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.5px; z-index: 2; box-shadow: 0 4px 15px rgba(236,80,117,0.3);
+        }
+
+        .popular-badge {
+            position: absolute; top: 12px; right: 12px; z-index: 2;
+            width: 36px; height: 36px; background: var(--brand-raspberry);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 15px rgba(236,80,117,0.4);
+        }
+        .popular-badge svg { width: 18px; height: 18px; stroke: white; }
+
+        .card-content { padding: 1.8rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-title { font-size: 1.4rem; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text-dark); }
+        .card-rating { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.8rem; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .stars { color: #FBBF24; letter-spacing: 1px; }
+        .card-description { margin-bottom: 1.2rem; flex-grow: 1; color: var(--text-body); font-size: 0.9rem; line-height: 1.6; }
+
+        .trust-box {
+            background: #F3F4F6; border: 1px solid #E5E7EB;
+            border-radius: 12px; padding: 10px 14px; margin-bottom: 16px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 0.72rem; color: #374151; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .trust-box svg { color: #10B981; fill: rgba(16, 185, 129, 0.1); stroke-width: 2px; }
+
+        .card-actions-container { margin-top: auto; }
+
+        /* Full Width CTA Button for Upsells */
+        .btn-book-full {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 16px 24px; border-radius: 14px; font-weight: 800;
+            cursor: pointer; text-transform: uppercase; font-size: 0.85rem;
+            letter-spacing: 0.8px; transition: all 0.3s var(--ease-spring);
+            text-decoration: none; text-align: center; width: 100%;
+            background: var(--brand-gradient); color: white; border: none;
+            box-shadow: 0 8px 20px rgba(236, 80, 117, 0.25);
+        }
+        .btn-book-full:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(236, 80, 117, 0.4);
+        }
+
+        /* === ELITE CAROUSEL FOR CHAUFFEUR (9:16 Aspect Ratio) === */
+        .carousel-container {
+            position: relative; width: 100%; height: 100%;
+            overflow: hidden;
+        }
+        .carousel-track {
+            display: flex; height: 100%;
+            transition: transform 0.5s ease;
+        }
+        .carousel-slide {
+            min-width: 100%; height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .carousel-slide img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: center center;
+        }
+
+        /* FORCE 16:9 ASPECT RATIO FOR CHAUFFEUR CARD IMAGE */
+        .spectacle-card.featured .card-image {
+            height: auto !important;
+            aspect-ratio: 16 / 9;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .spectacle-card.featured .card-image {
+                max-height: 380px;
+                aspect-ratio: 16 / 9; /* True 16:9 landscape ratio */
+            }
+        }
+
+        /* === ELITE UPSELL TOAST - PREMIUM ANIMATION === */
+        .upsell-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.85) translateY(20px);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.98) 100%);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            padding: 2.5rem 2.5rem 2rem;
+            border-radius: 28px;
+            z-index: 10000;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            max-width: 340px;
+            width: 88%;
+        }
+        .upsell-toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1) translateY(0);
+        }
+        .upsell-toast-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem;
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.35);
+            position: relative;
+        }
+        .upsell-toast.show .upsell-toast-icon {
+            animation: iconSuccess 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes iconSuccess {
+            0% { transform: scale(0) rotate(-45deg); }
+            50% { transform: scale(1.15) rotate(5deg); }
+            70% { transform: scale(0.95) rotate(-2deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .upsell-toast-icon::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            animation: ringPulse 2s ease-out infinite;
+        }
+        @keyframes ringPulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+        .upsell-toast-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+            stroke-width: 3;
+        }
+        .upsell-toast-title {
+            color: var(--text-dark);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+        }
+        .upsell-toast-subtitle {
+            color: var(--text-body);
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .upsell-toast-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #059669;
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 1.5rem;
+        }
+        .upsell-toast-badge svg {
+            flex-shrink: 0;
+        }
+        /* === ELITE TOAST CTA BUTTON === */
+        .upsell-toast-cta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 1.2rem;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.4s var(--ease-spring);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .upsell-toast-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s ease;
+        }
+        .upsell-toast-cta:hover::before {
+            left: 100%;
+        }
+        .upsell-toast-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        }
+        .upsell-toast-cta svg {
+            color: var(--brand-raspberry);
+            flex-shrink: 0;
+        }
+        .upsell-toast-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        .upsell-toast-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* === DUAL BUTTON CONTAINER FOR AGAFAY/BALLOON === */
+        .dual-btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+        .btn-voir-offre {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.8px;
+            transition: all 0.3s var(--ease-spring);
+            text-decoration: none;
+            text-align: center;
+            width: 100%;
+            background: #FFFFFF;
+            color: var(--text-dark);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+        /* === ELITE "DÉCOUVRIR L'EXPÉRIENCE" BUTTON - REFINED WHITE === */
+        .btn-voir-offre-elite {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 22px;
+            border-radius: 12px;
+            background: #FFFFFF;
+            color: var(--text-dark);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            text-transform: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 1px 3px rgba(0, 0, 0, 0.04),
+                0 4px 12px rgba(0, 0, 0, 0.03);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .btn-voir-offre-elite:hover {
+            transform: translateY(-2px);
+            border-color: var(--brand-raspberry);
+            box-shadow:
+                0 4px 12px rgba(236, 80, 117, 0.12),
+                0 8px 24px rgba(236, 80, 117, 0.08);
+        }
+        .btn-voir-offre-elite:active {
+            transform: translateY(0);
+        }
+        .btn-voir-offre-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-voir-offre-icon-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(145deg, var(--brand-raspberry) 0%, #d63d6a 100%);
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all 0.35s var(--ease-spring);
+            box-shadow:
+                0 2px 8px rgba(236, 80, 117, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        .btn-voir-offre-elite:hover .btn-voir-offre-icon-wrap {
+            transform: scale(1.1);
+            box-shadow:
+                0 4px 16px rgba(236, 80, 117, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+        .btn-voir-offre-icon-wrap svg {
+            width: 10px;
+            height: 10px;
+            color: #FFFFFF;
+            margin-left: 2px; /* Optical centering for play icon */
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+        }
+        .btn-voir-offre-label {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: 0.2px;
+        }
+        .btn-voir-offre-elite:hover .btn-voir-offre-label {
+            color: var(--brand-raspberry);
+        }
+        .btn-voir-offre-elite .btn-arrow {
+            color: var(--text-muted);
+            transition: all 0.3s var(--ease-spring);
+            flex-shrink: 0;
+            margin-left: 4px;
+        }
+        .btn-voir-offre-elite:hover .btn-arrow {
+            color: var(--brand-raspberry);
+            transform: translateX(3px);
+        }
+        /* Hide sublabel */
+        .btn-voir-offre-sublabel {
+            display: none;
+        }
+        .btn-voir-offre-text {
+            display: flex;
+            align-items: center;
+        }
+        .btn-voir-offre:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 0, 0, 0.12);
+        }
+        .btn-voir-offre svg {
+            width: 16px;
+            height: 16px;
+        }
+        .btn-ajouter-reservation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.8px;
+            transition: all 0.3s var(--ease-spring);
+            text-decoration: none;
+            text-align: center;
+            width: 100%;
+            background: var(--brand-gradient);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 20px rgba(236, 80, 117, 0.25);
+        }
+        .btn-ajouter-reservation:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(236, 80, 117, 0.4);
+        }
+        /* ELITE CAROUSEL - Clean minimal dots only */
+        .carousel-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 50px;
+        }
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+        }
+        .carousel-dot:hover {
+            background: rgba(255,255,255,0.7);
+        }
+        .carousel-dot.active {
+            background: #fff;
+            transform: scale(1.3);
+            box-shadow: 0 0 8px rgba(255,255,255,0.5);
+        }
+
+        /* Premium slide transition */
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            transition: transform 6s ease-out;
+        }
+        /* Subtle Ken Burns effect on active slide */
+        .carousel-slide.active img {
+            transform: scale(1.05);
+        }
+
+        /* === FINAL CTA SECTION === */
+        .final-cta-section {
+            text-align: center; padding: 6rem 2rem;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
+            position: relative;
+        }
+        .final-cta-section::before {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 300px;
+            background: radial-gradient(ellipse at 50% 100%, rgba(236, 80, 117, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .final-cta-section h2 {
+            font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+            margin-bottom: 1rem; color: var(--text-dark);
+        }
+        .final-cta-section p {
+            font-size: 1.15rem; color: var(--text-body);
+            max-width: 520px; margin: 0 auto 2.5rem auto; line-height: 1.7;
+        }
+
+        .excitement-text {
+            font-size: 3rem; margin-bottom: 1.5rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* === FOOTER === */
+        footer {
+            border-top: 1px solid rgba(0,0,0,0.05);
+            text-align: center; padding: 4rem 2rem;
+            font-size: 0.875rem; color: var(--text-muted);
+            background: #fff; position: relative; z-index: 2;
+        }
+        footer a { color: var(--brand-raspberry); text-decoration: none; }
+
+        /* === STORY OVERLAY - EXACT COPY FROM LP1Final2_240.html === */
+        .story-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; height: 100dvh;
+            background: #000; z-index: 9999;
+            display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden; will-change: opacity; transform: translateZ(0);
+        }
+        .story-overlay.show { display: flex; opacity: 1; }
+
+        .story-container {
+            width: 100%; height: 100%; height: 100dvh;
+            position: relative; overflow: hidden; background: #000;
+            backface-visibility: hidden; -webkit-font-smoothing: antialiased;
+        }
+
+        @media(min-width: 768px) {
+            .story-container {
+                width: 450px; height: 90vh; border-radius: 20px;
+                box-shadow: 0 0 50px rgba(0,0,0,0.8);
+                transform: translateZ(0);
+                -webkit-mask-image: -webkit-radial-gradient(white, black);
+                mask-image: radial-gradient(white, black);
+            }
+        }
+
+        .story-media-wrapper {
+            width: 100%; height: 100%;
+            position: relative; background: #000; z-index: 1; overflow: hidden;
+        }
+
+        /* === ELITE STORY MEDIA ITEMS (Fullscreen Optimized) === */
+        .story-media-item {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center center;
+            position: absolute; top: 0; left: 0;
+            opacity: 0;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity;
+            /* Mobile fullscreen optimization */
+            min-width: 100%;
+            min-height: 100%;
+        }
+        .story-media-item.active { opacity: 1; z-index: 1; }
+        .story-media-item img {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center center;
+            display: block;
+            /* Ensure crisp rendering */
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        .story-media-item iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            display: block;
+            /* Fill entire container */
+            position: absolute;
+            top: 0; left: 0;
+            /* Block ALL interactions - no play button visible */
+            pointer-events: none !important;
+        }
+
+        /* === ELITE BUNNY PLAYER CONTROL (Hide ALL Play Buttons) === */
+        .story-media-item iframe::before,
+        .story-media-item iframe::after { display: none !important; }
+
+        /* Hide ALL Bunny.net native controls via iframe wrapper */
+        .story-media-item {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            pointer-events: none; /* Prevents interaction with Bunny controls */
+        }
+
+        /* Ensure video fills full container */
+        .story-media-item iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            display: block;
+            object-fit: cover;
+            pointer-events: none; /* Block all click events on iframe */
+        }
+
+        /* VIDEO PRELOADER OVERLAY - Elite Skeleton */
+        .video-preloader {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 5;
+            opacity: 1;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .video-preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .preloader-pulse {
+            width: 60px; height: 60px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--brand-raspberry);
+            border-radius: 50%;
+            animation: preloaderSpin 1s linear infinite;
+        }
+        @keyframes preloaderSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        .story-ui-top {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 15px 15px 30px 15px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
+            z-index: 300; pointer-events: none;
+        }
+
+        .story-progress-bar {
+            display: flex; gap: 4px; height: 2px;
+            margin-bottom: 12px; pointer-events: auto; transform: translateZ(0);
+        }
+        .progress-segment {
+            flex: 1; background: rgba(255,255,255,0.3);
+            border-radius: 2px; overflow: hidden; height: 2px;
+        }
+        .progress-fill {
+            width: 100%; height: 100%; background: #fff;
+            transform-origin: left; transform: scaleX(0); will-change: transform;
+        }
+
+        .story-controls-row { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
+
+        .story-brand {
+            color: #fff; font-size: 0.8rem; font-weight: 700;
+            opacity: 0.95; text-transform: uppercase; letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .story-actions { display: flex; gap: 10px; align-items: center; pointer-events: auto; }
+
+        .story-icon {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; cursor: pointer;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            opacity: 0.95; transition: transform 0.2s;
+        }
+        .story-icon svg { width: 24px; height: 24px; stroke-width: 2px; }
+        .story-icon:hover { transform: scale(1.1); }
+
+        .story-nav-zone { position: absolute; top: 0; bottom: 0; z-index: 40; height: 100%; }
+        .nav-left { left: 0; width: 30%; }
+        .nav-right { right: 0; width: 30%; }
+        .nav-center { left: 30%; width: 40%; }
+
+        .story-footer {
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            transform: translateY(0);
+            width: 100%; 
+            max-width: none;
+            padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); 
+            z-index: 50;
+            /* Premium world-class optimized: black bottom gradient (70% opacity height) */
+            background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 70%, transparent 100%);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border: none;
+            border-radius: 0;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            text-align: center;
+            box-shadow: none; 
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            will-change: transform, opacity;
+        }
+
+        .story-footer.hidden { 
+            transform: translateY(20px); 
+            opacity: 0; 
+            pointer-events: none;
+        }
+
+        /* === NEW STORY FOOTER HEADER === */
+        .story-footer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 0 4px;
+        }
+
+        .story-footer-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .story-footer-description {
+            width: 100%;
+            text-align: left;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            margin-top: 2px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.45;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.6);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding-left: 4px; /* Align with title padding */
+        }
+
+        .story-footer-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            text-align: Left;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .story-cta-btn { 
+            background: #FFFFFF;
+            color: #000000; 
+            border: none; 
+            font-weight: 800; 
+            padding: 16px 24px; 
+            border-radius: 12px; 
+            width: 100%; 
+            font-size: 0.85rem; 
+            cursor: pointer; 
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .story-cta-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25); 
+        }
+        .story-cta-btn::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+            transform: skewX(-20deg); animation: btnShimmer 4s ease-in-out infinite;
+        }
+
+        .story-trust { 
+            color: #9CA3AF; 
+            font-size: 0.65rem; 
+            margin-top: 15px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .story-trust svg { 
+            color: #10B981; 
+            fill: rgba(16, 185, 129, 0.1); 
+            stroke: currentColor;
+            stroke-width: 2.5px;
+            text-shadow: none;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
+            transform: none;
+        }
+        .story-footer:not(.hidden) .story-trust { opacity: 0.92; transform: translateY(0); }
+
+        /* CLIMAX CARD */
+        .climax-phantom-layer {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center center;
+            background-repeat: no-repeat; z-index: 0;
+            transform: scale(1.0); will-change: transform;
+            transition: transform 14s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .story-climax-card {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            z-index: 100; pointer-events: none; display: flex; flex-direction: column;
+            justify-content: flex-end; padding-bottom: 72px; background: transparent;
+            opacity: 0; transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
+        }
+        .story-climax-card.active { opacity: 1; pointer-events: auto; }
+        .story-climax-card.active .climax-phantom-layer {
+            transform: scale(1.12) translateY(-8%);
+            transition: transform 22s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .climax-gradient-overlay {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.72) 38%, rgba(0,0,0,0.12) 78%, transparent 100%);
+            z-index: 1; pointer-events: none;
+        }
+        .climax-content {
+            position: relative; z-index: 2; text-align: center;
+            padding: 0 1.5rem; display: flex; flex-direction: column; align-items: center;
+        }
+        .climax-title {
+            color: #fff; font-family: 'Playfair Display';
+            font-size: clamp(2rem, 5vw, 2.5rem); margin-bottom: 0.5rem;
+            text-shadow: 0 4px 32px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.6);
+            opacity: 0; transform: translateY(24px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+            letter-spacing: -0.02em; font-weight: 700;
+        }
+        .climax-badge {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(255,255,255,0.16); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.24); padding: 7px 16px;
+            border-radius: 50px; margin-bottom: 1.4rem;
+            opacity: 0; transform: translateY(18px) scale(0.96);
+            transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;
+            box-shadow: 0 8px 36px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .climax-stars { display: flex; gap: 3px; }
+        .climax-stars svg { width: 13px; height: 13px; fill: #FFD700; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
+        .climax-badge-text { color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; }
+
+        .climax-desc {
+            color: rgba(255,255,255,0.97); font-size: 0.9rem; margin-bottom: 2rem;
+            line-height: 1.55; font-weight: 500;
+            text-shadow: 0 2px 22px rgba(0,0,0,1), 0 1px 4px rgba(0,0,0,0.5);
+            max-width: 90%; opacity: 0; transform: translateY(20px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s;
+        }
+        .climax-cta {
+            background: #fff; color: #000; width: 100%; padding: 1.3rem;
+            border-radius: 50px; font-weight: 800; font-size: 0.95rem; border: none;
+            box-shadow: 0 0 24px rgba(255,255,255,0.32), 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1.2px;
+            transform: scale(0.92) translateY(8px); opacity: 0;
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.75s, transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.75s, box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .climax-cta:hover {
+            transform: scale(1.01) translateY(-1px);
+            box-shadow: 0 0 32px rgba(255,255,255,0.4), 0 6px 16px rgba(0,0,0,0.18);
+        }
+
+        .story-climax-card.active .climax-title { opacity: 1; transform: translateY(0); }
+        .story-climax-card.active .climax-badge { opacity: 1; transform: translateY(0) scale(1); }
+        .story-climax-card.active .climax-desc { opacity: 1; transform: translateY(0); }
+        .story-climax-card.active .climax-cta { opacity: 1; transform: scale(1) translateY(0); }
+
+        .story-climax-card .story-trust {
+            margin-top: 22px; opacity: 0; transform: translateY(12px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s;
+        }
+        .story-climax-card.active .story-trust { opacity: 0.94; transform: translateY(0); }
+
+        /* === MOBILE RESPONSIVE === */
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; gap: 0.5rem; text-align: center; }
+            header { padding: 0.8rem 1.2rem !important; }
+
+            .hero {
+                padding: 0 0 2rem 0 !important; min-height: auto !important;
+                align-items: flex-start !important; background-image: none !important; background: #ffffff !important;
+            }
+            .hero::before { display: none; }
+            .hero-content {
+                width: 100% !important; max-width: none !important; margin: 0 !important;
+                border-radius: 0 !important; padding: 2.5rem 1.5rem !important;
+                background: transparent !important; backdrop-filter: none !important;
+                border: none !important; box-shadow: none !important;
+            }
+            .hero h1 { font-size: 2rem !important; line-height: 1.12 !important; }
+            .hero p.subtitle { font-size: 1rem !important; margin-bottom: 2rem !important; }
+
+            .wistia-video-container {
+                margin-bottom: 2rem !important; width: 100% !important;
+                border-width: 0 !important; border-radius: 20px !important;
+                box-shadow: 0 25px 60px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+            }
+
+            .cta-primary, .form-button {
+                width: 100%; padding: 1.2rem 1.5rem !important; font-size: 0.8rem !important;
+                white-space: nowrap;
+            }
+
+            .section { padding: 4rem 1.2rem; }
+            .section-header h2 { font-size: 1.9rem; }
+            .section-header p { font-size: 1rem; }
+
+            .booking-details-container {
+                padding: 2rem 1.5rem; border-radius: 24px; margin: 0 0.5rem;
+            }
+            .confirmation-badge { font-size: 0.6rem; padding: 8px 18px; }
+            .detail-icon { width: 48px; height: 48px; font-size: 1.3rem; }
+            .detail-value { font-size: 1.05rem; }
+
+            .spectacles-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .spectacle-card { min-height: auto; }
+            .spectacle-card.featured { max-width: 100%; }
+            .card-image { height: 220px; }
+
+            .upsells-section { padding: 4rem 1.2rem; }
+            .final-cta-section { padding: 4rem 1.2rem; }
+
+            .btn-secondary { width: 100%; }
+
+            .excitement-text { font-size: 2.5rem; }
+
+            /* ELITE FULLSCREEN STORY VIDEO ON MOBILE */
+            .story-container {
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                max-width: none !important;
+            }
+
+            .story-media-wrapper {
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+            }
+
+            /* Ensure video iframe takes full screen */
+            .story-media-item,
+            .story-media-item iframe,
+            .story-media-item img {
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                object-fit: cover !important;
+                object-position: center center !important;
+            }
+
+            .story-footer { padding-bottom: 40px; padding-top: 85px; }
+            .story-climax-card { padding-bottom: 65px; }
+
+            /* Chauffeur card 16:9 on mobile */
+            .spectacle-card.featured .card-image {
+                aspect-ratio: 16 / 9 !important;
+                max-height: 280px;
+            }
+
+            /* Elite "Découvrir l'Expérience" button mobile */
+            .btn-voir-offre-elite {
+                padding: 12px 16px;
+                gap: 8px;
+            }
+            .btn-voir-offre-icon-wrap {
+                width: 24px;
+                height: 24px;
+            }
+            .btn-voir-offre-icon-wrap svg {
+                width: 8px;
+                height: 8px;
+                margin-left: 1px;
+            }
+            .btn-voir-offre-label {
+                font-size: 0.8rem;
+            }
+            .btn-voir-offre-elite .btn-arrow {
+                width: 14px;
+                height: 14px;
+            }
+
+            /* Toast mobile */
+            .upsell-toast {
+                width: 92%;
+                padding: 2rem 1.5rem 1.5rem;
+            }
+            .upsell-toast-title {
+                font-size: 1.2rem;
+            }
+            .upsell-toast-subtitle {
+                font-size: 0.85rem;
+            }
+            .upsell-toast-cta {
+                padding: 12px 16px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- === CONFETTI CONTAINER === -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <!-- === HEADER === -->
+    <header>
+        <div class="header-container">
+            <div class="logo">Marrakech <span>Top Spot</span></div>
+        </div>
+    </header>
+
+    <main>
+        <!-- === HERO SECTION (CONFIRMATION) === -->
+        <section class="hero" id="heroSection">
+            <div class="hero-content">
+                <!-- SUCCESS BADGE -->
+                <div class="success-badge reveal active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    Réservation Confirmée
+                </div>
+
+                <!-- HEADLINE -->
+                <h1 class="reveal active reveal-delay-1">
+                    Félicitations <span class="highlight-name">[Prénom]</span>!<br>
+                    Votre soirée est confirmée.
+                </h1>
+
+                <p class="subtitle reveal active reveal-delay-2">
+                    Votre concierge personnel a sécurisé votre table. Vous recevrez une confirmation WhatsApp dans les prochaines minutes avec tous les détails.
+                </p>
+
+                <!-- WISTIA VIDEO - ELITE DYNAMIC LOADER (URL PARAM: wistiaId) -->
+                <div class="wistia-video-container reveal active reveal-delay-2" id="heroVideoContainer">
+                    <!-- Wistia player dynamically injected on URL param detection -->
+                    <div id="wistiaPlayerMount"></div>
+                    <div class="video-sound-badge" id="videoSoundBadge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
+                        ACTIVER LE SON
+                    </div>
+                    <div class="video-click-layer" onclick="toggleHeroSound()"></div>
+                </div>
+
+                <!-- MAIN CTA (WhatsApp) - INSTANT VISIBLE, NO SCROLL TRIGGER -->
+                <a href="#" onclick="contactConcierge(); return false;" class="cta-primary cta-whatsapp instant-visible">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.867-2.031-.967-.272-.099-.47-.149-.669.198-.198.347-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.173.198-.297.297-.495.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/>
+                    </svg>
+                    CONTACTER MON CONCIERGE
+                </a>
+            </div>
+        </section>
+
+        <!-- === BOOKING DETAILS SECTION === -->
+        <section class="section booking-section reveal" id="bookingDetails">
+            <div class="section-header">
+                <h2>Récapitulatif de votre <span class="highlight-pink">Réservation</span></h2>
+                <p>Conservez ces informations précieusement. Présentez-vous sous ce nom à l'entrée.</p>
+            </div>
+
+            <div class="booking-details-container">
+                <!-- Confirmation Badge -->
+                <div class="confirmation-badge">Confirmation #MTS-2025-XXXX</div>
+
+                <!-- Establishment -->
+                <div class="booking-detail-item">
+                    <div class="detail-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Établissement</div>
+                        <div class="detail-value">[Nom du Restaurant]</div>
+                    </div>
+                </div>
+
+                <!-- Date -->
+                <div class="booking-detail-item">
+                    <div class="detail-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Date</div>
+                        <div class="detail-value">[Samedi 15 Février 2025]</div>
+                    </div>
+                </div>
+
+                <!-- Time -->
+                <div class="booking-detail-item">
+                    <div class="detail-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Heure d'arrivée</div>
+                        <div class="detail-value">
+                            [20h30]
+                            <span class="live-indicator">
+                                <span class="live-dot-small"></span>
+                                Confirmé
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Name -->
+                <div class="booking-detail-item">
+                    <div class="detail-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Au nom de</div>
+                        <div class="detail-value">[Nom Complet]</div>
+                    </div>
+                </div>
+
+                <!-- Guests -->
+                <div class="booking-detail-item">
+                    <div class="detail-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Nombre d'invités</div>
+                        <div class="detail-value">[4] Adultes, [2] Enfants</div>
+                    </div>
+                </div>
+
+                <!-- Calendar Action -->
+                <div class="calendar-action">
+                    <a href="#" class="btn-secondary" onclick="addToGoogleCalendar(); return false;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                            <line x1="12" y1="14" x2="12" y2="18"></line>
+                            <line x1="10" y1="16" x2="14" y2="16"></line>
+                        </svg>
+                        AJOUTER À MON CALENDRIER
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- === SECTION 1: CHAUFFEUR (Transport) === -->
+        <section class="upsells-section reveal" id="upsellTransport">
+            <div class="section" style="padding-top: 0; padding-bottom: 0;">
+                <div class="section-header">
+                    <h2>Votre Table est Prête. Et votre <span class="highlight-pink">Chauffeur</span> ?</h2>
+                    <p>Ne gâchez pas votre soirée à chercher un taxi ou à négocier. Votre chauffeur privé vous attend à la sortie de votre hôtel.</p>
+                </div>
+
+                <div class="spectacles-grid">
+                    <!-- CHAUFFEUR CARD (Featured - Full Width with 9:16 Images) -->
+                    <div class="spectacle-card featured reveal reveal-delay-1" data-id="chauffeur">
+                        <div class="card-image">
+                            <div class="carousel-container" id="chauffeurCarousel">
+                                <div class="carousel-track">
+                                    <div class="carousel-slide active"><img src="https://MTSZone.b-cdn.net/Cheffeur/1.jpg" alt="Chauffeur VIP 1"></div>
+                                    <div class="carousel-slide"><img src="https://MTSZone.b-cdn.net/Cheffeur/3.jpg" alt="Chauffeur VIP 2"></div>
+                                    <div class="carousel-slide"><img src="https://MTSZone.b-cdn.net/Cheffeur/4.jpg" alt="Chauffeur VIP 3"></div>
+                                    <div class="carousel-slide"><img src="https://MTSZone.b-cdn.net/Cheffeur/2.jpg" alt="Chauffeur VIP 4"></div>
+                                </div>
+                                <div class="carousel-dots" id="chauffeurDots">
+                                    <span class="carousel-dot active" onclick="goToSlide('chauffeur', 0)"></span>
+                                    <span class="carousel-dot" onclick="goToSlide('chauffeur', 1)"></span>
+                                    <span class="carousel-dot" onclick="goToSlide('chauffeur', 2)"></span>
+                                    <span class="carousel-dot" onclick="goToSlide('chauffeur', 3)"></span>
+                                </div>
+                            </div>
+                            <span class="smart-label-badge">Indispensable Ce Soir</span>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Service Chauffeur : Aller-Retour VIP</h3>
+                            <div class="card-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="review-count">4.9/5 (Ponctualité Certifiée)</span>
+                            </div>
+                            <p class="card-description">Oubliez le stress de la conduite et les négociations. Votre chauffeur privé vous récupère à la porte de votre hôtel dans un véhicule climatisé, vous dépose au restaurant, et assure votre retour en toute sécurité à la fin de votre soirée.</p>
+                            <div class="trust-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                Paiement sur place • Disponibilité immédiate
+                            </div>
+                            <div class="card-actions-container">
+                                <button class="btn-book-full" onclick="addToReservation('chauffeur')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 5v14M5 12h14"></path>
+                                    </svg>
+                                    AJOUTER MON CHAUFFEUR (+300 DHS)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === SECTION 2: DREAM GRID (Agafay & Balloon) === -->
+        <section class="upsells-section reveal" id="upsellExperiences">
+            <div class="section" style="padding-top: 0; padding-bottom: 0;">
+                <div class="section-header">
+                    <h2>Sublimez le Reste de votre <span class="highlight-pink">Séjour</span></h2>
+                    <p>Nos clients VIP réservent généralement ces deux expériences pour le lendemain.</p>
+                </div>
+
+                <div class="spectacles-grid">
+                    <!-- CARD 1: AGAFAY (The Desert) -->
+                    <div class="spectacle-card reveal reveal-delay-1" data-id="agafay">
+                        <div class="card-image" onclick="StoryManager.open('agafay')">
+                            <img loading="lazy" decoding="async" src="https://MTSZone.b-cdn.net/Agafay/Agafay7.jpg" alt="Odyssée Nomade Agafay" width="600" height="400">
+                            <div class="card-image-overlay">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                                </svg>
+                            </div>
+                            <div class="media-badge">
+                                <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                GALERIE & VIDÉO
+                            </div>
+                            <span class="spectacle-type-badge">Best Seller</span>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">L'Odyssée Nomade : Sunset & Aventure</h3>
+                            <div class="card-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="review-count">4.8/5 (500+ avis)</span>
+                            </div>
+                            <p class="card-description">Vivez la magie d'Agafay, de la piste dorée au feu de camp.<br><br>
+                            <strong>L'Expérience Inclut :</strong><br>
+                            ✅ Sensations : Quad sur les pistes du désert (1H)<br>
+                            ✅ Tradition : Balade à dos de dromadaire au coucher du soleil<br>
+                            ✅ Magie : Dîner spectacle & feu de camp sous les étoiles</p>
+                            <div class="trust-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                Demi-Journée • Départ 14h • Agafay Desert
+                            </div>
+                            <div class="card-actions-container">
+                                <div class="dual-btn-container">
+                                    <a href="https://mtszone.b-cdn.net/LP1FinalHotAirV171.html.html" target="_blank" class="btn-voir-offre btn-voir-offre-elite">
+                                        <span class="btn-voir-offre-icon-wrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M8 5.14v13.72c0 .87.93 1.42 1.68.98l11.04-6.86c.71-.44.71-1.52 0-1.96L9.68 4.16C8.93 3.72 8 4.27 8 5.14z"/>
+                                            </svg>
+                                        </span>
+                                        <span class="btn-voir-offre-label">Découvrir l'Expérience</span>
+                                        <svg class="btn-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </a>
+                                    <button class="btn-ajouter-reservation" onclick="addToReservation('agafay')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 5v14M5 12h14"></path>
+                                        </svg>
+                                        Ajouter à ma réservation
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: BALLOON (The Sky) -->
+                    <div class="spectacle-card reveal reveal-delay-2" data-id="balloon">
+                        <div class="card-image" onclick="StoryManager.open('balloon')">
+                            <img loading="lazy" decoding="async" src="https://MTSZone.b-cdn.net/Agafay/Agafay0.jpg" alt="Montgolfière Marrakech" width="600" height="400">
+                            <div class="card-image-overlay">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                                </svg>
+                            </div>
+                            <div class="media-badge">
+                                <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                GALERIE & VIDÉO
+                            </div>
+                            <span class="spectacle-type-badge">Bucket List</span>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Montgolfière : Vol Sunrise & Petit-Dej</h3>
+                            <div class="card-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="review-count">4.9/5 (300+ avis)</span>
+                            </div>
+                            <p class="card-description">L'éveil céleste. Survolez Marrakech et l'Atlas au lever du soleil. Un moment de silence et de beauté pure, conclu par un petit-déjeuner berbère traditionnel.</p>
+                            <div class="trust-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                Matinée • Départ 5h30 • Marrakech Sky
+                            </div>
+                            <div class="card-actions-container">
+                                <div class="dual-btn-container">
+                                    <a href="https://mtszone.b-cdn.net/LP1FinalHotAirV69" target="_blank" class="btn-voir-offre btn-voir-offre-elite">
+                                        <span class="btn-voir-offre-icon-wrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M8 5.14v13.72c0 .87.93 1.42 1.68.98l11.04-6.86c.71-.44.71-1.52 0-1.96L9.68 4.16C8.93 3.72 8 4.27 8 5.14z"/>
+                                            </svg>
+                                        </span>
+                                        <span class="btn-voir-offre-label">Découvrir l'Expérience</span>
+                                        <svg class="btn-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </a>
+                                    <button class="btn-ajouter-reservation" onclick="addToReservation('balloon')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 5v14M5 12h14"></path>
+                                        </svg>
+                                        Ajouter à ma réservation
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === FINAL CTA SECTION === -->
+        <section class="final-cta-section reveal" id="finalCta">
+            <div class="excitement-text">🎉</div>
+            <h2>Prêt pour une soirée <span class="highlight-pink">Inoubliable</span> ?</h2>
+            <p>Notre équipe de conciergerie est à votre disposition 24h/24 pour personnaliser chaque détail de votre expérience.</p>
+            <a href="#" onclick="contactConciergeQuestion(); return false;" class="cta-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                ENVOYER UN MESSAGE AU CONCIERGE
+            </a>
+        </section>
+    </main>
+
+    <!-- === FOOTER === -->
+    <footer>
+        <p>© 2025 Marrakech Top Spot. Le Curateur de Vos Soirées d'Exception.</p>
+    </footer>
+
+    <!-- === ELITE UPSELL TOAST NOTIFICATION === -->
+    <div class="upsell-toast-overlay" id="upsellToastOverlay"></div>
+    <div class="upsell-toast" id="upsellToast">
+        <div class="upsell-toast-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        <div class="upsell-toast-title" id="upsellToastTitle">Ajouté à votre réservation</div>
+        <div class="upsell-toast-subtitle" id="upsellToastSubtitle">Votre concierge vous contactera sous peu avec tous les détails.</div>
+        <div class="upsell-toast-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            Votre Concierge Vous Contactera Sous Peu
+        </div>
+        <a href="#" id="upsellToastCta" class="upsell-toast-cta" target="_blank">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon>
+            </svg>
+            Voir Tous les Détails de l'Expérience
+        </a>
+    </div>
+
+    <!-- === STORY OVERLAY === -->
+    <div id="storyOverlay" class="story-overlay">
+        <div class="story-container">
+            <div class="story-ui-top">
+                <div class="story-progress-bar" id="storyProgressBar"></div>
+                <div class="story-controls-row">
+                    <div class="story-brand" id="storyBrandName">EXPERIENCE NAME</div>
+                    <div class="story-actions">
+                        <div class="story-icon" id="soundToggle">
+                            <svg id="iconMute" class="hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
+                            <svg id="iconSound" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                        </div>
+                        <div class="story-icon" id="storyCloseBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="story-media-wrapper" id="storyMediaWrapper"></div>
+            <div class="story-nav-zone nav-left" id="storyNavLeft"></div>
+            <div class="story-nav-zone nav-center" id="storyNavHold"></div>
+            <div class="story-nav-zone nav-right" id="storyNavRight"></div>
+            <div class="story-footer" id="storyTextContent">
+                <div class="story-footer-header">
+                    <div class="story-footer-title" id="storyFooterTitle">Experience Name</div>
+                    <div class="story-footer-rating" id="storyFooterRating"></div>
+                </div>
+                <div class="story-footer-description" id="storyFooterDescription">Description here...</div>
+                <button class="story-cta-btn" id="storyBookBtn">RÉSERVER CETTE EXPÉRIENCE</button>
+                <div class="story-trust">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
+                    Paiement sur place &bull; Zéro Frais
+                </div>
+            </div>
+            <div class="story-climax-card" id="climaxCard">
+                <div class="climax-phantom-layer" id="climaxBgContainer"></div>
+                <div class="climax-gradient-overlay"></div>
+                <div class="climax-content">
+                    <h2 class="climax-title" id="climaxTitle">Experience Name</h2>
+                    <div class="climax-badge">
+                        <div class="climax-stars">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <span class="climax-badge-text">Excellence Confirmée</span>
+                    </div>
+                    <p class="climax-desc" id="climaxDesc">Une expérience inoubliable vous attend.</p>
+                    <button class="climax-cta" id="climaxBtn">RÉSERVER CETTE EXPÉRIENCE</button>
+                    <div class="story-trust">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Réservation Gratuite & Instantanée
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player.js for video iframe control -->
+    <script src="https://cdn.embed.ly/player-0.1.0.min.js"></script>
+
+    <!-- === JAVASCRIPT === -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // === ELITE URL PARAMS HANDLER ===
+            function populateFromURLParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+
+                // Define mappings: URL param -> placeholder text
+                const paramMappings = {
+                    'name': '[Prénom]',
+                    'prenom': '[Prénom]',
+                    'nom': '[Nom Complet]',
+                    'fullname': '[Nom Complet]',
+                    'restaurant': '[Nom du Restaurant]',
+                    'etablissement': '[Nom du Restaurant]',
+                    'date': '[Samedi 15 Février 2025]',
+                    'heure': '[20h30]',
+                    'time': '[20h30]',
+                    'guests': '[4] Adultes, [2] Enfants',
+                    'adultes': '[4]',
+                    'enfants': '[2]',
+                    'confirmation': '#MTS-2025-XXXX'
+                };
+
+                // Get all text content in the page
+                const allElements = document.querySelectorAll('h1, h2, h3, p, div, span');
+
+                // Process each URL parameter
+                urlParams.forEach((value, key) => {
+                    const lowerKey = key.toLowerCase();
+                    const placeholder = paramMappings[lowerKey];
+
+                    if (placeholder) {
+                        // Replace placeholder in all elements
+                        allElements.forEach(element => {
+                            if (element.innerHTML.includes(placeholder)) {
+                                element.innerHTML = element.innerHTML.split(placeholder).join(value);
+                            }
+                        });
+                    }
+
+                    // Special handling for combined guest count
+                    if (lowerKey === 'adultes') {
+                        allElements.forEach(element => {
+                            if (element.innerHTML.includes('[4] Adultes')) {
+                                element.innerHTML = element.innerHTML.replace('[4] Adultes', `${value} Adultes`);
+                            }
+                        });
+                    }
+                    if (lowerKey === 'enfants') {
+                        allElements.forEach(element => {
+                            if (element.innerHTML.includes('[2] Enfants')) {
+                                element.innerHTML = element.innerHTML.replace('[2] Enfants', `${value} Enfants`);
+                            }
+                        });
+                    }
+                });
+
+                // Store params for WhatsApp messages
+                window.bookingParams = {
+                    name: urlParams.get('name') || urlParams.get('prenom') || '',
+                    fullName: urlParams.get('nom') || urlParams.get('fullname') || '',
+                    restaurant: urlParams.get('restaurant') || urlParams.get('etablissement') || '',
+                    date: urlParams.get('date') || '',
+                    time: urlParams.get('heure') || urlParams.get('time') || '',
+                    confirmation: urlParams.get('confirmation') || 'MTS-2025',
+                    userID: urlParams.get('userID') || urlParams.get('userId') || urlParams.get('id') || ''
+                };
+
+                // UPDATE DISCOVER LINKS WITH USERID
+                if (window.bookingParams.userID) {
+                    const discoverLinks = document.querySelectorAll('a.btn-voir-offre');
+                    discoverLinks.forEach(link => {
+                        const originalHref = link.getAttribute('href');
+                        if (originalHref && !originalHref.includes('userID=')) {
+                            const separator = originalHref.includes('?') ? '&' : '?';
+                            link.setAttribute('href', `${originalHref}${separator}userID=${window.bookingParams.userID}`);
+                        }
+                    });
+                }
+
+                // ELITE: Reveal content after population
+                // Use a small timeout to ensure the browser has painted the changes
+                setTimeout(() => {
+                    document.documentElement.classList.remove('js-loading');
+                }, 50);
+            }
+
+            // Initialize URL params
+            populateFromURLParams();
+
+            // === CONFETTI CELEBRATION ===
+            function createConfetti() {
+                const container = document.getElementById('confettiContainer');
+                const colors = ['#EC5075', '#C2185B', '#10B981', '#F59E0B', '#3B82F6', '#8B5CF6'];
+
+                for (let i = 0; i < 100; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                        confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                        confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                        container.appendChild(confetti);
+
+                        setTimeout(() => confetti.remove(), 5000);
+                    }, i * 30);
+                }
+            }
+
+            // Fire confetti on load
+            setTimeout(createConfetti, 500);
+
+            // === SCROLL REVEAL ANIMATION ===
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0, rootMargin: "0px 0px -80px 0px" });
+
+            document.querySelectorAll('.reveal:not(.active)').forEach(el => observer.observe(el));
+
+            // === ELITE WISTIA DYNAMIC LOADER (URL PARAM: wistiaId) ===
+            // Video loads ONLY after URL param is validated - zero conflicts
+            window._wq = window._wq || [];
+            let heroVideoApi = null;
+            let heroIsMuted = true;
+            let fadeInterval = null;
+            let wistiaInitialized = false;
+
+            // Extract Wistia ID from URL params (supports: wistiaId, videoId, wistia, vid)
+            function getWistiaIdFromURL() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('wistiaId') || params.get('videoId') || params.get('wistia') || params.get('vid') || null;
+            }
+
+            // Validate Wistia ID format (alphanumeric, 8-12 chars typical)
+            function isValidWistiaId(id) {
+                return id && /^[a-zA-Z0-9]{6,15}$/.test(id);
+            }
+
+            // Load external script with Promise for clean async handling
+            function loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.async = true;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            }
+
+            // Smooth audio fade function
+            function fadeAudio(video, targetVolume, duration, callback) {
+                if (fadeInterval) clearInterval(fadeInterval);
+
+                const startVolume = video.volume();
+                const steps = 20;
+                const stepDuration = duration / steps;
+                const volumeStep = (targetVolume - startVolume) / steps;
+                let currentStep = 0;
+
+                fadeInterval = setInterval(() => {
+                    currentStep++;
+                    let newVolume = startVolume + (volumeStep * currentStep);
+                    newVolume = Math.max(0, Math.min(1, newVolume));
+                    video.volume(newVolume);
+
+                    if (currentStep >= steps) {
+                        clearInterval(fadeInterval);
+                        fadeInterval = null;
+                        video.volume(targetVolume);
+                        if (callback) callback();
+                    }
+                }, stepDuration);
+            }
+
+            // Register Wistia video handler for dynamic ID
+            function registerWistiaHandler(videoId) {
+                window._wq.push({
+                    id: videoId,
+                    options: {
+                        autoPlay: true,
+                        muted: true,
+                        controlsVisibleOnLoad: false,
+                        playbar: false,
+                        volume: 0,
+                        endVideoBehavior: "default"
+                    },
+                    onReady: function(video) {
+                        heroVideoApi = video;
+                        video.volume(0);
+                        video.mute();
+                        video.play();
+
+                        // On video end: fade out, mute, restart silent, and scroll to next section
+                        video.bind('end', function() {
+                            if (!heroIsMuted) {
+                                fadeAudio(video, 0, 600, () => {
+                                    video.mute();
+                                    heroIsMuted = true;
+                                    video.time(0);
+                                    video.play();
+                                    updateBadgeUI();
+
+                                    // ELITE SCROLL: Custom scroll to avoid header overlap
+                                    setTimeout(() => {
+                                        const bookingSection = document.getElementById('bookingDetails');
+                                        const header = document.querySelector('header');
+                                        if (bookingSection) {
+                                            const headerHeight = header ? header.offsetHeight : 0;
+                                            const targetPosition = bookingSection.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
+                                            window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                                        }
+                                    }, 300);
+                                });
+                            } else {
+                                video.time(0);
+                                video.play();
+                                // ELITE SCROLL: Custom scroll to avoid header overlap
+                                setTimeout(() => {
+                                    const bookingSection = document.getElementById('bookingDetails');
+                                    const header = document.querySelector('header');
+                                    if (bookingSection) {
+                                        const headerHeight = header ? header.offsetHeight : 0;
+                                        const targetPosition = bookingSection.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
+                                        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                                    }
+                                }, 300);
+                            }
+                        });
+
+                        // Scroll observer for video - fade out when leaving viewport
+                        const heroObserver = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (!entry.isIntersecting) {
+                                    if (!heroIsMuted) {
+                                        fadeAudio(video, 0, 600, () => {
+                                            video.mute();
+                                            heroIsMuted = true;
+                                            video.pause();
+                                            updateBadgeUI();
+                                        });
+                                    } else {
+                                        video.pause();
+                                    }
+                                } else {
+                                    video.play();
+                                }
+                            });
+                        }, { threshold: 0.15 });
+
+                        const heroSection = document.getElementById('heroSection');
+                        if (heroSection) heroObserver.observe(heroSection);
+                    }
+                });
+            }
+
+            // ELITE: Initialize Wistia player dynamically from URL param
+            async function initializeWistiaFromURL() {
+                if (wistiaInitialized) return;
+
+                const videoId = getWistiaIdFromURL();
+
+                if (!isValidWistiaId(videoId)) {
+                    console.warn('[Wistia Elite] No valid wistiaId in URL params. Use: ?wistiaId=YOUR_ID');
+                    const mount = document.getElementById('wistiaPlayerMount');
+                    if (mount) {
+                        mount.innerHTML = '<div style="padding:56.25% 0 0 0;position:relative;background:#1a1a2e;border-radius:16px;display:flex;align-items:center;justify-content:center;"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#EC5075;font-family:Plus Jakarta Sans,sans-serif;text-align:center;padding:20px;"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/></svg><p style="margin-top:12px;opacity:0.8;font-size:14px;">Vidéo non disponible</p></div></div>';
+                    }
+                    return;
+                }
+
+                wistiaInitialized = true;
+                const mount = document.getElementById('wistiaPlayerMount');
+
+                // Inject Wistia embed HTML structure
+                mount.innerHTML = `
+                    <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                        <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                            <div class="wistia_embed wistia_async_${videoId} videoFoam=true playerColor=EC5075 controlsVisibleOnLoad=false playbar=false playButton=false settingsControl=false fullscreenButton=false smallPlayButton=false volumeControl=false endVideoBehavior=default autoPlay=true muted=true"
+                                 style="height:100%;position:relative;width:100%;background:#1a1a2e;border-radius:16px;">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Register handler BEFORE loading scripts (Wistia requirement)
+                registerWistiaHandler(videoId);
+
+                try {
+                    // Load Wistia scripts in sequence (media-specific first, then E-v1)
+                    await loadScript(`https://fast.wistia.com/embed/medias/${videoId}.jsonp`);
+                    await loadScript('https://fast.wistia.com/assets/external/E-v1.js');
+                    console.log(`[Wistia Elite] Video ${videoId} loaded successfully`);
+                } catch (error) {
+                    console.error('[Wistia Elite] Failed to load Wistia scripts:', error);
+                }
+            }
+
+            // Initialize Wistia on DOM ready
+            initializeWistiaFromURL();
+
+            window.toggleHeroSound = function() {
+                if (!heroVideoApi) return;
+
+                if (fadeInterval) clearInterval(fadeInterval);
+
+                if (heroIsMuted) {
+                    heroVideoApi.unmute();
+                    heroVideoApi.time(0);
+                    heroVideoApi.play();
+                    heroIsMuted = false;
+                    heroVideoApi.volume(0);
+                    fadeAudio(heroVideoApi, 1, 500);
+                } else {
+                    fadeAudio(heroVideoApi, 0, 500, () => {
+                        heroVideoApi.mute();
+                        heroIsMuted = true;
+                    });
+                }
+                updateBadgeUI();
+            };
+
+            function updateBadgeUI() {
+                const badge = document.getElementById('videoSoundBadge');
+                if (!badge) return;
+                if (heroIsMuted) {
+                    badge.classList.remove('badge-hidden');
+                } else {
+                    badge.classList.add('badge-hidden');
+                }
+            }
+
+            // === EXPERIENCES DATA FOR STORIES WITH AUDIO ===
+            window.experiencesData = [
+                {
+                    id: "agafay",
+                    name: "L'Odyssée Nomade : Sunset & Aventure",
+                    shortName: "L'Odyssée Nomade", // Short title without colon part
+                    description: "Vivez la magie d'Agafay, de la piste dorée au feu de camp. Sensations quad, balade dromadaire et dîner spectacle sous les étoiles.",
+                    image: "https://MTSZone.b-cdn.net/Agafay/Agafay7.jpg",
+                    gallery: [
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/3.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/13.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/8.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/6.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/2.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/10.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/20.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/9.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/7.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/11.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/12.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/19.jpg"
+                    ],
+                    finalImage: "https://MTSZone.b-cdn.net/Agafay/Vertical/5.jpg",
+                    video: "https://player.mediadelivery.net/embed/555558/ffa46b23-0aaa-4eca-80f9-07b13188c6b1",
+                    audio: "https://MTSZone.b-cdn.net/agafyAudio1.MP3",
+                    rating: "4.8"
+                },
+                {
+                    id: "balloon",
+                    name: "Montgolfière : Vol Sunrise & Petit-Dej",
+                    shortName: "Montgolfière", // Short title without colon part
+                    description: "L'éveil céleste. Survolez Marrakech et l'Atlas au lever du soleil. Un moment de silence et de beauté pure, conclu par un petit-déjeuner berbère traditionnel.",
+                    image: "https://MTSZone.b-cdn.net/Agafay/Agafay0.jpg",
+                    gallery: [
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/15.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/14.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/17.jpg",
+                        "https://MTSZone.b-cdn.net/Agafay/Vertical/Untitled-LiveDoc-(1).jpg"
+                    ],
+                    finalImage: "https://MTSZone.b-cdn.net/Agafay/Vertical/18.jpg",
+                    video: "https://player.mediadelivery.net/embed/555558/625b43cd-fa48-4fdc-a73c-ffe6ca12952d",
+                    audio: "https://MTSZone.b-cdn.net/HotAirAudio1.MP3",
+                    rating: "4.9"
+                }
+            ];
+
+            // === ELITE STORY MANAGER WITH AUDIO (EXACT COPY FROM LP1Final2_240.html) ===
+            window.StoryManager = {
+                queue: [],
+                currentIndex: 0,
+                currentExp: null,
+                timer: null,
+                isPaused: false,
+                isMuted: false,
+                audioObj: new Audio(),
+                currentVideoPlayer: null,
+                imageDuration: 4000,
+                hasUnlockedAudio: false,
+
+                init: function() {
+                    this.audioObj.loop = false;
+                    this.audioObj.volume = 1.0;
+                    this.audioObj.preload = 'auto';
+
+                    // Preload audio files
+                    const agafayAudio = new Audio('https://MTSZone.b-cdn.net/agafyAudio1.MP3');
+                    agafayAudio.preload = 'auto';
+                    const balloonAudio = new Audio('https://MTSZone.b-cdn.net/HotAirAudio1.MP3');
+                    balloonAudio.preload = 'auto';
+
+                    // Nav Controls
+                    document.getElementById('storyNavLeft').addEventListener('click', (e) => { e.stopPropagation(); this.prev(); });
+                    document.getElementById('storyNavRight').addEventListener('click', (e) => { e.stopPropagation(); this.next(); });
+
+                    // Center control (Tap to Toggle / Hold to Pause)
+                    const holdZone = document.getElementById('storyNavHold');
+                    let touchStartTime = 0;
+                    let wasPausedBeforeTouch = false;
+
+                    const handleStart = (e) => {
+                        if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault();
+                        touchStartTime = Date.now();
+                        wasPausedBeforeTouch = this.isPaused;
+                        this.pause();
+                    };
+
+                    const handleEnd = (e) => {
+                        if(e.cancelable && e.target.id === 'storyNavHold') e.preventDefault();
+                        const duration = Date.now() - touchStartTime;
+                        const isTap = duration < 250;
+                        if (isTap) {
+                            if (wasPausedBeforeTouch) {
+                                this.resume();
+                            }
+                        } else {
+                            this.resume();
+                        }
+                    };
+
+                    holdZone.addEventListener('mousedown', handleStart);
+                    holdZone.addEventListener('mouseup', handleEnd);
+                    holdZone.addEventListener('touchstart', handleStart, {passive: false});
+                    holdZone.addEventListener('touchend', handleEnd, {passive: false});
+
+                    // Sound Toggle
+                    document.getElementById('soundToggle').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.toggleMute();
+                    });
+
+                    document.getElementById('storyCloseBtn').addEventListener('click', () => this.close());
+
+                    const bookAction = () => {
+                        this.close();
+                        const params = window.bookingParams || {};
+                        const name = params.name || 'Client VIP';
+                        const context = name ? ` au nom de ${name}` : '';
+
+                        const message = `✨ *Nouvelle Réservation - ${this.currentExp.name}* ✨
+
+Bonjour Marrakech Top Spot,
+
+Je souhaite réserver *${this.currentExp.name}*${context}.
+
+📋 *Expérience souhaitée :*
+${this.currentExp.description}
+
+Merci de me confirmer les disponibilités et les détails de réservation.
+
+J'ai hâte de vivre cette expérience ! 🌟`;
+
+                        window.open(`https://wa.me/212680802756?text=${encodeURIComponent(message)}`, '_blank');
+                    };
+                    document.getElementById('storyBookBtn').addEventListener('click', bookAction);
+                    document.getElementById('climaxBtn').addEventListener('click', bookAction);
+
+                    // Silent Audio Unlocker
+                    const unlockAudio = () => {
+                        if (this.hasUnlockedAudio) return;
+                        const p = this.audioObj.play();
+                        if (p !== undefined) {
+                            p.then(() => {
+                                this.audioObj.pause();
+                                this.audioObj.currentTime = 0;
+                                this.hasUnlockedAudio = true;
+                                ['click', 'touchstart', 'scroll'].forEach(evt => document.removeEventListener(evt, unlockAudio));
+                            }).catch(() => {});
+                        }
+                    };
+                    ['click', 'touchstart', 'scroll'].forEach(evt => document.addEventListener(evt, unlockAudio, { passive: true, once: true }));
+                },
+
+                open: function(id) {
+                    this.currentExp = (window.experiencesData || []).find(e => e.id === id);
+                    if(!this.currentExp) return;
+
+                    if(!this.hasUnlockedAudio) {
+                        this.audioObj.play().catch(()=>{});
+                        this.audioObj.pause();
+                        this.hasUnlockedAudio = true;
+                    }
+
+                    this.updateUI(this.currentExp);
+
+                    // Smart Duration Calculation based on Audio
+                    if(this.currentExp.audio) {
+                        this.audioObj.src = this.currentExp.audio;
+                        this.audioObj.onloadedmetadata = () => {
+                            const total = this.audioObj.duration;
+                            if(total > 10) {
+                                const count = this.currentExp.gallery.length;
+                                const reservedForClimax = Math.max(5, total * 0.15);
+                                const availableTime = total - reservedForClimax - 15;
+                                if(availableTime > 0 && count > 0) {
+                                    this.imageDuration = (availableTime / count) * 1000;
+                                    this.imageDuration = Math.max(2500, Math.min(6000, this.imageDuration));
+                                }
+                            }
+                        };
+                    }
+
+                    // Build Queue
+                    this.queue = [];
+                    if(this.currentExp.video) this.queue.push({ type: 'video', src: this.currentExp.video });
+                    this.currentExp.gallery.forEach(img => this.queue.push({ type: 'image', src: img }));
+
+                    // ELITE PRELOADER: Preload all gallery images with priority
+                    this.currentExp.gallery.forEach((src, index) => {
+                        const img = new Image();
+                        // High priority for first 3 images
+                        if (index < 3) {
+                            img.fetchPriority = 'high';
+                        }
+                        img.src = src;
+                    });
+
+                    // ELITE: Preload final/climax image
+                    if (this.currentExp.finalImage) {
+                        const finalImg = new Image();
+                        finalImg.src = this.currentExp.finalImage;
+                    }
+
+                    // ELITE: Preload video iframe by creating hidden preconnect
+                    if (this.currentExp.video) {
+                        const videoUrl = new URL(this.currentExp.video);
+                        const preconnect = document.createElement('link');
+                        preconnect.rel = 'preconnect';
+                        preconnect.href = videoUrl.origin;
+                        document.head.appendChild(preconnect);
+                    }
+
+                    // Progress Bar
+                    const progContainer = document.getElementById('storyProgressBar');
+                    progContainer.innerHTML = '';
+                    this.queue.forEach(() => {
+                        const seg = document.createElement('div');
+                        seg.className = 'progress-segment';
+                        seg.innerHTML = '<div class="progress-fill"></div>';
+                        progContainer.appendChild(seg);
+                    });
+
+                    this.currentIndex = 0;
+                    this.isPaused = false;
+
+                    document.getElementById('storyOverlay').classList.add('show');
+                    document.body.style.overflow = 'hidden';
+
+                    this.renderSlide();
+                },
+
+                renderSlide: function() {
+                    const wrapper = document.getElementById('storyMediaWrapper');
+
+                    if(this.timer) clearTimeout(this.timer);
+                    this.timer = null;
+
+                    const allFills = document.querySelectorAll('.progress-segment .progress-fill');
+                    allFills.forEach((fill, i) => {
+                        fill.style.transition = 'none';
+                        fill.style.transform = i < this.currentIndex ? 'scaleX(1)' : 'scaleX(0)';
+                    });
+
+                    if(this.currentIndex >= this.queue.length) {
+                        this.showClimax();
+                        return;
+                    }
+
+                    // ELITE PRELOADER: Preload next 3 images for smooth transitions
+                    for (let i = 1; i <= 3; i++) {
+                        const nextIdx = this.currentIndex + i;
+                        if (nextIdx < this.queue.length) {
+                            const next = this.queue[nextIdx];
+                            if (next.type === 'image') {
+                                const img = new Image();
+                                img.src = next.src;
+                            }
+                        }
+                    }
+
+                    // Also preload final image for climax
+                    if (this.currentExp && this.currentExp.finalImage) {
+                        const finalImg = new Image();
+                        finalImg.src = this.currentExp.finalImage;
+                    }
+
+                    document.getElementById('climaxCard').classList.remove('active');
+                    document.getElementById('storyTextContent').classList.remove('hidden');
+
+                    const item = this.queue[this.currentIndex];
+                    const currentFill = allFills[this.currentIndex];
+
+                    // ELITE: Smooth cleanup with fade
+                    const existingItems = wrapper.querySelectorAll('.story-media-item');
+                    existingItems.forEach(el => {
+                        el.style.opacity = '0';
+                        setTimeout(() => el.remove(), 300);
+                    });
+
+                    // Clear any remaining preloaders
+                    wrapper.querySelectorAll('.video-preloader').forEach(p => p.remove());
+
+                    if(item.type === 'video') {
+                        this.playVideoSlide(item, wrapper, currentFill);
+                    } else {
+                        this.playImageSlide(item, wrapper, currentFill);
+                    }
+                },
+
+                playVideoSlide: function(item, container, progressBar) {
+                    if(this.isMuted) {
+                        this.audioObj.pause();
+                    } else {
+                        this.fadeAudio(0, 300, true);
+                    }
+
+                    // ELITE: Create preloader overlay
+                    const preloader = document.createElement('div');
+                    preloader.className = 'video-preloader';
+                    preloader.innerHTML = '<div class="preloader-pulse"></div>';
+                    container.appendChild(preloader);
+
+                    const iframe = document.createElement('iframe');
+                    const ts = new Date().getTime();
+
+                    let src = item.src;
+                    if(!src.includes('?')) src += '?';
+                    // ELITE BUNNY CONFIG: Hide ALL native controls and play buttons
+                    src += `&autoplay=true&loop=false&muted=false&preload=true`;
+                    src += `&controls=false&playButton=false&bigPlayButton=false`;
+                    src += `&pip=false&captions=false&playsinline=true`;
+                    src += `&responsive=true&transparentBackground=false`;
+                    src += `&ts=${ts}`;
+
+                    iframe.src = src;
+                    iframe.className = 'story-media-item';
+                    iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+                    iframe.setAttribute('loading', 'eager');
+                    iframe.setAttribute('playsinline', '');
+                    iframe.setAttribute('webkit-playsinline', '');
+                    iframe.style.pointerEvents = 'none'; // Block ALL interactions
+                    iframe.style.opacity = '0';
+                    iframe.style.transition = 'opacity 0.5s ease';
+
+                    container.appendChild(iframe);
+
+                    // ELITE: Fade in iframe after brief load, fade out preloader
+                    setTimeout(() => {
+                        iframe.style.opacity = '1';
+                        preloader.classList.add('fade-out');
+                        setTimeout(() => preloader.remove(), 600);
+                    }, 800);
+
+                    requestAnimationFrame(() => iframe.classList.add('active'));
+
+                    if(typeof playerjs !== 'undefined') {
+                        const player = new playerjs.Player(iframe);
+                        this.currentVideoPlayer = player;
+
+                        player.on('ready', () => {
+                            player.play();
+                            if(!this.isMuted) {
+                                player.unmute();
+                                player.setVolume(100);
+                            }
+                            player.getDuration((d) => {
+                                const dur = d ? d : 15;
+                                progressBar.style.transition = `transform ${dur}s linear`;
+                                progressBar.style.transform = 'scaleX(1)';
+                            });
+                            // Hide preloader once player is ready
+                            preloader.classList.add('fade-out');
+                            iframe.style.opacity = '1';
+                        });
+
+                        player.on('ended', () => {
+                            this.next();
+                        });
+                    } else {
+                        progressBar.style.transition = 'transform 15s linear';
+                        progressBar.style.transform = 'scaleX(1)';
+                        this.timer = setTimeout(() => this.next(), 15000);
+                    }
+                },
+
+                playImageSlide: function(item, container, progressBar) {
+                    this.currentVideoPlayer = null;
+
+                    if(!this.isMuted && this.audioObj.paused) {
+                        this.audioObj.play().catch(()=>{});
+                        this.fadeAudio(1, 400);
+                    }
+
+                    // ELITE: Create image with smooth Ken Burns effect
+                    const img = document.createElement('img');
+                    img.src = item.src;
+                    img.className = 'story-media-item';
+                    img.style.opacity = '0';
+                    img.style.transform = 'scale(1.02)';
+                    img.style.transition = 'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+
+                    container.appendChild(img);
+
+                    // ELITE TRANSITION: Smooth fade and scale
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            img.classList.add('active');
+                            img.style.opacity = '1';
+                            img.style.transform = 'scale(1)';
+                        });
+                    });
+
+                    setTimeout(() => {
+                        progressBar.style.transition = `transform ${this.imageDuration}ms linear`;
+                        progressBar.style.transform = 'scaleX(1)';
+                    }, 50);
+
+                    this.timer = setTimeout(() => this.next(), this.imageDuration);
+                },
+
+                fadeAudio: function(targetVol, duration, pauseAtEnd = false) {
+                    const startVol = this.audioObj.volume;
+                    const steps = 10;
+                    const interval = duration / steps;
+                    const stepAmount = (targetVol - startVol) / steps;
+
+                    let counter = 0;
+                    const fadeTimer = setInterval(() => {
+                        counter++;
+                        let newVol = this.audioObj.volume + stepAmount;
+                        if(newVol < 0) newVol = 0;
+                        if(newVol > 1) newVol = 1;
+                        this.audioObj.volume = newVol;
+
+                        if(counter >= steps) {
+                            clearInterval(fadeTimer);
+                            this.audioObj.volume = targetVol;
+                            if(pauseAtEnd) this.audioObj.pause();
+                        }
+                    }, interval);
+                },
+
+                toggleMute: function() {
+                    this.isMuted = !this.isMuted;
+
+                    document.getElementById('iconMute').classList.toggle('hidden', !this.isMuted);
+                    document.getElementById('iconSound').classList.toggle('hidden', this.isMuted);
+
+                    if(this.isMuted) {
+                        this.fadeAudio(0, 200, true);
+                        if(this.currentVideoPlayer) this.currentVideoPlayer.mute();
+                    } else {
+                        if(this.currentVideoPlayer) {
+                            this.currentVideoPlayer.unmute();
+                            this.currentVideoPlayer.setVolume(100);
+                        } else {
+                            this.audioObj.play().catch(()=>{});
+                            this.fadeAudio(1, 200);
+                        }
+                    }
+                },
+
+                pause: function() {
+                    this.isPaused = true;
+                    const segments = document.querySelectorAll('.progress-segment');
+                    if(segments[this.currentIndex]) {
+                        const fill = segments[this.currentIndex].querySelector('.progress-fill');
+                        if(fill) {
+                            const computed = window.getComputedStyle(fill);
+                            const matrix = computed.transform;
+                            fill.style.transition = 'none';
+                            fill.style.transform = matrix;
+                        }
+                    }
+                    clearTimeout(this.timer);
+                    if(this.currentVideoPlayer) this.currentVideoPlayer.pause();
+                    if(!this.audioObj.paused) this.audioObj.pause();
+                },
+
+                resume: function() {
+                    if(!this.isPaused) return;
+                    this.isPaused = false;
+
+                    const item = this.queue[this.currentIndex];
+                    const segments = document.querySelectorAll('.progress-segment');
+                    const fill = segments[this.currentIndex] ? segments[this.currentIndex].querySelector('.progress-fill') : null;
+
+                    if(item.type === 'video') {
+                        if(this.currentVideoPlayer) {
+                            this.currentVideoPlayer.play();
+                            if(fill) {
+                                fill.style.transition = 'transform 10s linear';
+                                fill.style.transform = 'scaleX(1)';
+                            }
+                        }
+                    } else {
+                        if(!this.isMuted) {
+                            this.audioObj.play().catch(()=>{});
+                            this.fadeAudio(1, 200);
+                        }
+                        if(fill) {
+                            fill.style.transition = `transform ${this.imageDuration}ms linear`;
+                            fill.style.transform = 'scaleX(1)';
+                        }
+                        this.timer = setTimeout(() => this.next(), this.imageDuration);
+                    }
+                },
+
+                next: function() {
+                    if(this.currentIndex < this.queue.length) {
+                        this.currentIndex++;
+                        this.renderSlide();
+                    }
+                },
+
+                prev: function() {
+                    if(this.currentIndex > 0) {
+                        this.currentIndex--;
+                        this.renderSlide();
+                    }
+                },
+
+                showClimax: function() {
+                    if(!this.isMuted) {
+                        this.audioObj.play().catch(()=>{});
+                        this.fadeAudio(1, 300);
+                    }
+                    document.getElementById('storyTextContent').classList.add('hidden');
+                    document.getElementById('storyMediaWrapper').innerHTML = '';
+                    document.getElementById('climaxCard').classList.add('active');
+                },
+
+                updateUI: function(exp) {
+                    // Use shortName for the big title (without the colon part)
+                    const shortName = exp.shortName || exp.name.split(':')[0].trim();
+
+                    document.getElementById('storyBrandName').textContent = exp.name;
+                    
+                    // NEW FOOTER UI UPDATES
+                    const footerTitle = document.getElementById('storyFooterTitle');
+                    if(footerTitle) footerTitle.textContent = shortName;
+                    
+                    const footerRating = document.getElementById('storyFooterRating');
+                    if(footerRating && exp.rating) { 
+                        footerRating.innerHTML = '<span style="color: #FFD700; letter-spacing: 2px;">★★★★★</span> <span style="color: #FFF; font-weight: 700; margin-left: 6px;">' + exp.rating + '/5</span>'; 
+                    }
+                    
+                    const footerDesc = document.getElementById('storyFooterDescription');
+                    if(footerDesc) { footerDesc.textContent = exp.description; }
+
+                    document.getElementById('climaxTitle').textContent = shortName;
+                    document.getElementById('climaxDesc').textContent = exp.description;
+
+                    const bgContainer = document.getElementById('climaxBgContainer');
+                    if(exp.finalImage) {
+                        bgContainer.style.backgroundImage = `url('${exp.finalImage}')`;
+                    }
+                },
+
+                close: function() {
+                    this.fadeAudio(0, 200, true);
+                    document.getElementById('storyOverlay').classList.remove('show');
+
+                    setTimeout(() => {
+                        document.getElementById('storyMediaWrapper').innerHTML = '';
+                        document.body.style.overflow = '';
+                        this.audioObj.pause();
+                        this.audioObj.currentTime = 0;
+                        this.currentVideoPlayer = null;
+                        clearTimeout(this.timer);
+                        this.currentIndex = 0;
+                        this.queue = [];
+                    }, 300);
+                }
+            };
+
+            // Initialize StoryManager
+            StoryManager.init();
+
+            // === ELITE TEASER ENGINE (Triggers "VOIR L'EXPÉRIENCE" Animation) ===
+            function initTeaserEngine() {
+                const cardTimers = new Map();
+                const DEFAULT_DELAY = 1500; // 1.5s for experience cards
+                const FEATURED_DELAY = 2500; // 2.5s for featured cards
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const card = entry.target;
+                        const experienceId = card.dataset.id;
+                        const isFeatured = card.classList.contains('featured');
+                        const targetDelay = isFeatured ? FEATURED_DELAY : DEFAULT_DELAY;
+
+                        if (entry.isIntersecting) {
+                            // Card entered view: Start countdown
+                            if (!cardTimers.has(card)) {
+                                const timerId = setTimeout(() => {
+                                    // Trigger the animation
+                                    requestAnimationFrame(() => {
+                                        card.classList.add('teaser-active');
+                                    });
+
+                                    // ELITE VIDEO PRELOAD: Preload story video when teaser activates
+                                    if (experienceId && window.experiencesData) {
+                                        const experience = window.experiencesData.find(e => e.id === experienceId);
+                                        if (experience && experience.video) {
+                                            const preloadId = `preload-story-${experienceId}`;
+                                            if (!document.getElementById(preloadId)) {
+                                                const preloadLink = document.createElement('link');
+                                                preloadLink.id = preloadId;
+                                                preloadLink.rel = 'preload';
+                                                preloadLink.href = experience.video;
+                                                preloadLink.as = 'document';
+                                                document.head.appendChild(preloadLink);
+                                                console.log(`[Teaser Engine] Preloading video for: ${experienceId}`);
+                                            }
+                                        }
+                                        // Also preload first gallery image
+                                        if (experience && experience.gallery && experience.gallery[0]) {
+                                            const img = new Image();
+                                            img.src = experience.gallery[0];
+                                        }
+                                    }
+
+                                }, targetDelay);
+
+                                cardTimers.set(card, timerId);
+                            }
+                        } else {
+                            // Card left view: Cancel and reset
+                            if (cardTimers.has(card)) {
+                                clearTimeout(cardTimers.get(card));
+                                cardTimers.delete(card);
+                            }
+                            requestAnimationFrame(() => {
+                                card.classList.remove('teaser-active');
+                            });
+                        }
+                    });
+                }, {
+                    threshold: 0.6,
+                    rootMargin: "0px"
+                });
+
+                // Initialize after DOM is ready
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('.spectacle-card');
+                    cards.forEach(card => observer.observe(card));
+                    console.log(`[Teaser Engine] Observing ${cards.length} cards`);
+                }, 100);
+            }
+
+            // Initialize Teaser Engine
+            initTeaserEngine();
+        });
+
+        // === CAROUSEL FUNCTIONS ===
+        const carouselStates = {
+            chauffeur: { currentSlide: 0, totalSlides: 4 }
+        };
+
+        function moveCarousel(id, direction) {
+            const state = carouselStates[id];
+            if (!state) return;
+
+            state.currentSlide += direction;
+            if (state.currentSlide < 0) state.currentSlide = state.totalSlides - 1;
+            if (state.currentSlide >= state.totalSlides) state.currentSlide = 0;
+
+            updateCarousel(id);
+        }
+
+        function goToSlide(id, index) {
+            const state = carouselStates[id];
+            if (!state) return;
+
+            state.currentSlide = index;
+            updateCarousel(id);
+        }
+
+        function updateCarousel(id) {
+            const state = carouselStates[id];
+            const track = document.querySelector(`#${id}Carousel .carousel-track`);
+            const dots = document.querySelectorAll(`#${id}Dots .carousel-dot`);
+
+            if (track) {
+                track.style.transform = `translateX(-${state.currentSlide * 100}%)`;
+            }
+
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === state.currentSlide);
+            });
+        }
+
+        // Auto-advance carousel
+        setInterval(() => {
+            moveCarousel('chauffeur', 1);
+        }, 5000);
+
+        // === ADD TO GOOGLE CALENDAR ===
+        function addToGoogleCalendar() {
+            const params = window.bookingParams || {};
+            const restaurant = params.restaurant || 'Restaurant VIP';
+            const name = params.name || '';
+
+            const title = encodeURIComponent(`Dîner Spectacle VIP - ${restaurant} | Marrakech Top Spot`);
+            const details = encodeURIComponent(`✨ Votre réservation VIP est confirmée !
+
+📍 Établissement : ${restaurant}
+👤 Au nom de : ${name || 'Votre nom'}
+
+📞 Concierge Marrakech Top Spot : +212 680 802 756
+
+Présentez-vous à l'entrée sous votre nom. Bonne soirée !`);
+            const location = encodeURIComponent(`${restaurant}, Marrakech, Morocco`);
+
+            // Default date - can be enhanced with URL params
+            const startDate = "20250215T200000";
+            const endDate = "20250216T010000";
+
+            const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${startDate}/${endDate}`;
+
+            window.open(calendarUrl, '_blank');
+        }
+
+        // === ELITE CONCIERGE CONTACT FUNCTIONS ===
+
+        // Main contact concierge (Hero button)
+        function contactConcierge() {
+            const params = window.bookingParams || {};
+            const name = params.name || '';
+            const restaurant = params.restaurant || '';
+            const date = params.date || '';
+            const time = params.time || '';
+
+            let message = `✨ *Bonjour Marrakech Top Spot* ✨
+
+`;
+            if (name) {
+                message += `Je suis ${name}, `;
+            } else {
+                message += `Je `;
+            }
+
+            message += `viens de confirmer ma réservation`;
+
+            if (restaurant) {
+                message += ` au *${restaurant}*`;
+            }
+            if (date && time) {
+                message += ` pour le *${date}* à *${time}*`;
+            } else if (date) {
+                message += ` pour le *${date}*`;
+            }
+
+            message += `.
+
+Je suis ravi(e) de cette soirée et je souhaite m'assurer que tout est parfait.
+
+Avez-vous besoin d'informations supplémentaires de ma part ?
+
+Merci pour votre service exceptionnel ! 🌟`;
+
+            window.open(`https://wa.me/212680802756?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // Contact concierge with question (Final CTA)
+        function contactConciergeQuestion() {
+            const params = window.bookingParams || {};
+            const name = params.name || '';
+            const restaurant = params.restaurant || '';
+
+            let message = `✨ *Bonjour Marrakech Top Spot* ✨
+
+`;
+            if (name) {
+                message += `Je suis ${name}. `;
+            }
+
+            message += `J'ai une question concernant ma réservation VIP`;
+
+            if (restaurant) {
+                message += ` au *${restaurant}*`;
+            }
+
+            message += `.
+
+[Votre question ici]
+
+Merci de votre réactivité ! 🙏`;
+
+            window.open(`https://wa.me/212680802756?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // === ELITE UPSELL FUNCTIONS ===
+
+        // Get personalized greeting based on URL params
+        function getPersonalizedGreeting() {
+            const params = window.bookingParams || {};
+            const name = params.name || params.fullName || '';
+            const restaurant = params.restaurant || '';
+            const date = params.date || '';
+
+            let context = '';
+            if (name && restaurant && date) {
+                context = ` pour ma réservation au nom de ${name} (${restaurant}, ${date})`;
+            } else if (name && restaurant) {
+                context = ` pour ma réservation au nom de ${name} au ${restaurant}`;
+            } else if (name) {
+                context = ` pour ma réservation au nom de ${name}`;
+            }
+            return context;
+        }
+
+        // Chauffeur upsell (direct request)
+        function requestUpsell(experience) {
+            const context = getPersonalizedGreeting();
+
+            const messages = {
+                'chauffeur': `✨ *Bonjour Marrakech Top Spot* ✨
+
+Je souhaite ajouter le *Service Chauffeur VIP Aller-Retour*${context}.
+
+🚗 Je suis intéressé(e) par :
+• Prise en charge à mon hôtel
+• Trajet aller vers le restaurant
+• Retour après la soirée
+
+Merci de me confirmer la disponibilité et les détails ! 🙏`
+            };
+
+            const message = encodeURIComponent(messages[experience] || "Bonjour, je souhaite ajouter une expérience à ma réservation.");
+            window.open(`https://wa.me/212680802756?text=${message}`, '_blank');
+        }
+
+        // Show elite toast notification with optional CTA link
+        function showUpsellToast(title, subtitle, ctaUrl = null) {
+            const toast = document.getElementById('upsellToast');
+            const overlay = document.getElementById('upsellToastOverlay');
+            const titleEl = document.getElementById('upsellToastTitle');
+            const subtitleEl = document.getElementById('upsellToastSubtitle');
+            const ctaBtn = document.getElementById('upsellToastCta');
+
+            titleEl.textContent = title;
+            subtitleEl.textContent = subtitle;
+
+            // Show/hide CTA button based on URL
+            if (ctaUrl && ctaBtn) {
+                ctaBtn.href = ctaUrl;
+                ctaBtn.style.display = 'flex';
+            } else if (ctaBtn) {
+                ctaBtn.style.display = 'none';
+            }
+
+            toast.classList.add('show');
+            overlay.classList.add('show');
+
+            // Auto-hide after 8 seconds (longer for better UX with CTA)
+            setTimeout(() => {
+                toast.classList.remove('show');
+                overlay.classList.remove('show');
+            }, 8000);
+
+            // Click overlay to close
+            overlay.onclick = () => {
+                toast.classList.remove('show');
+                overlay.classList.remove('show');
+            };
+        }
+
+        // Add to reservation (for Agafay & Balloon) - Elite confirmation, NO WhatsApp redirect
+        function addToReservation(experience) {
+            const params = window.bookingParams || {};
+            const name = params.name || 'Cher invité';
+
+            // WEBHOOK TRIGGER
+            const webhookUrl = 'https://hook.eu1.make.com/opztxf4d2o3f34uay2g2z1u2ccr8ndgi';
+            
+            let offerID = '';
+            if (experience === 'chauffeur') offerID = 'Pickup';
+            else if (experience === 'balloon') offerID = 'HotAirBalloon';
+            else if (experience === 'agafay') offerID = 'Odyssee';
+
+            if (offerID) {
+                const payload = {
+                    userID: params.userID || '',
+                    OfferID: offerID,
+                    Date: "",
+                    NumberOfPeople: ""
+                };
+
+                // Send webhook (fire and forget pattern to not delay UI)
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).catch(err => console.error('Webhook Error:', err));
+            }
+
+            const experienceDetails = {
+                'agafay': {
+                    name: "L'Odyssée Nomade",
+                    fullName: "L'Odyssée Nomade : Sunset & Aventure à Agafay",
+                    includes: "Quad (1H) + Balade Dromadaire + Dîner Spectacle",
+                    toastTitle: "Demande Enregistrée avec Succès",
+                    toastSubtitle: `${name}, votre Concierge Personnel vous contactera très prochainement pour organiser chaque détail de votre aventure inoubliable au désert d'Agafay.`,
+                    landingPage: "https://mtszone.b-cdn.net/LP1FinalHotAirV171.html.html"
+                },
+                'balloon': {
+                    name: "Montgolfière Sunrise",
+                    fullName: "Vol en Montgolfière au Lever du Soleil",
+                    includes: "Vol Sunrise + Petit-Déjeuner Berbère Traditionnel",
+                    toastTitle: "Demande Enregistrée avec Succès",
+                    toastSubtitle: `${name}, votre Concierge Personnel vous contactera très prochainement pour organiser votre vol magique au lever du soleil au-dessus de Marrakech.`,
+                    landingPage: "https://mtszone.b-cdn.net/LP1FinalHotAirV69"
+                },
+                'chauffeur': {
+                    name: "Chauffeur VIP",
+                    fullName: "Service Chauffeur Privé Aller-Retour",
+                    includes: "Prise en charge hôtel + Trajet Aller-Retour",
+                    toastTitle: "Service Chauffeur Confirmé",
+                    toastSubtitle: `${name}, votre chauffeur privé est réservé. Votre Concierge vous enverra tous les détails sous peu.`,
+                    landingPage: null
+                }
+            };
+
+            const exp = experienceDetails[experience];
+            if (!exp) return;
+
+            // Show elite branded toast with optional landing page CTA
+            showUpsellToast(exp.toastTitle, exp.toastSubtitle, exp.landingPage);
+        }
+    </script>
+</body>
+</html>
