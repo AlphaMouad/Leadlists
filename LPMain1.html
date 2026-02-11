@@ -2164,6 +2164,15 @@ function generateUserID() {
 }
 
 // === ELITE UPGRADE 1: VIDEO PRELOAD MANAGER (SMART QUEUE) ===
+const ensureNormalSpeed = (p) => {
+    try {
+        if(p && p.send) {
+             p.send({ method: 'setPlaybackRate', value: 1 });
+             p.send({ method: 'setSpeed', value: 1 });
+        }
+    } catch(e) {}
+};
+
 const VideoPreloadManager = {
     queue: new Map(), // id -> { id, url, priority, ts }
     activeCount: 0,
@@ -2253,7 +2262,7 @@ const VideoPreloadManager = {
             let src = item.url;
             if(!src.includes('?')) src += '?';
             // Explicitly force controls=0 and muted=1 and autoplay=1
-            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
+            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1&speed=1`;
             
             iframe.src = src;
             iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
@@ -2271,6 +2280,8 @@ const VideoPreloadManager = {
             const player = new playerjs.Player(iframe);
             // Default ready=true because we use autoplay. We refine with timeupdate.
             this.players.set(item.id, { player: player, ready: true });
+
+            player.on('ready', () => ensureNormalSpeed(player));
 
             player.on('timeupdate', (t) => {
                 if(t.seconds > 0) {
@@ -2940,6 +2951,7 @@ window.StoryManager = {
                 try {
                     player.setCurrentTime(0);
                     if(!this.isMuted) { player.unmute(); player.setVolume(100); }
+                    ensureNormalSpeed(player);
                     player.play();
                     
                     // Show immediately
@@ -2963,7 +2975,7 @@ window.StoryManager = {
         const ts = new Date().getTime();
         let src = item.src;
         if(!src.includes('?')) src += '?';
-        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
+        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}&speed=1`;
         iframe.src = src;
         iframe.className = 'story-media-item';
         iframe.style.opacity = '0';
@@ -2991,9 +3003,11 @@ window.StoryManager = {
         const onPlayerReady = () => {
             if(!this.isMuted) { player.unmute(); player.setVolume(100); }
             player.setCurrentTime(0);
+            ensureNormalSpeed(player);
             player.play();
         };
 
+        player.on('ready', () => ensureNormalSpeed(player));
         player.on('play', triggerFadeIn);
         player.on('timeupdate', (t) => {
             // Force fade in if time moves (video is playing)
