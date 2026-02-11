@@ -18,11 +18,7 @@
     <!-- === PERFORMANCE & PRELOADS === -->
     <link rel="preconnect" href="https://iframe.mediadelivery.net" crossorigin>
     <link rel="preconnect" href="https://vz-fe8cf04d-f49.b-cdn.net" crossorigin>
-    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/MalakV2/Malak7.jpg" fetchpriority="high">
     <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/3.png" fetchpriority="high">
-    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/4.png" fetchpriority="high">
-    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/6.png" fetchpriority="high">
-    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/7.png" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fast.wistia.com">
@@ -32,16 +28,9 @@
     <link rel="preconnect" href="https://docs.google.com" crossorigin>
     <link rel="dns-prefetch" href="https://docs.google.com">
 
-    <!-- MAPBOX CSS -->
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-    
-
     <!-- BUNNY.NET PLAYER API -->
-    <script src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"></script>
-    <script src="https://t.contentsquare.net/uxa/6689442e882d5.js"></script>
-    <!-- MAPBOX JS -->
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
+    <script src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js" defer></script>
+    <script src="https://t.contentsquare.net/uxa/6689442e882d5.js" defer></script>
 
     <!-- FONTS -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700;1,800;1,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1480,9 +1469,9 @@ iframe.story-media-item {
         <section class="hero" id="heroSection">
             <div class="hero-video-bg" id="heroVideoBg">
                 <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/3.png" alt="Hero Background" fetchpriority="high">
-                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/4.png" alt="Hero Background" fetchpriority="high">
-                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/6.png" alt="Hero Background" fetchpriority="high">
-                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/7.png" alt="Hero Background" fetchpriority="high">
+                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/4.png" alt="Hero Background">
+                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/6.png" alt="Hero Background">
+                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/7.png" alt="Hero Background">
             </div>
 
             <div class="hero-content">
@@ -3437,18 +3426,67 @@ window.closeMenu = () => MenuEngine.close();
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoidnBzbW9lcm9ja3MiLCJhIjoiY21qaWY1czlsMHAzNzNnc2Nmc21qNXM3bSJ9.EWmJAoL7TH7Dx5mm_v7tIg';
 let map = null; let mapMarker = null;
+let isMapboxLoading = false;
+
+function loadMapboxResources(callback) {
+    if (window.mapboxgl) {
+        callback();
+        return;
+    }
+    if (isMapboxLoading) {
+        const check = setInterval(() => {
+            if (window.mapboxgl) {
+                clearInterval(check);
+                callback();
+            }
+        }, 100);
+        return;
+    }
+    isMapboxLoading = true;
+
+    // Load CSS
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css';
+    document.head.appendChild(link);
+
+    // Load JS
+    const script = document.createElement('script');
+    script.src = 'https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js';
+    script.onload = () => {
+        // Load Language Plugin
+        const langScript = document.createElement('script');
+        langScript.src = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js';
+        langScript.onload = () => {
+             callback();
+        };
+        document.head.appendChild(langScript);
+    };
+    document.head.appendChild(script);
+}
+
 function openMapWidget(id, event) {
     if(event) event.stopPropagation(); const venue = VENUES[id]; if (!venue) return;
     const modal = document.getElementById('mapbox-modal'); document.body.style.overflow = 'hidden'; modal.style.display = 'flex';
-    setTimeout(() => { modal.classList.add('active'); if (map) { setTimeout(() => { map.resize(); map.flyTo({ center: venue.coords, zoom: 15, duration: 1200 }); addMarker(venue.coords); }, 600); } }, 10);
+
+    // Animate in
+    setTimeout(() => { modal.classList.add('active'); }, 10);
+
     document.getElementById('v-name').textContent = venue.name; document.getElementById('v-address').textContent = venue.address;
     document.getElementById('v-wa-btn').href = `https://wa.me/212680802756?text=Bonjour Concierge, je suis intéressé par ${venue.name}. Pouvez-vous m'aider pour l'accès ou une navette ?`;
-    if (!map) {
-        mapboxgl.accessToken = MAPBOX_TOKEN;
-        map = new mapboxgl.Map({ container: 'map-canvas', style: 'mapbox://styles/mapbox/dark-v11', center: venue.coords, zoom: 15, pitch: 45, antialias: true });
-        const language = new MapboxLanguage({ defaultLanguage: 'fr' }); map.addControl(language);
-        map.on('load', () => { map.resize(); addMarker(venue.coords); });
-    }
+
+    loadMapboxResources(() => {
+        if (map) {
+            setTimeout(() => { map.resize(); map.flyTo({ center: venue.coords, zoom: 15, duration: 1200 }); addMarker(venue.coords); }, 600);
+        } else {
+            mapboxgl.accessToken = MAPBOX_TOKEN;
+            map = new mapboxgl.Map({ container: 'map-canvas', style: 'mapbox://styles/mapbox/dark-v11', center: venue.coords, zoom: 15, pitch: 45, antialias: true });
+            if (window.MapboxLanguage) {
+                const language = new MapboxLanguage({ defaultLanguage: 'fr' }); map.addControl(language);
+            }
+            map.on('load', () => { map.resize(); addMarker(venue.coords); });
+        }
+    });
 }
 function addMarker(coords) { if (mapMarker) mapMarker.remove(); const el = document.createElement('div'); el.className = 'venue-marker'; mapMarker = new mapboxgl.Marker(el).setLngLat(coords).addTo(map); }
 function closeMapWidget() { const modal = document.getElementById('mapbox-modal'); modal.classList.remove('active'); document.body.style.overflow = ''; setTimeout(() => { modal.style.display = 'none'; }, 400); }
