@@ -792,7 +792,7 @@
     object-fit: cover; object-position: center center;
     position: absolute; top: 0; left: 0; 
     opacity: 0; 
-    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.6s cubic-bezier(0.19, 1, 0.22, 1);
     will-change: opacity;
 }
 
@@ -2225,6 +2225,15 @@ const VideoPreloadManager = {
         this.process();
     },
 
+    prioritize: function(id) {
+        // Boost priority of an existing or new item
+        const exp = experiencesData.find(e => e.id === id);
+        if (exp && exp.video) {
+             if (this.loaded.has(id)) return; // Already loaded
+             this.enqueue(id, exp.video, 10); // Highest priority
+        }
+    },
+
     process: function() {
         if (this.activeCount >= this.MAX_CONCURRENT) return;
 
@@ -2252,25 +2261,25 @@ const VideoPreloadManager = {
             
             let src = item.url;
             if(!src.includes('?')) src += '?';
-            // Explicitly force controls=0 and muted=1 and autoplay=1
-            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1&rel=0`;
+            // Explicitly force controls=0, muted=1, autoplay=1, loop=0, dnt=1
+            src += `&preload=true&autoplay=true&muted=true&loop=0&controls=0&playsinline=1&enablejsapi=1&modestbranding=1&rel=0&dnt=1`;
             
             iframe.src = src;
             iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
             iframe.style.width = "100%";
             iframe.style.height = "100%";
             iframe.style.border = "none";
-            iframe.style.opacity = '0';
+            iframe.style.opacity = '0'; // Strictly hidden
             iframe.className = 'story-media-item';
             iframe.setAttribute('loading', 'eager');
             iframe.setAttribute('fetchpriority', 'high');
             iframe.setAttribute('scrolling', 'no');
-            iframe.style.pointerEvents = 'none';
+            iframe.style.pointerEvents = 'none'; // Strictly non-interactive
             
             // Create Player instance and store it
             const player = new playerjs.Player(iframe);
-            // Default ready=true because we use autoplay. We refine with timeupdate.
-            this.players.set(item.id, { player: player, ready: true });
+            // Default ready=false until verified
+            this.players.set(item.id, { player: player, ready: false });
 
             player.on('timeupdate', (t) => {
                 if(t.seconds > 0) {
@@ -2287,7 +2296,7 @@ const VideoPreloadManager = {
                 this.process();
             };
 
-            // Release slot when loaded
+            // Release slot when loaded (network level)
             iframe.onload = releaseSlot;
             
             // Failsafe release (5s)
@@ -2854,11 +2863,16 @@ window.StoryManager = {
             return;
         }
 
+        // PRELOAD LOGIC
         if(this.currentIndex + 1 < this.queue.length) {
             const next = this.queue[this.currentIndex + 1];
             if(next.type === 'image' && !this.preloadedUrls.has(next.src)) {
                 const img = new Image(); img.src = next.src; img.fetchPriority = "high";
                 this.preloadedUrls.add(next.src);
+            }
+            // NEW: Prioritize Next Video
+            if(next.type === 'video') {
+                VideoPreloadManager.prioritize(this.currentExp.id);
             }
         } else if (this.currentIndex === this.queue.length - 1 && this.currentExp.finalImage) {
             if(!this.preloadedUrls.has(this.currentExp.finalImage)) {
@@ -2876,7 +2890,6 @@ window.StoryManager = {
         
         // PAUSE previous video immediately if it was video
         if (oldEl && oldEl.tagName === 'IFRAME') {
-             // We don't pause immediately to allow cross-fade, BUT we must ensure pointer events are off
              oldEl.style.pointerEvents = 'none';
         }
 
@@ -2930,7 +2943,7 @@ window.StoryManager = {
                     oldEl.remove();
                 }
             }
-        }, 600); // 0.6s to match CSS transition
+        }, 650); // 0.65s buffer for 0.6s transition
     },
 
     // 4. Video Logic (ELITE INSTANT PLAYBACK & CONTROLS FIX)
@@ -2946,6 +2959,7 @@ window.StoryManager = {
         
         let iframe;
         let player;
+        let isPreloaded = false;
         
         if (preloadedData && preloadedData.player) {
             const preloadedIframe = document.querySelector(`#video-preload-container iframe[data-id="${expId}"]`);
@@ -2953,48 +2967,32 @@ window.StoryManager = {
                 iframe = preloadedIframe;
                 player = preloadedData.player;
                 this.currentVideoPlayer = player;
-
-                // INSTANT PLAY
-                try {
-                    player.setCurrentTime(0);
-                    if(!this.isMuted) { player.unmute(); player.setVolume(100); }
-                    player.play();
-                    
-                    // Show immediately
-                    this.transitionAndClean(iframe, oldEl);
-                    player.getDuration((d) => {
-                        const dur = d ? d : 15;
-                        progressBar.style.transition = `transform ${dur}s linear`;
-                        progressBar.style.transform = 'scaleX(1)';
-                    });
-                    
-                    player.off('ended');
-                    player.on('ended', () => { this.next(); });
-                    
-                    return; 
-                } catch(e) { console.error("Instant Play Error", e); }
+                isPreloaded = true;
             }
         }
 
-        // Fallback
-        iframe = document.createElement('iframe');
-        const ts = new Date().getTime();
-        let src = item.src;
-        if(!src.includes('?')) src += '?';
-        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
-        iframe.src = src;
-        iframe.className = 'story-media-item';
-        iframe.style.opacity = '0';
-        iframe.style.zIndex = '60';
-        iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
-        iframe.setAttribute('loading', 'eager');
-        iframe.setAttribute('fetchpriority', 'high');
-        container.appendChild(iframe);
+        if (!isPreloaded) {
+            // Fallback: Create new
+            iframe = document.createElement('iframe');
+            const ts = new Date().getTime();
+            let src = item.src;
+            if(!src.includes('?')) src += '?';
+            src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}&loop=0&dnt=1`;
+            iframe.src = src;
+            iframe.className = 'story-media-item';
+            iframe.style.opacity = '0';
+            iframe.style.zIndex = '60';
+            iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
+            iframe.setAttribute('loading', 'eager');
+            iframe.setAttribute('fetchpriority', 'high');
+            container.appendChild(iframe);
 
-        player = new playerjs.Player(iframe);
-        this.currentVideoPlayer = player;
+            player = new playerjs.Player(iframe);
+            this.currentVideoPlayer = player;
+        }
 
         let hasFadedIn = false;
+
         const triggerFadeIn = () => {
              if(hasFadedIn) return;
              hasFadedIn = true;
@@ -3012,14 +3010,22 @@ window.StoryManager = {
             player.play();
         };
 
-        player.on('play', triggerFadeIn);
+        // NEW: Strictly rely on timeupdate for visual fade-in to prevent Play Button Glitch
         player.on('timeupdate', (t) => {
-            // Force fade in if time moves (video is playing)
-            if(t.seconds > 0 && !hasFadedIn) triggerFadeIn();
+            // Wait for 0.15s of playback to ensure buffer is done and frame is rendered
+            if(t.seconds > 0.15 && !hasFadedIn) {
+                triggerFadeIn();
+            }
         });
 
-        player.on('ready', onPlayerReady);
         player.on('ended', () => { this.next(); });
+
+        if(isPreloaded) {
+            // Already ready, just play
+            onPlayerReady();
+        } else {
+            player.on('ready', onPlayerReady);
+        }
     },
 
     // 5. Image Logic (ELITE LOAD DETECTION)
