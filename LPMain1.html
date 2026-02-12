@@ -2253,7 +2253,7 @@ const VideoPreloadManager = {
             let src = item.url;
             if(!src.includes('?')) src += '?';
             // Explicitly force controls=0 and muted=1 and autoplay=1
-            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1`;
+            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1&rel=0`;
             
             iframe.src = src;
             iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
@@ -2754,6 +2754,23 @@ window.StoryManager = {
         this.currentExp = (window.experiencesData || []).find(e => e.id === id);
         if(!this.currentExp) return;
 
+        // NEW: Inject Poster Immediately (Poster-First Strategy)
+        const wrapper = document.getElementById('storyMediaWrapper');
+        // Clear only non-preload items
+        const allItems = wrapper.querySelectorAll('.story-media-item');
+        allItems.forEach(el => {
+            if (el.parentNode.id !== 'video-preload-container') el.remove();
+        });
+
+        // Inject high-res poster at Z-index 50 (Base)
+        const poster = document.createElement('img');
+        poster.src = this.currentExp.finalImage || this.currentExp.image;
+        poster.className = 'story-media-item active';
+        poster.style.zIndex = '50';
+        poster.style.opacity = '1';
+        poster.id = 'temp-poster';
+        wrapper.appendChild(poster);
+
         if(!this.hasUnlockedAudio) {
             this.audioObj.play().catch(()=>{}); 
             this.audioObj.pause();
@@ -2817,7 +2834,8 @@ window.StoryManager = {
         // Remove any pending slides that haven't become active yet
         const allItems = wrapper.querySelectorAll('.story-media-item');
         allItems.forEach(el => {
-            if (!el.classList.contains('active') && el.parentNode.id !== 'video-preload-container') {
+            // Keep active items, preload container items, and our temp poster
+            if (!el.classList.contains('active') && el.parentNode.id !== 'video-preload-container' && el.id !== 'temp-poster') {
                 el.remove();
             }
         });
@@ -2865,11 +2883,11 @@ window.StoryManager = {
         this.currentVideoPlayer = null; 
 
         if(item.type === 'video') {
-            // New is Video -> Video Container z=40 (Must be > Image z=30)
-            preloadContainer.style.zIndex = '40';
+            // New is Video -> Video Container z=60 (Active)
+            preloadContainer.style.zIndex = '60';
             this.playVideoSlide(item, wrapper, currentFill, oldEl);
         } else {
-            // New is Image -> Video Container z=20 (Behind Image z=30)
+            // New is Image -> Video Container z=20 (Background)
             preloadContainer.style.zIndex = '20';
             this.playImageSlide(item, wrapper, currentFill, oldEl);
         }
@@ -2878,12 +2896,12 @@ window.StoryManager = {
     // NEW: World-Class Seamless Stacking Transition
     transitionAndClean: function(newEl, oldEl) {
         requestAnimationFrame(() => {
-            newEl.style.zIndex = '30'; // Top
+            newEl.style.zIndex = '60'; // Top (Active)
             newEl.style.opacity = '1';
             newEl.classList.add('active');
             
             if (oldEl) {
-                oldEl.style.zIndex = '20'; // Push back
+                oldEl.style.zIndex = '50'; // Push back (Base)
                 // Keep opacity 1 to avoid black flash
             }
         });
@@ -2967,7 +2985,7 @@ window.StoryManager = {
         iframe.src = src;
         iframe.className = 'story-media-item';
         iframe.style.opacity = '0';
-        iframe.style.zIndex = '30';
+        iframe.style.zIndex = '60';
         iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
         iframe.setAttribute('loading', 'eager');
         iframe.setAttribute('fetchpriority', 'high');
@@ -3015,7 +3033,7 @@ window.StoryManager = {
         img.src = item.src;
         img.className = 'story-media-item';
         img.style.opacity = '0';
-        img.style.zIndex = '30';
+        img.style.zIndex = '60';
         container.appendChild(img);
         
         const onImageReady = () => {
