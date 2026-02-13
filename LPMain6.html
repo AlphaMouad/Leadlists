@@ -39,6 +39,8 @@
     <!-- BUNNY.NET PLAYER API -->
     <script src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"></script>
     <script src="https://t.contentsquare.net/uxa/6689442e882d5.js"></script>
+    <!-- PDF.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <!-- MAPBOX JS -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
@@ -1186,13 +1188,12 @@ iframe.story-media-item {
 
 .menu-iframe-container {
     flex: 1 1 auto; position: relative; width: 100%; min-height: 0; 
-    overflow: hidden; background: #000; z-index: 10; -webkit-overflow-scrolling: touch;
+    overflow-y: auto; overflow-x: hidden; background: #000; z-index: 10;
+    -webkit-overflow-scrolling: touch; text-align: center;
 }
-.menu-iframe-container iframe {
-    /* Allow both horizontal and vertical pan for PDF zoom */
-    touch-action: pan-x pan-y pinch-zoom; 
-    /* Ensure iframe fills container */
-    display: block;
+.menu-iframe-container canvas {
+    max-width: 100%; height: auto; display: block; margin: 0 auto 10px auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
 /* === MENU SPINNER (Unique, no conflicts) === */
@@ -2167,7 +2168,7 @@ function generateUserID() {
 const VideoPreloadManager = {
     queue: new Map(), // id -> { id, url, priority, ts }
     activeCount: 0,
-    MAX_CONCURRENT: 2,
+    MAX_CONCURRENT: 3,
     loaded: new Set(),
     container: null,
     players: new Map(),
@@ -2827,6 +2828,15 @@ window.StoryManager = {
             } catch(e){}
         }
 
+        // PREDICTIVE PRELOADING: Identify next story and load its video
+        const expIndex = window.experiencesData.findIndex(e => e.id === this.currentExp.id);
+        if (expIndex !== -1 && expIndex + 1 < window.experiencesData.length) {
+            const nextExp = window.experiencesData[expIndex + 1];
+            if (nextExp && nextExp.video && !VideoPreloadManager.loaded.has(nextExp.id)) {
+                VideoPreloadManager.enqueue(nextExp.id, nextExp.video, 3); // Priority 3 (High)
+            }
+        }
+
         const wrapper = document.getElementById('storyMediaWrapper');
         const preloadContainer = document.getElementById('video-preload-container');
         
@@ -2992,6 +3002,24 @@ window.StoryManager = {
         iframe.setAttribute('fetchpriority', 'high');
         container.appendChild(iframe);
 
+        // Premium Loader
+        let storyLoader = document.getElementById('story-premium-loader');
+        if(!storyLoader) {
+            storyLoader = document.createElement('div');
+            storyLoader.id = 'story-premium-loader';
+            storyLoader.innerHTML = '<div style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2); border-top: 3px solid #fff; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>';
+            storyLoader.style.cssText = 'position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:55; pointer-events:none; opacity:0; transition: opacity 0.3s;';
+            const style = document.createElement('style');
+            style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+            document.head.appendChild(style);
+            container.parentElement.appendChild(storyLoader);
+        }
+
+        // Show loader if video takes >300ms
+        const loaderTimeout = setTimeout(() => {
+            if (!hasFadedIn) storyLoader.style.opacity = '1';
+        }, 300);
+
         player = new playerjs.Player(iframe);
         this.currentVideoPlayer = player;
 
@@ -2999,6 +3027,9 @@ window.StoryManager = {
         const triggerFadeIn = () => {
              if(hasFadedIn) return;
              hasFadedIn = true;
+             clearTimeout(loaderTimeout);
+             if(storyLoader) storyLoader.style.opacity = '0';
+
              this.transitionAndClean(iframe, oldEl);
              player.getDuration((d) => {
                 const dur = d ? d : 15;
@@ -3215,132 +3246,92 @@ window.StoryManager = {
 StoryManager.init();
 
 /* ============================================================================
-   ELITE MENU ENGINE V21 - RESERVATION INTEGRATION & OPTIMIZED UX
+   ELITE MENU ENGINE V22 - PDF.JS UPGRADE (NATIVE RENDERER)
    ============================================================================ */
 
 const MenuEngine = (() => {
     'use strict';
 
-    const CONFIG = {
-        GDOCS_VIEWER: 'https://docs.google.com/gview?embedded=true&url=',
-        LOAD_TIMEOUT: 3000
-    };
-
     const state = {
         isOpen: false,
-        currentUrl: null,
-        currentId: null, // Store restaurant ID for booking
+        currentId: null,
         isDestroyed: false,
-        savedScrollY: 0
+        savedScrollY: 0,
+        pdfDoc: null
     };
 
-    const utils = {
-        log: (msg) => console.log(`[MenuEngine V21] ${msg}`),
+    const run = async (url, container) => {
+        container.innerHTML = '';
         
-        isIOS: () => /iPad|iPhone|iPod/i.test(navigator.userAgent) && !window.MSStream,
-        isAndroid: () => /Android/i.test(navigator.userAgent)
-    };
+        // Loader
+        let loader = document.createElement('div');
+        loader.className = 'menu-loader';
+        loader.innerHTML = '<div class="menu-spinner"></div><div class="loading-text">Chargement...</div>';
+        loader.style.cssText = "position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:20; pointer-events:none;";
+        container.appendChild(loader);
 
-    const viewStrategy = {
-        // STRATEGY: GOOGLE DOCS (ANDROID / PC BACKUP)
-        createGDocsFrame(url) {
-            const iframe = document.createElement('iframe');
-            iframe.src = `${CONFIG.GDOCS_VIEWER}${encodeURIComponent(url)}`;
-            iframe.style.cssText = "width:100%; height:100%; border:none; opacity:0; transition:opacity 0.4s ease;";
-            return iframe;
-        },
-
-        // STRATEGY: DIRECT (iOS / DESKTOP)
-        createDirectFrame(url) {
-            const iframe = document.createElement('iframe');
-            iframe.src = url;
-            iframe.style.cssText = "width:100%; height:100%; border:none; opacity:0; transition:opacity 0.4s ease;";
-            return iframe;
-        }
-    };
-
-    const run = (url, container, attempt = 1) => {
-        if (attempt === 1) container.innerHTML = '';
-        
-        // Ensure Loader
-        let loader = container.querySelector('.menu-loader');
-        if (!loader) {
-            loader = document.createElement('div');
-            loader.className = 'menu-loader';
-            loader.innerHTML = '<div class="menu-spinner"></div><div class="loading-text">Chargement...</div>';
-            loader.style.cssText = "position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:0;";
-            container.appendChild(loader);
-        }
-
-        // Ensure Fallback
-        let fallback = container.querySelector('.menu-fallback-container');
-        if (!fallback) {
-            fallback = document.createElement('div');
-            fallback.className = 'menu-fallback-container';
+        // Fallback Button (Hidden by default)
+        const showFallback = () => {
+            if(loader) loader.remove();
+            let fallback = document.createElement('div');
+            fallback.className = 'menu-fallback-container visible';
             fallback.innerHTML = `<a href="${url}" target="_blank" class="btn-menu-fallback">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 OUVRIR LE MENU PDF
             </a>`;
             container.appendChild(fallback);
-        }
-
-        let iframe;
-        let loaded = false;
-        let retryTimer = null;
-
-        // === DEVICE LOGIC ===
-        if (utils.isAndroid()) {
-            utils.log('Mode: Android (Google Docs) - Attempt ' + attempt);
-            iframe = viewStrategy.createGDocsFrame(url);
-        } else {
-            utils.log('Mode: Native (Direct) - Attempt ' + attempt);
-            iframe = viewStrategy.createDirectFrame(url);
-        }
-
-        const onSuccess = () => {
-            if(loaded) return;
-            loaded = true;
-            if(retryTimer) clearTimeout(retryTimer);
-            iframe.style.opacity = '1';
-            
-            // Critical: Ensure fallback is hidden if it was pending or shown
-            fallback.classList.remove('visible');
-            
-            // Hide loader
-            setTimeout(() => { if(loader) loader.remove(); }, 400);
         };
 
-        iframe.onload = onSuccess;
+        if (typeof pdfjsLib === 'undefined') {
+            console.error("PDF.js library not loaded.");
+            showFallback();
+            return;
+        }
 
-        // Failsafe visibility (1.5s) - just in case onload is swallowed but content renders
-        setTimeout(() => { 
-            if(!loaded && iframe.parentNode) { iframe.style.opacity = '1'; } 
-        }, 1500);
+        // Set worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // Retry Logic (2.5s)
-        retryTimer = setTimeout(() => {
-            if (!loaded) {
-                if (attempt < 2) {
-                    utils.log('Retry loading menu...');
-                    if(iframe.parentNode) iframe.remove();
-                    run(url, container, attempt + 1);
-                } else {
-                    // Max retries reached, show fallback
-                    fallback.classList.add('visible');
-                    if(loader) loader.style.opacity = '0';
-                }
+        try {
+            const loadingTask = pdfjsLib.getDocument(url);
+            const pdf = await loadingTask.promise;
+            state.pdfDoc = pdf;
+
+            // Render all pages
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                const page = await pdf.getPage(pageNum);
+                const scale = 1.5; // High quality
+                const viewport = page.getViewport({scale: scale});
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                canvas.style.opacity = '0';
+                canvas.style.transition = 'opacity 0.4s ease';
+
+                // Add to container
+                container.appendChild(canvas);
+
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+
+                await page.render(renderContext).promise;
+                canvas.style.opacity = '1';
             }
-        }, 2500);
 
-        // Append to container
-        iframe.style.position = 'relative';
-        iframe.style.zIndex = '10';
-        container.appendChild(iframe);
+            // Remove loader when at least first page is done (or all in loop above)
+            if(loader) loader.remove();
+
+        } catch (error) {
+            console.error('Error rendering PDF:', error);
+            showFallback();
+        }
     };
 
     return {
         init: () => {
-            utils.log('Initialized');
             const modal = document.getElementById('menuModal');
             if (modal) {
                 modal.addEventListener('click', (e) => {
@@ -3358,34 +3349,27 @@ const MenuEngine = (() => {
 
             state.isOpen = true;
             state.isDestroyed = false;
-            state.currentId = id; // Capture ID
+            state.currentId = id;
             
-            // 1. CAPTURE SCROLL POSITION ACCURATELY
             state.savedScrollY = window.scrollY || document.documentElement.scrollTop;
             
             const modal = document.getElementById('menuModal');
             const container = document.getElementById('iframeContainer');
             
-            // 2. LOCK BODY (Prevents background scroll)
             document.body.style.position = 'fixed';
             document.body.style.top = `-${state.savedScrollY}px`;
             document.body.style.width = '100%';
             document.body.style.overflow = 'hidden';
 
-            // 3. SHOW MODAL
             modal.style.display = 'flex';
-            void modal.offsetWidth; // Reflow
+            void modal.offsetWidth;
             modal.classList.add('active');
 
-            // 4. RUN ENGINE
             run(url, container);
         },
 
         book: () => {
-            // Close without restoring scroll (we will scroll to form instead)
             MenuEngine.close(true);
-            
-            // Wait for modal to fade out visually, then scroll
             setTimeout(() => {
                 if(state.currentId) scrollToForm(state.currentId);
             }, 350);
@@ -3395,6 +3379,7 @@ const MenuEngine = (() => {
             if (!state.isOpen) return;
             state.isOpen = false;
             state.isDestroyed = true;
+            state.pdfDoc = null;
             
             const modal = document.getElementById('menuModal');
             const container = document.getElementById('iframeContainer');
@@ -3405,21 +3390,16 @@ const MenuEngine = (() => {
                 modal.style.display = 'none';
                 container.innerHTML = '';
                 
-                // Unlock Body
                 document.body.style.position = '';
                 document.body.style.top = '';
                 document.body.style.width = '';
                 document.body.style.overflow = '';
 
                 if (!skipRestore) {
-                    // 5. RESTORE SCROLL (INSTANT JUMP, NO ANIMATION)
                     const html = document.documentElement;
                     const scrollBehavior = html.style.scrollBehavior;
-                    html.style.scrollBehavior = 'auto'; // Kill smooth scroll
-                    
+                    html.style.scrollBehavior = 'auto';
                     window.scrollTo(0, state.savedScrollY);
-
-                    // Restore preferences
                     requestAnimationFrame(() => {
                         html.style.scrollBehavior = scrollBehavior;
                     });
