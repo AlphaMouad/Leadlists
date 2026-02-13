@@ -39,8 +39,6 @@
     <!-- BUNNY.NET PLAYER API -->
     <script src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"></script>
     <script src="https://t.contentsquare.net/uxa/6689442e882d5.js"></script>
-    <!-- PDF.JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <!-- MAPBOX JS -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
@@ -1188,12 +1186,13 @@ iframe.story-media-item {
 
 .menu-iframe-container {
     flex: 1 1 auto; position: relative; width: 100%; min-height: 0; 
-    overflow-y: auto; overflow-x: hidden; background: #000; z-index: 10;
-    -webkit-overflow-scrolling: touch; text-align: center;
+    overflow: hidden; background: #000; z-index: 10; -webkit-overflow-scrolling: touch;
 }
-.menu-iframe-container canvas {
-    max-width: 100%; height: auto; display: block; margin: 0 auto 10px auto;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+.menu-iframe-container iframe {
+    /* Allow both horizontal and vertical pan for PDF zoom */
+    touch-action: pan-x pan-y pinch-zoom;
+    /* Ensure iframe fills container */
+    display: block;
 }
 
 /* === MENU SPINNER (Unique, no conflicts) === */
@@ -3246,88 +3245,88 @@ window.StoryManager = {
 StoryManager.init();
 
 /* ============================================================================
-   ELITE MENU ENGINE V22 - PDF.JS UPGRADE (NATIVE RENDERER)
+   ELITE MENU ENGINE V23 - HYBRID IFRAME OPTIMIZATION
    ============================================================================ */
 
 const MenuEngine = (() => {
     'use strict';
 
+    const CONFIG = {
+        GDOCS_VIEWER: 'https://docs.google.com/gview?embedded=true&url=',
+        FALLBACK_DELAY: 3500 // 3.5s strict timeout before fallback
+    };
+
     const state = {
         isOpen: false,
         currentId: null,
-        isDestroyed: false,
-        savedScrollY: 0,
-        pdfDoc: null
+        savedScrollY: 0
     };
 
-    const run = async (url, container) => {
-        container.innerHTML = '';
+    const utils = {
+        isIOS: () => /iPad|iPhone|iPod/i.test(navigator.userAgent) && !window.MSStream,
+        isAndroid: () => /Android/i.test(navigator.userAgent)
+    };
+
+    const run = (url, container, attempt = 1) => {
+        if (attempt === 1) container.innerHTML = '';
         
-        // Loader
-        let loader = document.createElement('div');
+        // 1. Create Loader
+        const loader = document.createElement('div');
         loader.className = 'menu-loader';
         loader.innerHTML = '<div class="menu-spinner"></div><div class="loading-text">Chargement...</div>';
-        loader.style.cssText = "position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:20; pointer-events:none;";
+        loader.style.cssText = "position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:20; background:#000;";
         container.appendChild(loader);
 
-        // Fallback Button (Hidden by default)
-        const showFallback = () => {
-            if(loader) loader.remove();
-            let fallback = document.createElement('div');
-            fallback.className = 'menu-fallback-container visible';
-            fallback.innerHTML = `<a href="${url}" target="_blank" class="btn-menu-fallback">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                OUVRIR LE MENU PDF
-            </a>`;
-            container.appendChild(fallback);
+        // 2. Create Fallback (Hidden initially)
+        const fallback = document.createElement('div');
+        fallback.className = 'menu-fallback-container';
+        fallback.innerHTML = `<a href="${url}" target="_blank" class="btn-menu-fallback">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            OUVRIR LE MENU PDF
+        </a>`;
+        container.appendChild(fallback);
+
+        // 3. Iframe Construction
+        const iframe = document.createElement('iframe');
+        // Smart Routing: iOS prefers direct link (Native PDF), Android/Others prefer GDocs
+        if (utils.isIOS()) {
+            iframe.src = url;
+        } else {
+            iframe.src = `${CONFIG.GDOCS_VIEWER}${encodeURIComponent(url)}`;
+        }
+
+        iframe.style.cssText = "width:100%; height:100%; border:none; opacity:0; transition:opacity 0.4s ease; position:relative; z-index:10;";
+
+        let loaded = false;
+
+        // Success Handler
+        iframe.onload = () => {
+            loaded = true;
+            iframe.style.opacity = '1';
+            setTimeout(() => { if(loader) loader.remove(); }, 300);
         };
 
-        if (typeof pdfjsLib === 'undefined') {
-            console.error("PDF.js library not loaded.");
-            showFallback();
-            return;
-        }
-
-        // Set worker
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        try {
-            const loadingTask = pdfjsLib.getDocument(url);
-            const pdf = await loadingTask.promise;
-            state.pdfDoc = pdf;
-
-            // Render all pages
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                const page = await pdf.getPage(pageNum);
-                const scale = 1.5; // High quality
-                const viewport = page.getViewport({scale: scale});
-
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                canvas.style.opacity = '0';
-                canvas.style.transition = 'opacity 0.4s ease';
-
-                // Add to container
-                container.appendChild(canvas);
-
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-
-                await page.render(renderContext).promise;
-                canvas.style.opacity = '1';
+        // Failsafe Timeout
+        setTimeout(() => {
+            if (!loaded) {
+                // If not loaded in 3.5s, show fallback immediately
+                fallback.classList.add('visible');
+                // We keep the spinner behind it just in case it loads late,
+                // but the button allows user escape.
             }
+        }, CONFIG.FALLBACK_DELAY);
 
-            // Remove loader when at least first page is done (or all in loop above)
-            if(loader) loader.remove();
-
-        } catch (error) {
-            console.error('Error rendering PDF:', error);
-            showFallback();
+        // Retry Logic for GDocs (if it fails fast or stalls)
+        if (!utils.isIOS()) {
+            setTimeout(() => {
+                if (!loaded && attempt < 2) {
+                    console.log("Retrying GDocs viewer...");
+                    iframe.src = iframe.src; // Force reload
+                }
+            }, 2000);
         }
+
+        container.appendChild(iframe);
     };
 
     return {
@@ -3350,7 +3349,6 @@ const MenuEngine = (() => {
             state.isOpen = true;
             state.isDestroyed = false;
             state.currentId = id;
-            
             state.savedScrollY = window.scrollY || document.documentElement.scrollTop;
             
             const modal = document.getElementById('menuModal');
@@ -3378,8 +3376,6 @@ const MenuEngine = (() => {
         close: (skipRestore = false) => {
             if (!state.isOpen) return;
             state.isOpen = false;
-            state.isDestroyed = true;
-            state.pdfDoc = null;
             
             const modal = document.getElementById('menuModal');
             const container = document.getElementById('iframeContainer');
