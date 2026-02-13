@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <!-- === META TAGS === -->
-    <title>Dîner Spectacle Marrakech : Réservation VIP (Paiement Sur Place) | Top Spot</title>
-    <meta name="description" content="Accès VIP aux 7 meilleurs restaurants festifs de Marrakech. Réservez votre table sans acompte ni carte bancaire. Confirmation WhatsApp 60s. Service Concierge Gratuit.">
+    <title>Restaurant Festif Marrakech : Réservation VIP & Dîner Spectacle | Top Spot Elite</title>
+    <meta name="description" content="Découvrez les 7 meilleurs restaurants festifs de Marrakech. Accès VIP, tables exclusives et shows grandioses. Réservation conciergerie gratuite sans acompte.">
     <meta name="theme-color" content="#030303">
 
     <!-- iOS Safari Enhancements -->
@@ -20,9 +20,9 @@
     <link rel="preconnect" href="https://vz-fe8cf04d-f49.b-cdn.net" crossorigin>
     <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/MalakV2/Malak7.jpg" fetchpriority="high">
     <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/3.png" fetchpriority="high">
-    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/4.png" fetchpriority="high">
-    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/6.png" fetchpriority="high">
-    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/7.png" fetchpriority="high">
+    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/4.png">
+    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/6.png">
+    <link rel="preload" as="image" href="https://MTSZone.b-cdn.net/BG/7.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fast.wistia.com">
@@ -1480,9 +1480,9 @@ iframe.story-media-item {
         <section class="hero" id="heroSection">
             <div class="hero-video-bg" id="heroVideoBg">
                 <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/3.png" alt="Hero Background" fetchpriority="high">
-                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/4.png" alt="Hero Background" fetchpriority="high">
-                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/6.png" alt="Hero Background" fetchpriority="high">
-                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/7.png" alt="Hero Background" fetchpriority="high">
+                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/4.png" alt="Hero Background">
+                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/6.png" alt="Hero Background">
+                <img class="hero-slideshow-img" src="https://MTSZone.b-cdn.net/BG/7.png" alt="Hero Background">
             </div>
 
             <div class="hero-content">
@@ -2253,7 +2253,7 @@ const VideoPreloadManager = {
             let src = item.url;
             if(!src.includes('?')) src += '?';
             // Explicitly force controls=0 and muted=1 and autoplay=1
-            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1&rel=0`;
+            src += `&preload=true&autoplay=true&muted=true&loop=false&controls=0&playsinline=1&enablejsapi=1&modestbranding=1&rel=0&dnt=1`;
             
             iframe.src = src;
             iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
@@ -2981,11 +2981,12 @@ window.StoryManager = {
         const ts = new Date().getTime();
         let src = item.src;
         if(!src.includes('?')) src += '?';
-        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&ts=${ts}`;
+        src += `&enablejsapi=1&autoplay=1&muted=0&playsinline=1&controls=0&modestbranding=1&rel=0&dnt=1&ts=${ts}`;
         iframe.src = src;
         iframe.className = 'story-media-item';
         iframe.style.opacity = '0';
         iframe.style.zIndex = '60';
+        iframe.style.pointerEvents = 'none';
         iframe.allow = "autoplay; fullscreen; accelerometer; encrypted-media; gyroscope; picture-in-picture";
         iframe.setAttribute('loading', 'eager');
         iframe.setAttribute('fetchpriority', 'high');
@@ -3012,10 +3013,10 @@ window.StoryManager = {
             player.play();
         };
 
-        player.on('play', triggerFadeIn);
+        // player.on('play', triggerFadeIn); // REMOVED to prevent premature play button flash
         player.on('timeupdate', (t) => {
-            // Force fade in if time moves (video is playing)
-            if(t.seconds > 0 && !hasFadedIn) triggerFadeIn();
+            // Force fade in ONLY if time moves significantly (frames rendering)
+            if(t.seconds > 0.15 && !hasFadedIn) triggerFadeIn();
         });
 
         player.on('ready', onPlayerReady);
