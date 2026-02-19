@@ -70,73 +70,6 @@
             object-fit: cover;
         }
 
-        /* SPLIT SCREEN THUMBNAIL HACK */
-        .thumbnail-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 20;
-            display: flex;
-            cursor: pointer;
-            transition: opacity 0.5s ease;
-        }
-
-        .thumb-left {
-            width: 50%;
-            height: 100%;
-            position: relative;
-            background-image: url('https://MTSZone.b-cdn.net/BG/3.png');
-            background-size: cover;
-            background-position: center;
-        }
-        .thumb-left::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.3);
-        }
-
-        .thumb-right {
-            width: 50%;
-            height: 100%;
-            background: #111;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-left: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-        }
-
-        /* PLAY BUTTON CENTERED */
-        .play-btn-centered {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: rgba(197, 160, 89, 0.9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 30;
-            transition: transform 0.3s ease, background 0.3s ease;
-            box-shadow: 0 0 30px rgba(197, 160, 89, 0.4);
-        }
-
-        .thumbnail-overlay:hover .play-btn-centered {
-            transform: translate(-50%, -50%) scale(1.1);
-            background: #fff;
-        }
-
-        .thumbnail-overlay:hover .play-btn-centered svg {
-            fill: #000;
-        }
-
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
         /* TEAR SHEET GRID */
@@ -168,18 +101,26 @@
             background: #0f0f0f;
         }
 
-        /* CALENDLY EMBED PLACEHOLDER */
-        .calendly-placeholder {
+        /* CALENDAR STYLING - ELITE UPGRADE */
+        .calendar-container {
             width: 100%;
-            height: 700px;
-            background: #111;
-            border: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            color: #666;
-            font-family: 'Inter', sans-serif;
+            background: rgba(10, 10, 10, 0.95); /* Deep dark background */
+            border: 1px solid rgba(197, 160, 89, 0.2); /* Subtle Gold Border */
+            border-radius: 4px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(197, 160, 89, 0.05); /* Deep Shadow + Inner Glow */
+            overflow: hidden;
+            position: relative;
+        }
+
+        .calendar-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.5), transparent);
+            z-index: 10;
         }
     </style>
 </head>
@@ -227,37 +168,8 @@
         <!-- SECTION 2: THE CORE ASSET (VIDEO) -->
         <div class="max-w-6xl mx-auto mb-16">
             <div class="video-wrapper rounded-sm relative group">
-
-                <!-- CUSTOM THUMBNAIL OVERLAY (THE HACK) -->
-                <div class="thumbnail-overlay" id="videoOverlay" onclick="playVideo()">
-                    <!-- Left: Clubhouse Render -->
-                    <div class="thumb-left group-hover:grayscale-0 transition-all duration-700 grayscale">
-                        <div class="absolute bottom-6 left-6 z-10">
-                            <span class="bg-black/80 backdrop-blur text-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold border border-white/10">
-                                Ambassadeur Clubhouse
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Right: Lead's Context -->
-                    <div class="thumb-right">
-                        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4 border border-gray-700">
-                            <span class="text-2xl">🏢</span>
-                        </div>
-                        <h3 class="text-xl font-serif text-white mb-1">Real Estate Investing Co</h3>
-                        <p class="text-xs text-gray-500 uppercase tracking-widest">Allocation Review</p>
-                    </div>
-
-                    <!-- Centered Play Button -->
-                    <div class="play-btn-centered">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#fff">
-                            <path d="M8 5v14l11-7z"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- ACTUAL VIDEO -->
-                <video id="mainVideo" class="w-full h-full" controls preload="metadata">
+                <!-- NATIVE VIDEO PLAYER (NO OVERLAY) -->
+                <video id="mainVideo" class="w-full h-full" controls preload="metadata" poster="https://MTSZone.b-cdn.net/BG/3.png">
                     <source src="https://MTSZone.b-cdn.net/LoomP1.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -308,26 +220,14 @@
                 <br><span class="text-[#C5A059] text-xs font-bold uppercase tracking-widest mt-4 block">No Sales Teams. Direct GP Access.</span>
             </p>
 
-            <!-- CALENDLY EMBED PLACEHOLDER -->
-            <!-- In a real scenario, the Calendly iframe would go here. -->
-            <div class="calendly-placeholder rounded-sm p-8">
-                <div class="text-center space-y-4">
-                    <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    </div>
-                    <h3 class="text-xl text-white font-serif">Schedule Your Allocation Review</h3>
-                    <p class="text-sm text-gray-500 max-w-md mx-auto">Select a time below to meet with the General Partners.</p>
-
-                    <!-- Fake Calendar Grid for Visual -->
-                    <div class="grid grid-cols-7 gap-2 max-w-xs mx-auto mt-8 opacity-30">
-                        <div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div>
-                        <div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div>
-                    </div>
-
-                    <button class="mt-8 bg-[#C5A059] text-black font-bold uppercase tracking-widest text-xs px-8 py-4 hover:bg-white transition-colors">
-                        Open Calendar
-                    </button>
-                </div>
+            <!-- YOUCANBOOK.ME EMBED (ELITE STYLING) -->
+            <div class="calendar-container">
+                <iframe
+                    src="https://amg-alignement-call.youcanbook.me/?noframe=true&skipHeaderFooter=true"
+                    style="width:100%;height:800px;border:0px;background-color:transparent;"
+                    frameborder="0"
+                    allowtransparency="true">
+                </iframe>
             </div>
         </div>
 
@@ -342,20 +242,5 @@
         </div>
     </footer>
 
-    <script>
-        function playVideo() {
-            const overlay = document.getElementById('videoOverlay');
-            const video = document.getElementById('mainVideo');
-
-            // Fade out overlay
-            overlay.style.opacity = '0';
-
-            // Wait for transition, then hide and play
-            setTimeout(() => {
-                overlay.classList.add('hidden');
-                video.play();
-            }, 500);
-        }
-    </script>
 </body>
 </html>
