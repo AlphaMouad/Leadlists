@@ -1,459 +1,361 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invest in Les Ambassadeurs 6 & 7 | AMG Building</title>
+    <title>Encrypted Session: Real Estate Investing Co | AMG Building</title>
+
+    <!-- TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Fonts: Playfair Display (Luxury) & Inter (Clean) -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+
+    <!-- FONTS: PLAYFAIR DISPLAY (SERIF) & INTER (SANS) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --gold-primary: #C5A059;
+            --bg-dark: #080808;
+            --bg-card: #121212;
+            --text-primary: #FFFFFF;
+            --text-secondary: #9CA3AF;
+            --gold-accent: #C5A059;
+            --gold-hover: #D4AF37;
+            --success-green: #10B981;
         }
 
-        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', serif; }
-        
-        /* ELITE VIDEO BACKGROUND UTILITIES */
-        .video-docker {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            overflow: hidden; z-index: 0;
-        }
-        .video-docker iframe {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100vw; height: 56.25vw; /* 16:9 Aspect Ratio */
-            min-height: 100vh; min-width: 177.77vh;
-            pointer-events: none;
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
 
-        /* Cinema Grain Overlay */
-        .noise-overlay {
-            position: absolute; inset: 0; width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 2;
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
         }
 
-        /* Text Gradients */
-        .gold-text-gradient {
-            background: linear-gradient(135deg, #DFBD69 0%, #F9E5AA 50%, #C5A059 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0px 2px 10px rgba(197, 160, 89, 0.2);
+        .gold-text { color: var(--gold-accent); }
+        .bg-gold { background-color: var(--gold-accent); }
+        .border-gold { border-color: var(--gold-accent); }
+
+        /* BRUTALIST LUXURY UTILITIES */
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* Premium Form Styles */
-        .glass-form {
-            background: rgba(10, 10, 10, 0.65);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+        .glow-green {
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        /* VIDEO PLAYER STYLES */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            background: #000;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-        
-        .input-group input, .input-group select {
-            background: transparent;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-        .input-group input:focus, .input-group select:focus {
-            border-color: #C5A059;
-            background: rgba(255,255,255,0.03);
-            outline: none;
-        }
-        
-        /* Custom Select Arrow */
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0px center;
-            background-size: 14px;
+
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        /* Animations */
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.2, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-        
-        .btn-gold {
-            background: linear-gradient(135deg, #C5A059 0%, #B08D46 100%);
-            position: relative; overflow: hidden;
+        /* SPLIT SCREEN THUMBNAIL HACK */
+        .thumbnail-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            display: flex;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
         }
-        .btn-gold::after {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-20deg);
-            animation: shimmer 6s infinite;
-        }
-        @keyframes shimmer { 0%, 90% { left: -100%; } 100% { left: 200%; } }
 
-        /* Logo Filter for Dark Mode */
-        .logo-white {
-            filter: brightness(0) invert(1);
+        .thumb-left {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            background-image: url('https://MTSZone.b-cdn.net/BG/3.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .thumb-left::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .thumb-right {
+            width: 50%;
+            height: 100%;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        /* PLAY BUTTON CENTERED */
+        .play-btn-centered {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(197, 160, 89, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            transition: transform 0.3s ease, background 0.3s ease;
+            box-shadow: 0 0 30px rgba(197, 160, 89, 0.4);
+        }
+
+        .thumbnail-overlay:hover .play-btn-centered {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: #fff;
+        }
+
+        .thumbnail-overlay:hover .play-btn-centered svg {
+            fill: #000;
+        }
+
+        .hidden { display: none !important; opacity: 0; pointer-events: none; }
+
+        /* TEAR SHEET GRID */
+        .tear-sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (min-width: 768px) {
+            .tear-sheet-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .tear-sheet-item {
+            background: var(--bg-dark);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        .tear-sheet-item:hover {
+            background: #0f0f0f;
+        }
+
+        /* CALENDLY EMBED PLACEHOLDER */
+        .calendly-placeholder {
+            width: 100%;
+            height: 700px;
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #666;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="antialiased">
 
-    <!-- Sticky Header -->
-    <nav class="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 transition-all duration-300" id="navbar">
-        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
-            <!-- Logo -->
-            <a href="#" class="block">
-                <img src="https://amg-building.com/wp-content/uploads/2025/04/Logo.svg" 
-                     alt="AMG Building" 
-                     class="h-7 w-auto logo-white">
-            </a>
-            
-            <div class="hidden md:flex items-center gap-8 text-xs font-medium uppercase tracking-widest text-gray-300">
-                <a href="#project" class="hover:text-white transition-colors">The Project</a>
-                <a href="#amenities" class="hover:text-white transition-colors">Lifestyle</a>
-                <a href="#floorplans" class="hover:text-white transition-colors">Villas</a>
-                <a href="#contact" class="hover:text-white transition-colors">Contact</a>
-            </div>
-            
-            <a href="#contact" class="hidden md:block border border-[#C5A059] text-[#C5A059] px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[#C5A059] hover:text-black transition-all">
-                Enquire Now
-            </a>
-            
-            <button class="md:hidden text-white">
-                <i data-lucide="menu" class="w-6 h-6"></i>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="relative h-screen min-h-[850px] flex items-center justify-center overflow-hidden bg-black">
-        
-        <!-- Video Background -->
-        <div class="video-docker">
-            <iframe 
-                src="https://player.mediadelivery.net/embed/555558/390af435-4a2d-48da-9c6f-fc34ad55482f?autoplay=true&loop=true&muted=true&preload=true&controls=0&playsinline=true" 
-                allow="autoplay; fullscreen; picture-in-picture" 
-                class="scale-[1.15] opacity-90">
-            </iframe>
-        </div>
-
-        <!-- Cinematic Overlay Stack -->
-        <div class="absolute inset-0 bg-black/30 z-[1]"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-[1]"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40 z-[1]"></div>
-        <div class="noise-overlay"></div>
-
-        <!-- Content -->
-        <div class="container mx-auto px-6 relative z-10 grid lg:grid-cols-12 gap-12 items-center pt-20">
-            
-            <!-- Left: Hero Copy (Span 7 cols) -->
-            <div class="lg:col-span-7 text-white space-y-8 reveal active">
-                
-                <div class="inline-flex items-center gap-3">
-                    <div class="h-[1px] w-8 bg-[#C5A059]"></div>
-                    <span class="text-[#C5A059] text-xs font-bold tracking-[0.25em] uppercase">Now Selling Phase 6 & 7</span>
+    <!-- SECTION 1: THE BOARDROOM HEADER -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-panel border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- LOGO -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white flex items-center justify-center">
+                    <span class="font-serif font-bold text-black text-xl">A</span>
                 </div>
-
-                <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] font-medium leading-[1.05]">
-                    Invest in Marrakech's <br>
-                    <span class="gold-text-gradient italic pr-2">Golden Standard</span>
-                </h1>
-                
-                <p class="text-lg text-gray-300 max-w-xl leading-relaxed font-light border-l-2 border-white/20 pl-6">
-                    <strong class="text-white">Les Ambassadeurs 6 & 7:</strong> An exclusive gated community of 64 luxury villas on 11 hectares. Trusted by the diaspora, built to European standards.
-                </p>
-
-                <div class="flex flex-col sm:flex-row gap-5 pt-4">
-                    <a href="#contact" class="btn-gold text-black px-10 py-4 text-xs font-bold uppercase tracking-widest text-center shadow-lg hover:shadow-[#C5A059]/40 transition-shadow">
-                        Download Brochure
-                    </a>
-                    <a href="#project" class="group px-10 py-4 border border-white/30 text-white text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all text-center flex items-center justify-center gap-2">
-                        View Gallery
-                        <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
-                    </a>
-                </div>
-                
-                <!-- Trust Indicators Small -->
-                <div class="pt-8 flex gap-8 opacity-70">
-                    <div>
-                        <p class="text-2xl font-serif text-white">100%</p>
-                        <p class="text-[10px] uppercase tracking-wider text-gray-400">Delivery Rate</p>
-                    </div>
-                    <div class="w-[1px] bg-white/20 h-full"></div>
-                    <div>
-                        <p class="text-2xl font-serif text-white">11ha</p>
-                        <p class="text-[10px] uppercase tracking-wider text-gray-400">Premium Land</p>
-                    </div>
+                <div class="flex flex-col">
+                    <span class="text-white font-bold tracking-widest text-sm uppercase leading-none">AMG Building</span>
+                    <span class="text-gray-500 text-[10px] tracking-widest uppercase mt-1">Private Equity Group</span>
                 </div>
             </div>
 
-            <!-- Right: Premium Form (Span 5 cols) -->
-            <div class="lg:col-span-5 reveal delay-200">
-                <div class="glass-form p-8 md:p-10 relative overflow-hidden rounded-sm">
-                    <!-- Top Gold Line -->
-                    <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#C5A059] to-transparent opacity-80"></div>
-
-                    <div class="mb-8 text-center md:text-left">
-                        <h3 class="text-2xl md:text-3xl text-white font-serif mb-2">Register Your Interest</h3>
-                        <p class="text-[#C5A059] text-xs font-bold uppercase tracking-wider">Get Exclusive Offers & Floor Plans</p>
-                    </div>
-                    
-                    <form class="space-y-6">
-                        <div class="input-group">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
-                            <input type="text" class="w-full text-white px-2 py-3 text-sm placeholder-white/20" placeholder="e.g. Alexander Smith">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Email Address</label>
-                            <input type="email" class="w-full text-white px-2 py-3 text-sm placeholder-white/20" placeholder="investor@example.com">
-                        </div>
-
-                        <div class="input-group">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
-                            <div class="flex gap-3">
-                                <div class="w-1/4 relative">
-                                    <select class="w-full text-white px-2 py-3 text-sm cursor-pointer">
-                                        <option class="text-black" selected>+212</option>
-                                        <option class="text-black">+33</option>
-                                        <option class="text-black">+44</option>
-                                        <option class="text-black">+1</option>
-                                    </select>
-                                </div>
-                                <input type="tel" class="w-3/4 text-white px-2 py-3 text-sm placeholder-white/20" placeholder="6 00 00 00 00">
-                            </div>
-                        </div>
-
-                        <div class="input-group">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Interested In</label>
-                            <select class="w-full text-white px-2 py-3 text-sm cursor-pointer">
-                                <option class="text-black" value="" disabled selected>Select an option...</option>
-                                <option class="text-black">Requesting Floor Plans</option>
-                                <option class="text-black">Scheduling a Viewing</option>
-                                <option class="text-black">Investment Consultation</option>
-                            </select>
-                        </div>
-
-                        <button type="button" class="w-full bg-white hover:bg-gray-100 text-black font-bold py-4 uppercase tracking-widest text-xs transition-all mt-4 hover:scale-[1.01]">
-                            Request Details
-                        </button>
-                        
-                        <p class="text-[9px] text-gray-500 text-center leading-relaxed">
-                            By registering, you agree to receive updates from AMG Building regarding this project. Your data is strictly confidential.
-                        </p>
-                    </form>
-                </div>
+            <!-- SESSION STATUS -->
+            <div class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/5">
+                <div class="w-2 h-2 rounded-full bg-green-500 glow-green animate-pulse"></div>
+                <span class="text-[10px] md:text-xs font-mono text-green-400 tracking-wider uppercase">
+                    ENCRYPTED SESSION: REAL ESTATE INVESTING CO
+                </span>
             </div>
         </div>
+    </header>
 
-        <!-- Scroll Indicator -->
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 animate-bounce">
-            <span class="text-[9px] uppercase tracking-[0.2em] text-white/40">Explore</span>
-            <i data-lucide="chevron-down" class="text-[#C5A059] w-4 h-4"></i>
-        </div>
-    </section>
+    <main class="pt-32 pb-24 px-6 relative z-10">
 
-    <!-- Trust Bar -->
-    <div class="bg-black text-white py-8 border-b border-gray-800">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gray-800">
-                <div class="reveal">
-                    <p class="text-3xl font-serif text-[#C5A059]">85%</p>
-                    <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Diaspora Clients</p>
-                </div>
-                <div class="reveal delay-100">
-                    <p class="text-3xl font-serif text-[#C5A059]">100%</p>
-                    <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Delivery Rate</p>
-                </div>
-                <div class="reveal delay-200">
-                    <p class="text-3xl font-serif text-[#C5A059]">11ha</p>
-                    <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Premium Land</p>
-                </div>
-                <div class="reveal delay-300">
-                    <p class="text-3xl font-serif text-[#C5A059]">EUR</p>
-                    <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Build Standards</p>
-                </div>
+        <!-- DYNAMIC HEADLINES -->
+        <div class="max-w-5xl mx-auto text-center mb-12">
+            <div class="inline-block mb-4">
+                <span class="px-3 py-1 border border-[#C5A059] text-[#C5A059] text-[10px] font-bold tracking-[0.2em] uppercase">Confidential Briefing</span>
             </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-6 leading-tight">
+                Prepared Exclusively for <span class="text-[#C5A059] italic">John Doe</span>
+            </h1>
+            <h2 class="text-gray-400 text-sm md:text-lg font-light tracking-wide uppercase">
+                Strategic GP/LP Co-Investment <span class="mx-2 text-[#C5A059]">•</span> Project Ambassadeur 6&7, Marrakech
+            </h2>
         </div>
-    </div>
 
-    <!-- USP Section (Why Invest) -->
-    <section class="py-24 bg-white" id="project">
-        <div class="container mx-auto px-6">
-            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
-                <h2 class="text-4xl md:text-5xl font-serif font-medium mb-4 text-gray-900">Why Les Ambassadeurs?</h2>
-                <p class="text-gray-600 font-light text-lg">Located in the heart of Marrakech, offering a perfect equilibrium of privacy, nature, and urban accessibility.</p>
-            </div>
+        <!-- SECTION 2: THE CORE ASSET (VIDEO) -->
+        <div class="max-w-6xl mx-auto mb-16">
+            <div class="video-wrapper rounded-sm relative group">
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="group p-8 bg-gray-50 border border-gray-100 hover:border-[#C5A059] hover:shadow-xl transition-all duration-300 reveal">
-                    <div class="w-14 h-14 bg-white shadow-md rounded-full flex items-center justify-center mb-6 text-[#C5A059] group-hover:bg-[#C5A059] group-hover:text-white transition-colors">
-                        <i data-lucide="map-pin" class="w-7 h-7"></i>
-                    </div>
-                    <h3 class="text-xl font-serif mb-3">Prime Location</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Strategically situated minutes from Marrakech center, providing a serene escape without sacrificing connectivity to airports and amenities.
-                    </p>
-                </div>
-
-                <!-- Feature 2 -->
-                <div class="group p-8 bg-gray-50 border border-gray-100 hover:border-[#C5A059] hover:shadow-xl transition-all duration-300 reveal delay-100">
-                    <div class="w-14 h-14 bg-white shadow-md rounded-full flex items-center justify-center mb-6 text-[#C5A059] group-hover:bg-[#C5A059] group-hover:text-white transition-colors">
-                        <i data-lucide="shield-check" class="w-7 h-7"></i>
-                    </div>
-                    <h3 class="text-xl font-serif mb-3">Secure Investment</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Developed by AMG Building, Morocco's leader in luxury. Sold-out success on Ambassadeurs 1-5 proves high demand and asset appreciation.
-                    </p>
-                </div>
-
-                <!-- Feature 3 -->
-                <div class="group p-8 bg-gray-50 border border-gray-100 hover:border-[#C5A059] hover:shadow-xl transition-all duration-300 reveal delay-200">
-                    <div class="w-14 h-14 bg-white shadow-md rounded-full flex items-center justify-center mb-6 text-[#C5A059] group-hover:bg-[#C5A059] group-hover:text-white transition-colors">
-                        <i data-lucide="gem" class="w-7 h-7"></i>
-                    </div>
-                    <h3 class="text-xl font-serif mb-3">Luxury Finishes</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        European-grade materials, private pools, spacious 350m² layouts, and smart home readiness for the modern global citizen.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Split Showcase Section -->
-    <section class="py-24 bg-black text-white overflow-hidden" id="amenities">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col lg:flex-row items-center gap-16">
-                <div class="lg:w-1/2 reveal">
-                    <div class="relative">
-                        <div class="absolute -inset-4 bg-[#C5A059]/20 blur-xl"></div>
-                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2071&auto=format&fit=crop" 
-                             alt="Villa Interior" 
-                             class="relative w-full h-[500px] object-cover shadow-2xl grayscale hover:grayscale-0 transition-all duration-700">
-                        
-                        <!-- Floating Card -->
-                        <div class="absolute bottom-8 -right-4 bg-white text-black p-6 shadow-xl max-w-xs hidden md:block">
-                            <p class="font-serif font-bold text-lg mb-1">Type A1 Villa</p>
-                            <p class="text-gray-600 text-sm">350m² Built Area • 4 Bedrooms</p>
+                <!-- CUSTOM THUMBNAIL OVERLAY (THE HACK) -->
+                <div class="thumbnail-overlay" id="videoOverlay" onclick="playVideo()">
+                    <!-- Left: Clubhouse Render -->
+                    <div class="thumb-left group-hover:grayscale-0 transition-all duration-700 grayscale">
+                        <div class="absolute bottom-6 left-6 z-10">
+                            <span class="bg-black/80 backdrop-blur text-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold border border-white/10">
+                                Ambassadeur Clubhouse
+                            </span>
                         </div>
                     </div>
-                </div>
-                <div class="lg:w-1/2 space-y-8 reveal delay-200">
-                    <h2 class="text-5xl font-serif font-medium leading-tight">
-                        A Sanctuary of <br>
-                        <span class="text-[#C5A059] italic">Modern Elegance</span>
-                    </h2>
-                    <p class="text-gray-400 text-lg font-light">
-                        Every villa in Les Ambassadeurs 6 & 7 is designed to maximize light, space, and privacy. Enjoy your own private garden and swimming pool in a secure, gated environment.
-                    </p>
-                    
-                    <ul class="space-y-4">
-                        <li class="flex items-center gap-4">
-                            <i data-lucide="check-circle-2" class="text-[#C5A059]"></i>
-                            <span>Private Swimming Pool & Landscaped Garden</span>
-                        </li>
-                        <li class="flex items-center gap-4">
-                            <i data-lucide="check-circle-2" class="text-[#C5A059]"></i>
-                            <span>Solarium & Terrace Views</span>
-                        </li>
-                        <li class="flex items-center gap-4">
-                            <i data-lucide="check-circle-2" class="text-[#C5A059]"></i>
-                            <span>Master Suite with Dressing Room</span>
-                        </li>
-                        <li class="flex items-center gap-4">
-                            <i data-lucide="check-circle-2" class="text-[#C5A059]"></i>
-                            <span>High-End Marble & Wood Finishes</span>
-                        </li>
-                    </ul>
 
-                    <a href="#contact" class="inline-block border-b border-[#C5A059] text-[#C5A059] pb-1 hover:text-white hover:border-white transition-colors uppercase text-xs tracking-widest font-bold">
-                        View Floor Plans &rarr;
-                    </a>
+                    <!-- Right: Lead's Context -->
+                    <div class="thumb-right">
+                        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4 border border-gray-700">
+                            <span class="text-2xl">🏢</span>
+                        </div>
+                        <h3 class="text-xl font-serif text-white mb-1">Real Estate Investing Co</h3>
+                        <p class="text-xs text-gray-500 uppercase tracking-widest">Allocation Review</p>
+                    </div>
+
+                    <!-- Centered Play Button -->
+                    <div class="play-btn-centered">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#fff">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- ACTUAL VIDEO -->
+                <video id="mainVideo" class="w-full h-full" controls preload="metadata">
+                    <source src="https://MTSZone.b-cdn.net/LoomP1.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+
+        <!-- SECTION 3: THE "TEAR SHEET" (FINANCIALS) -->
+        <div class="max-w-6xl mx-auto mb-24">
+            <div class="tear-sheet-grid">
+                <!-- Metric 1 -->
+                <div class="tear-sheet-item">
+                    <span class="text-gray-500 text-[10px] uppercase tracking-[0.2em] mb-2 font-bold">Target IRR</span>
+                    <span class="text-4xl md:text-5xl font-serif text-[#C5A059] mb-1">22%+</span>
+                    <span class="text-gray-600 text-xs font-mono">36-Month Exit Horizon</span>
+                </div>
+
+                <!-- Metric 2 -->
+                <div class="tear-sheet-item">
+                    <span class="text-gray-500 text-[10px] uppercase tracking-[0.2em] mb-2 font-bold">Equity Multiple</span>
+                    <span class="text-4xl md:text-5xl font-serif text-white mb-1">1.8x</span>
+                    <span class="text-gray-600 text-xs font-mono">Target Range: 1.6x - 1.8x</span>
+                </div>
+
+                <!-- Metric 3 -->
+                <div class="tear-sheet-item">
+                    <span class="text-gray-500 text-[10px] uppercase tracking-[0.2em] mb-2 font-bold">Total LP Tranche</span>
+                    <span class="text-4xl md:text-5xl font-serif text-white mb-1">$1.8M</span>
+                    <span class="text-gray-600 text-xs font-mono">Asset-Backed SPV</span>
+                </div>
+
+                <!-- Metric 4 -->
+                <div class="tear-sheet-item relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-red-900/30 text-red-400 text-[9px] px-2 py-1 font-bold uppercase tracking-widest">
+                        High Demand
+                    </div>
+                    <span class="text-gray-500 text-[10px] uppercase tracking-[0.2em] mb-2 font-bold">Availability</span>
+                    <span class="text-4xl md:text-5xl font-serif text-[#C5A059] mb-1">3 Slots</span>
+                    <span class="text-gray-600 text-xs font-mono">$600k Minimum Allocation</span>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Gallery Grid -->
-    <section class="py-24 bg-gray-50">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-serif text-gray-900">Life at Les Ambassadeurs</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[600px]">
-                <div class="md:col-span-2 h-full reveal group overflow-hidden relative">
-                    <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=2074&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Villa Pool">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
-                </div>
-                <div class="flex flex-col gap-4 h-full">
-                    <div class="h-1/2 reveal delay-100 group overflow-hidden relative">
-                        <img src="https://images.unsplash.com/photo-1613545325278-f24b0cae1224?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Interiors">
+        <!-- SECTION 4: THE FRICTIONLESS GATEWAY -->
+        <div class="max-w-4xl mx-auto text-center" id="schedule">
+            <h2 class="text-3xl md:text-4xl font-serif text-white mb-6">Unlock The Data Room</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+                To unlock the full 50-page Data Room, Legal Framework, and Financial Models, schedule your 15-minute Allocation Review below.
+                <br><span class="text-[#C5A059] text-xs font-bold uppercase tracking-widest mt-4 block">No Sales Teams. Direct GP Access.</span>
+            </p>
+
+            <!-- CALENDLY EMBED PLACEHOLDER -->
+            <!-- In a real scenario, the Calendly iframe would go here. -->
+            <div class="calendly-placeholder rounded-sm p-8">
+                <div class="text-center space-y-4">
+                    <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                     </div>
-                    <div class="h-1/2 reveal delay-200 group overflow-hidden relative">
-                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gardens">
+                    <h3 class="text-xl text-white font-serif">Schedule Your Allocation Review</h3>
+                    <p class="text-sm text-gray-500 max-w-md mx-auto">Select a time below to meet with the General Partners.</p>
+
+                    <!-- Fake Calendar Grid for Visual -->
+                    <div class="grid grid-cols-7 gap-2 max-w-xs mx-auto mt-8 opacity-30">
+                        <div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div>
+                        <div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div><div class="h-8 bg-gray-700 rounded"></div>
                     </div>
+
+                    <button class="mt-8 bg-[#C5A059] text-black font-bold uppercase tracking-widest text-xs px-8 py-4 hover:bg-white transition-colors">
+                        Open Calendar
+                    </button>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Final CTA / Footer -->
-    <section class="py-20 bg-black text-center relative overflow-hidden" id="contact">
-        <!-- Decorative BG -->
-        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-        
-        <div class="container mx-auto px-6 relative z-10">
-            <h2 class="text-4xl md:text-6xl font-serif text-white mb-6">Secure Your Legacy</h2>
-            <p class="text-gray-400 mb-10 max-w-xl mx-auto font-light">Limited units remaining in Phase 6 & 7. Speak to our investment consultants today.</p>
-            
-            <div class="flex flex-col md:flex-row justify-center gap-6">
-                <button class="btn-gold text-black px-10 py-5 font-bold text-xs uppercase tracking-widest shadow-lg hover:shadow-yellow-500/20">
-                    Schedule a Private Viewing
-                </button>
-                <button class="px-10 py-5 border border-gray-600 text-white font-bold text-xs uppercase tracking-widest hover:border-white hover:bg-white hover:text-black transition-all">
-                    Download Brochure PDF
-                </button>
-            </div>
-            
-            <p class="mt-16 text-[10px] text-gray-600 uppercase tracking-widest">
-                &copy; 2026 AMG Building. Les Ambassadeurs 6 & 7. All Rights Reserved.<br>
-                Marrakech, Morocco.
+    </main>
+
+    <footer class="border-t border-white/5 py-12 text-center relative z-10 bg-black">
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="text-[10px] text-gray-600 uppercase tracking-widest font-mono">
+                &copy; 2025 AMG Building. Confidential & Proprietary. <br>
+                For intended recipient John Doe only. Do not distribute.
             </p>
         </div>
-    </section>
+    </footer>
 
     <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
+        function playVideo() {
+            const overlay = document.getElementById('videoOverlay');
+            const video = document.getElementById('mainVideo');
 
-        // Intersection Observer for Scroll Animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, { threshold: 0.1 });
+            // Fade out overlay
+            overlay.style.opacity = '0';
 
-        document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-
-        // Sticky Navbar Transition
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                nav.classList.add('bg-black/95', 'py-0');
-                nav.classList.remove('bg-black/80', 'py-2');
-            } else {
-                nav.classList.remove('bg-black/95', 'py-0');
-                nav.classList.add('bg-black/80', 'py-2');
-            }
-        });
+            // Wait for transition, then hide and play
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                video.play();
+            }, 500);
+        }
     </script>
 </body>
 </html>
